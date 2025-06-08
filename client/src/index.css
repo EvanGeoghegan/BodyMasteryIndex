@@ -39,6 +39,22 @@
   --dropdown-text: hsl(220, 15%, 90%);
 }
 
+/* Improve dropdown text visibility */
+[data-radix-select-content] {
+  background-color: var(--dark-secondary) !important;
+  border-color: var(--dark-border) !important;
+}
+
+[data-radix-select-item] {
+  color: var(--dropdown-text) !important;
+}
+
+[data-radix-select-item]:focus,
+[data-radix-select-item][data-highlighted] {
+  background-color: var(--accent-navy) !important;
+  color: white !important;
+}
+
 .dark {
   --background: hsl(240, 10%, 3.9%);
   --foreground: hsl(0, 0%, 98%);
