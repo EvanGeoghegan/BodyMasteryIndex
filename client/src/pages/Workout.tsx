@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Plus, Save, Copy } from "lucide-react";
 import ExerciseForm from "@/components/ExerciseForm";
+import CardioExerciseForm from "@/components/CardioExerciseForm";
 import { storage } from "@/lib/storage";
 import { Exercise, ExerciseSet, Workout, Template } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
@@ -176,7 +177,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
               onClick={() => setShowTemplateDialog(true)}
               variant="outline"
               size="sm"
-              className="bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-green"
+              className="bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-navy"
             >
               <Copy className="mr-1" size={14} />
               From Template
@@ -206,7 +207,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
             <h3 className="text-lg font-semibold text-text-primary">Exercises</h3>
             <Button
               onClick={addExercise}
-              className="bg-accent-green hover:bg-green-500 text-dark-primary px-4 py-2"
+              className="bg-accent-navy hover:bg-accent-light-navy text-white px-4 py-2"
             >
               <Plus className="mr-1" size={16} />
               Add Exercise
@@ -215,12 +216,21 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
 
           <div className="space-y-4">
             {exercises.map((exercise, index) => (
-              <ExerciseForm
-                key={exercise.id}
-                exercise={exercise}
-                onUpdate={(updatedExercise) => updateExercise(index, updatedExercise)}
-                onDelete={() => deleteExercise(index)}
-              />
+              exercise.type === "cardio" ? (
+                <CardioExerciseForm
+                  key={exercise.id}
+                  exercise={exercise}
+                  onUpdate={(updatedExercise) => updateExercise(index, updatedExercise)}
+                  onDelete={() => deleteExercise(index)}
+                />
+              ) : (
+                <ExerciseForm
+                  key={exercise.id}
+                  exercise={exercise}
+                  onUpdate={(updatedExercise) => updateExercise(index, updatedExercise)}
+                  onDelete={() => deleteExercise(index)}
+                />
+              )
             ))}
           </div>
         </div>
@@ -228,7 +238,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
         {/* Save Workout */}
         <Button
           onClick={saveWorkout}
-          className="w-full bg-accent-green hover:bg-green-500 text-dark-primary font-semibold py-3 px-6"
+          className="w-full bg-accent-navy hover:bg-accent-light-navy text-white font-semibold py-3 px-6"
         >
           <Save className="mr-2" size={20} />
           Save Workout

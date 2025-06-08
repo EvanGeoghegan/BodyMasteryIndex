@@ -54,7 +54,7 @@ export default function PersonalBests() {
     <div className="min-h-screen bg-dark-primary pb-20">
       <header className="bg-dark-secondary p-4 shadow-lg">
         <h2 className="text-xl font-bold text-text-primary flex items-center">
-          <Trophy className="mr-2 text-accent-green" size={24} />
+          <Trophy className="mr-2 text-accent-navy" size={24} />
           Personal Bests
         </h2>
       </header>
@@ -84,8 +84,8 @@ export default function PersonalBests() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-accent-green">
-                    {pb.weight} lbs
+                  <div className="text-2xl font-bold text-accent-navy">
+                    {pb.weight} kg
                   </div>
                   <p className="text-text-secondary text-sm">
                     {formatDate(pb.date)}
@@ -96,10 +96,10 @@ export default function PersonalBests() {
               <div className="mt-3 flex items-center space-x-4 text-sm">
                 <span className="text-text-disabled flex items-center">
                   <TrendingUp className="mr-1" size={14} />
-                  {pb.type === '1RM' ? '1RM' : 'Volume PR'}: {pb.weight} lbs × {pb.reps}
+                  {pb.type === '1RM' ? '1RM' : 'Volume PR'}: {pb.weight} kg × {pb.reps}
                 </span>
                 {index === 0 && (
-                  <span className="bg-accent-green text-dark-primary px-2 py-1 rounded text-xs font-medium">
+                  <span className="bg-accent-navy text-white px-2 py-1 rounded text-xs font-medium">
                     Strongest Lift
                   </span>
                 )}
