@@ -61,7 +61,7 @@ export default function ActivityCalendar({ workoutDays }: ActivityCalendarProps)
   return (
     <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
       <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center">
-        <Calendar className="text-accent-green mr-2" size={20} />
+        <Calendar className="text-accent-navy mr-2" size={20} />
         Activity Calendar
       </h3>
       

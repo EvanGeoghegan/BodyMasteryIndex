@@ -121,7 +121,7 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(workouts)
       .where(and(eq(workouts.id, parseInt(id)), eq(workouts.userId, userId)));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Template methods
@@ -174,7 +174,7 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(templates)
       .where(and(eq(templates.id, parseInt(id)), eq(templates.userId, userId)));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Personal best methods
@@ -227,7 +227,7 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(personalBests)
       .where(and(eq(personalBests.id, parseInt(id)), eq(personalBests.userId, userId)));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Utility methods

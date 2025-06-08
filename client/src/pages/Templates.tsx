@@ -268,7 +268,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
                 <Button
                   onClick={addExercise}
                   size="sm"
-                  className="bg-accent-green hover:bg-green-500 text-dark-primary"
+                  className="bg-accent-navy hover:bg-accent-light-navy text-white"
                 >
                   <Plus size={14} />
                 </Button>
@@ -387,7 +387,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
               </Button>
               <Button
                 onClick={handleSave}
-                className="flex-1 bg-accent-green hover:bg-green-500 text-dark-primary"
+                className="flex-1 bg-accent-navy hover:bg-accent-light-navy text-white"
               >
                 {editingTemplate ? 'Update' : 'Create'}
               </Button>
