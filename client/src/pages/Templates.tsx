@@ -304,21 +304,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
                         </SelectContent>
                       </Select>
                       
-                      {exercise.type === "cardio" && (
-                        <Select value={exercise.cardioType || ""} onValueChange={(value) => updateExercise(index, 'cardioType', value)}>
-                          <SelectTrigger className="bg-dark-primary text-text-primary border-dark-border text-sm">
-                            <SelectValue placeholder="Cardio type" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-dark-secondary border-dark-border">
-                            <SelectItem value="zone2">Zone 2</SelectItem>
-                            <SelectItem value="low_intensity">Low Intensity</SelectItem>
-                            <SelectItem value="high_intensity">High Intensity</SelectItem>
-                            <SelectItem value="intervals">Intervals</SelectItem>
-                            <SelectItem value="sprints">Sprints</SelectItem>
-                            <SelectItem value="steps">Steps</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      )}
+
                     </div>
                     
                     {exercise.type === "cardio" ? (

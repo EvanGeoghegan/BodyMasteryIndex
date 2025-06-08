@@ -42,7 +42,6 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       name: templateEx.name,
       type: templateEx.type || "strength",
-      cardioType: templateEx.cardioType,
       sets: Array.from({ length: templateEx.sets }, (_, index) => ({
         id: `${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}`,
         weight: templateEx.suggestedWeight,

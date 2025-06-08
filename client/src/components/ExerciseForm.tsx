@@ -17,11 +17,7 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseF
   };
 
   const updateExerciseType = (type: "strength" | "cardio") => {
-    onUpdate({ ...exercise, type, cardioType: type === "strength" ? undefined : exercise.cardioType });
-  };
-
-  const updateCardioType = (cardioType: "zone2" | "low_intensity" | "high_intensity" | "intervals" | "sprints" | "steps") => {
-    onUpdate({ ...exercise, cardioType });
+    onUpdate({ ...exercise, type });
   };
 
   const updateSet = (setIndex: number, updates: Partial<ExerciseSet>) => {
@@ -66,14 +62,7 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseF
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const cardioTypeLabels = {
-    zone2: "Zone 2",
-    low_intensity: "Low Intensity",
-    high_intensity: "High Intensity",
-    intervals: "Intervals",
-    sprints: "Sprints",
-    steps: "Steps"
-  };
+
 
   return (
     <div className="bg-dark-elevated rounded-lg p-4 border border-dark-border">
@@ -106,18 +95,7 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseF
           </SelectContent>
         </Select>
 
-        {exercise.type === "cardio" && (
-          <Select value={exercise.cardioType || ""} onValueChange={updateCardioType}>
-            <SelectTrigger className="w-40 bg-dark-primary text-text-primary border-dark-border text-sm h-8">
-              <SelectValue placeholder="Cardio type" />
-            </SelectTrigger>
-            <SelectContent className="bg-dark-secondary border-dark-border">
-              {Object.entries(cardioTypeLabels).map(([value, label]) => (
-                <SelectItem key={value} value={value}>{label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
+
       </div>
       
       {/* Sets Header */}

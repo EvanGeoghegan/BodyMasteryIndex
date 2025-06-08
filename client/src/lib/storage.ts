@@ -224,9 +224,9 @@ class LocalStorage {
         type: "cardio",
         estimatedDuration: 25,
         exercises: [
-          { name: "Running Intervals", sets: 4, suggestedDuration: 5, type: "cardio", cardioType: "intervals" },
-          { name: "Cycling Sprints", sets: 6, suggestedDuration: 3, type: "cardio", cardioType: "sprints" },
-          { name: "Jump Rope", sets: 3, suggestedDuration: 4, type: "cardio", cardioType: "high_intensity" }
+          { name: "Running Intervals", sets: 4, suggestedDuration: 5, type: "cardio" },
+          { name: "Cycling Sprints", sets: 6, suggestedDuration: 3, type: "cardio" },
+          { name: "Jump Rope", sets: 3, suggestedDuration: 4, type: "cardio" }
         ]
       },
       {
@@ -236,8 +236,8 @@ class LocalStorage {
         type: "cardio",
         estimatedDuration: 45,
         exercises: [
-          { name: "Treadmill Walk", sets: 1, suggestedDuration: 45, suggestedDistance: 3, type: "cardio", cardioType: "zone2" },
-          { name: "Stationary Bike", sets: 1, suggestedDuration: 30, type: "cardio", cardioType: "low_intensity" }
+          { name: "Treadmill Walk", sets: 1, suggestedDuration: 45, suggestedDistance: 3, type: "cardio" },
+          { name: "Stationary Bike", sets: 1, suggestedDuration: 30, type: "cardio" }
         ]
       },
       {
@@ -247,7 +247,7 @@ class LocalStorage {
         type: "cardio",
         estimatedDuration: 60,
         exercises: [
-          { name: "Walking", sets: 1, suggestedDistance: 5, type: "cardio", cardioType: "steps" }
+          { name: "Walking", sets: 1, suggestedDistance: 5, type: "cardio" }
         ]
       }
     ];
