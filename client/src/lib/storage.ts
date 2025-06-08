@@ -176,54 +176,78 @@ class LocalStorage {
         name: "Push Day",
         description: "Chest, Shoulders, Triceps",
         category: "Push",
+        type: "strength",
         estimatedDuration: 75,
         exercises: [
-          { name: "Bench Press", sets: 4, suggestedWeight: 135, suggestedReps: 8 },
-          { name: "Overhead Press", sets: 4, suggestedWeight: 95, suggestedReps: 8 },
-          { name: "Incline Dumbbell Press", sets: 3, suggestedWeight: 50, suggestedReps: 10 },
-          { name: "Lateral Raises", sets: 3, suggestedWeight: 15, suggestedReps: 12 },
-          { name: "Tricep Dips", sets: 3, suggestedReps: 10 },
-          { name: "Push-ups", sets: 3, suggestedReps: 15 }
+          { name: "Bench Press", sets: 4, suggestedWeight: 135, suggestedReps: 8, type: "strength" },
+          { name: "Overhead Press", sets: 4, suggestedWeight: 95, suggestedReps: 8, type: "strength" },
+          { name: "Incline Dumbbell Press", sets: 3, suggestedWeight: 50, suggestedReps: 10, type: "strength" },
+          { name: "Lateral Raises", sets: 3, suggestedWeight: 15, suggestedReps: 12, type: "strength" },
+          { name: "Tricep Dips", sets: 3, suggestedReps: 10, type: "strength" },
+          { name: "Push-ups", sets: 3, suggestedReps: 15, type: "strength" }
         ]
       },
       {
         name: "Pull Day",
         description: "Back, Biceps",
         category: "Pull",
+        type: "strength",
         estimatedDuration: 60,
         exercises: [
-          { name: "Deadlift", sets: 4, suggestedWeight: 225, suggestedReps: 6 },
-          { name: "Pull-ups", sets: 4, suggestedReps: 8 },
-          { name: "Barbell Rows", sets: 4, suggestedWeight: 135, suggestedReps: 8 },
-          { name: "Lat Pulldowns", sets: 3, suggestedWeight: 120, suggestedReps: 10 },
-          { name: "Bicep Curls", sets: 3, suggestedWeight: 25, suggestedReps: 12 }
+          { name: "Deadlift", sets: 4, suggestedWeight: 225, suggestedReps: 6, type: "strength" },
+          { name: "Pull-ups", sets: 4, suggestedReps: 8, type: "strength" },
+          { name: "Barbell Rows", sets: 4, suggestedWeight: 135, suggestedReps: 8, type: "strength" },
+          { name: "Lat Pulldowns", sets: 3, suggestedWeight: 120, suggestedReps: 10, type: "strength" },
+          { name: "Bicep Curls", sets: 3, suggestedWeight: 25, suggestedReps: 12, type: "strength" }
         ]
       },
       {
         name: "Leg Day",
         description: "Quads, Hamstrings, Glutes, Calves",
         category: "Legs",
+        type: "strength",
         estimatedDuration: 90,
         exercises: [
-          { name: "Squat", sets: 4, suggestedWeight: 185, suggestedReps: 8 },
-          { name: "Romanian Deadlift", sets: 4, suggestedWeight: 135, suggestedReps: 8 },
-          { name: "Bulgarian Split Squats", sets: 3, suggestedWeight: 25, suggestedReps: 10 },
-          { name: "Leg Press", sets: 3, suggestedWeight: 300, suggestedReps: 12 },
-          { name: "Leg Curls", sets: 3, suggestedWeight: 80, suggestedReps: 12 },
-          { name: "Calf Raises", sets: 4, suggestedWeight: 45, suggestedReps: 15 },
-          { name: "Walking Lunges", sets: 3, suggestedReps: 20 }
+          { name: "Squat", sets: 4, suggestedWeight: 185, suggestedReps: 8, type: "strength" },
+          { name: "Romanian Deadlift", sets: 4, suggestedWeight: 135, suggestedReps: 8, type: "strength" },
+          { name: "Bulgarian Split Squats", sets: 3, suggestedWeight: 25, suggestedReps: 10, type: "strength" },
+          { name: "Leg Press", sets: 3, suggestedWeight: 300, suggestedReps: 12, type: "strength" },
+          { name: "Leg Curls", sets: 3, suggestedWeight: 80, suggestedReps: 12, type: "strength" },
+          { name: "Calf Raises", sets: 4, suggestedWeight: 45, suggestedReps: 15, type: "strength" },
+          { name: "Walking Lunges", sets: 3, suggestedReps: 20, type: "strength" }
         ]
       },
       {
-        name: "Cardio HIIT",
+        name: "HIIT Cardio",
         description: "High Intensity Interval Training",
         category: "Cardio",
+        type: "cardio",
         estimatedDuration: 25,
         exercises: [
-          { name: "Burpees", sets: 4, suggestedReps: 10 },
-          { name: "Mountain Climbers", sets: 4, suggestedReps: 20 },
-          { name: "Jump Squats", sets: 4, suggestedReps: 15 },
-          { name: "High Knees", sets: 4, suggestedReps: 30 }
+          { name: "Running Intervals", sets: 4, suggestedDuration: 5, type: "cardio", cardioType: "intervals" },
+          { name: "Cycling Sprints", sets: 6, suggestedDuration: 3, type: "cardio", cardioType: "sprints" },
+          { name: "Jump Rope", sets: 3, suggestedDuration: 4, type: "cardio", cardioType: "high_intensity" }
+        ]
+      },
+      {
+        name: "Zone 2 Cardio",
+        description: "Low Intensity Steady State",
+        category: "Cardio",
+        type: "cardio",
+        estimatedDuration: 45,
+        exercises: [
+          { name: "Treadmill Walk", sets: 1, suggestedDuration: 45, suggestedDistance: 3, type: "cardio", cardioType: "zone2" },
+          { name: "Stationary Bike", sets: 1, suggestedDuration: 30, type: "cardio", cardioType: "low_intensity" }
+        ]
+      },
+      {
+        name: "Step Challenge",
+        description: "Daily step goal workout",
+        category: "Cardio",
+        type: "cardio",
+        estimatedDuration: 60,
+        exercises: [
+          { name: "Walking", sets: 1, suggestedDistance: 5, type: "cardio", cardioType: "steps" }
         ]
       }
     ];

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Minus } from "lucide-react";
 
 interface ActivityCalendarProps {
   workoutDays: string[];
@@ -106,20 +106,27 @@ export default function ActivityCalendar({ workoutDays }: ActivityCalendarProps)
               {hasWorkoutDay && !isTodayDate && (
                 <div className="absolute bottom-0 w-1 h-1 bg-accent-green rounded-full"></div>
               )}
+              {!hasWorkoutDay && !isTodayDate && isCurrentMonthDay && (
+                <Minus className="absolute bottom-0 right-0 text-text-disabled" size={8} />
+              )}
             </div>
           );
         })}
       </div>
       
       {/* Calendar Legend */}
-      <div className="flex items-center justify-center space-x-6 mt-4 pt-4 border-t border-dark-border">
+      <div className="flex items-center justify-center space-x-4 mt-4 pt-4 border-t border-dark-border">
         <div className="flex items-center space-x-2">
           <div className="w-3 h-3 bg-accent-green rounded-full"></div>
           <span className="text-text-secondary text-sm">Today</span>
         </div>
         <div className="flex items-center space-x-2">
           <div className="w-2 h-2 bg-accent-green rounded-full"></div>
-          <span className="text-text-secondary text-sm">Workout Day</span>
+          <span className="text-text-secondary text-sm">Workout</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Minus className="text-text-disabled" size={10} />
+          <span className="text-text-secondary text-sm">Rest Day</span>
         </div>
       </div>
     </div>

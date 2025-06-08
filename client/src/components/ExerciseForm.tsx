@@ -2,18 +2,26 @@ import { useState } from "react";
 import { Exercise, ExerciseSet } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash2, Plus, Check, Circle } from "lucide-react";
 
 interface ExerciseFormProps {
   exercise: Exercise;
   onUpdate: (exercise: Exercise) => void;
   onDelete: () => void;
-  onStartRest: (restTime: number) => void;
 }
 
-export default function ExerciseForm({ exercise, onUpdate, onDelete, onStartRest }: ExerciseFormProps) {
+export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseFormProps) {
   const updateExerciseName = (name: string) => {
     onUpdate({ ...exercise, name });
+  };
+
+  const updateExerciseType = (type: "strength" | "cardio") => {
+    onUpdate({ ...exercise, type, cardioType: type === "strength" ? undefined : exercise.cardioType });
+  };
+
+  const updateCardioType = (cardioType: "zone2" | "low_intensity" | "high_intensity" | "intervals" | "sprints" | "steps") => {
+    onUpdate({ ...exercise, cardioType });
   };
 
   const updateSet = (setIndex: number, updates: Partial<ExerciseSet>) => {
@@ -24,13 +32,20 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete, onStartRest
   };
 
   const addSet = () => {
+    const lastSet = exercise.sets[exercise.sets.length - 1];
     const newSet: ExerciseSet = {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      weight: exercise.sets.length > 0 ? exercise.sets[exercise.sets.length - 1].weight : 0,
-      reps: exercise.sets.length > 0 ? exercise.sets[exercise.sets.length - 1].reps : 0,
       completed: false,
-      restTime: 150,
     };
+
+    if (exercise.type === "cardio") {
+      newSet.duration = lastSet?.duration || 0;
+      newSet.distance = lastSet?.distance || 0;
+    } else {
+      newSet.weight = lastSet?.weight || 0;
+      newSet.reps = lastSet?.reps || 0;
+    }
+
     onUpdate({ ...exercise, sets: [...exercise.sets, newSet] });
   };
 
@@ -42,17 +57,22 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete, onStartRest
   const toggleSetCompleted = (setIndex: number) => {
     const set = exercise.sets[setIndex];
     updateSet(setIndex, { completed: !set.completed });
-    
-    if (!set.completed) {
-      // Start rest timer when set is completed
-      onStartRest(set.restTime);
-    }
   };
 
-  const formatRestTime = (seconds: number): string => {
+  const formatRestTime = (seconds?: number): string => {
+    if (!seconds) return "0:00";
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const cardioTypeLabels = {
+    zone2: "Zone 2",
+    low_intensity: "Low Intensity",
+    high_intensity: "High Intensity",
+    intervals: "Intervals",
+    sprints: "Sprints",
+    steps: "Steps"
   };
 
   return (
@@ -61,7 +81,7 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete, onStartRest
         <Input
           value={exercise.name}
           onChange={(e) => updateExerciseName(e.target.value)}
-          className="bg-transparent text-text-primary font-medium text-lg border-none outline-none p-0 h-auto"
+          className="bg-transparent text-text-primary font-medium text-lg border-none outline-none p-0 h-auto flex-1 mr-4"
           placeholder="Exercise name"
         />
         <Button
@@ -73,12 +93,47 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete, onStartRest
           <Trash2 size={16} />
         </Button>
       </div>
+
+      {/* Exercise Type and Cardio Type */}
+      <div className="flex items-center space-x-2 mb-3">
+        <Select value={exercise.type || "strength"} onValueChange={updateExerciseType}>
+          <SelectTrigger className="w-32 bg-dark-primary text-text-primary border-dark-border text-sm h-8">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-dark-secondary border-dark-border">
+            <SelectItem value="strength">Strength</SelectItem>
+            <SelectItem value="cardio">Cardio</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {exercise.type === "cardio" && (
+          <Select value={exercise.cardioType || ""} onValueChange={updateCardioType}>
+            <SelectTrigger className="w-40 bg-dark-primary text-text-primary border-dark-border text-sm h-8">
+              <SelectValue placeholder="Cardio type" />
+            </SelectTrigger>
+            <SelectContent className="bg-dark-secondary border-dark-border">
+              {Object.entries(cardioTypeLabels).map(([value, label]) => (
+                <SelectItem key={value} value={value}>{label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      </div>
       
       {/* Sets Header */}
       <div className="flex items-center space-x-2 text-sm mb-2">
         <span className="text-text-secondary w-8">Set</span>
-        <span className="text-text-secondary w-20">Weight</span>
-        <span className="text-text-secondary w-16">Reps</span>
+        {exercise.type === "cardio" ? (
+          <>
+            <span className="text-text-secondary w-20">Duration</span>
+            <span className="text-text-secondary w-20">Distance</span>
+          </>
+        ) : (
+          <>
+            <span className="text-text-secondary w-20">Weight</span>
+            <span className="text-text-secondary w-16">Reps</span>
+          </>
+        )}
         <span className="text-text-secondary w-16">Rest</span>
         <span className="text-text-secondary w-8"></span>
       </div>
@@ -88,23 +143,51 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete, onStartRest
         {exercise.sets.map((set, index) => (
           <div key={set.id} className="flex items-center space-x-2">
             <span className="text-text-primary w-8 text-sm">{index + 1}</span>
+            
+            {exercise.type === "cardio" ? (
+              <>
+                <Input
+                  type="number"
+                  value={set.duration || ''}
+                  onChange={(e) => updateSet(index, { duration: parseFloat(e.target.value) || 0 })}
+                  className="w-20 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
+                  placeholder="min"
+                />
+                <Input
+                  type="number"
+                  value={set.distance || ''}
+                  onChange={(e) => updateSet(index, { distance: parseFloat(e.target.value) || 0 })}
+                  className="w-20 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
+                  placeholder="miles"
+                />
+              </>
+            ) : (
+              <>
+                <Input
+                  type="number"
+                  value={set.weight || ''}
+                  onChange={(e) => updateSet(index, { weight: parseFloat(e.target.value) || 0 })}
+                  className="w-20 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
+                  placeholder="lbs"
+                />
+                <Input
+                  type="number"
+                  value={set.reps || ''}
+                  onChange={(e) => updateSet(index, { reps: parseInt(e.target.value) || 0 })}
+                  className="w-16 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
+                  placeholder="reps"
+                />
+              </>
+            )}
+            
             <Input
               type="number"
-              value={set.weight || ''}
-              onChange={(e) => updateSet(index, { weight: parseFloat(e.target.value) || 0 })}
-              className="w-20 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
-              placeholder="0"
-            />
-            <Input
-              type="number"
-              value={set.reps || ''}
-              onChange={(e) => updateSet(index, { reps: parseInt(e.target.value) || 0 })}
+              value={set.restTime ? Math.floor(set.restTime / 60) : ''}
+              onChange={(e) => updateSet(index, { restTime: (parseInt(e.target.value) || 0) * 60 })}
               className="w-16 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
-              placeholder="0"
+              placeholder="min"
             />
-            <div className="w-16 text-text-secondary text-sm">
-              {formatRestTime(set.restTime)}
-            </div>
+            
             <Button
               onClick={() => toggleSetCompleted(index)}
               variant="ghost"

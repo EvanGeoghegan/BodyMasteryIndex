@@ -1,46 +1,71 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Timer, Save } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Plus, Save, Copy } from "lucide-react";
 import ExerciseForm from "@/components/ExerciseForm";
-import RestTimer from "@/components/RestTimer";
 import { storage } from "@/lib/storage";
-import { Exercise, ExerciseSet, Workout } from "@shared/schema";
+import { Exercise, ExerciseSet, Workout, Template } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
 interface WorkoutProps {
   onWorkoutSaved: () => void;
+  initialTemplate?: Template;
 }
 
-export default function WorkoutPage({ onWorkoutSaved }: WorkoutProps) {
+export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: WorkoutProps) {
   const [workoutName, setWorkoutName] = useState("");
   const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [showRestTimer, setShowRestTimer] = useState(false);
-  const [restTime, setRestTime] = useState(150);
-  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [showTemplateDialog, setShowTemplateDialog] = useState(false);
+  const [workoutType, setWorkoutType] = useState<"strength" | "cardio" | "mixed">("strength");
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set start time when component mounts
-    setStartTime(new Date());
+    setTemplates(storage.getTemplates());
     
-    // Add initial exercise if none exist
-    if (exercises.length === 0) {
+    // Initialize from template if provided
+    if (initialTemplate) {
+      loadFromTemplate(initialTemplate);
+    } else if (exercises.length === 0) {
       addExercise();
     }
-  }, []);
+  }, [initialTemplate]);
+
+  const loadFromTemplate = (template: Template) => {
+    setWorkoutName(template.name);
+    setWorkoutType(template.type || "strength");
+    
+    const templateExercises: Exercise[] = template.exercises.map(templateEx => ({
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      name: templateEx.name,
+      type: templateEx.type || "strength",
+      cardioType: templateEx.cardioType,
+      sets: Array.from({ length: templateEx.sets }, (_, index) => ({
+        id: `${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}`,
+        weight: templateEx.suggestedWeight,
+        reps: templateEx.suggestedReps,
+        duration: templateEx.suggestedDuration,
+        distance: templateEx.suggestedDistance,
+        completed: false,
+      }))
+    }));
+    
+    setExercises(templateExercises);
+  };
 
   const addExercise = () => {
     const newExercise: Exercise = {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       name: "",
+      type: "strength",
       sets: [
         {
           id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
           weight: 0,
           reps: 0,
           completed: false,
-          restTime: 150,
         }
       ],
     };

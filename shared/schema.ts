@@ -3,10 +3,12 @@ import { z } from "zod";
 // Exercise Set Schema
 export const exerciseSetSchema = z.object({
   id: z.string(),
-  weight: z.number().min(0),
-  reps: z.number().min(0),
+  weight: z.number().min(0).optional(),
+  reps: z.number().min(0).optional(),
+  duration: z.number().min(0).optional(), // for cardio exercises in minutes
+  distance: z.number().min(0).optional(), // for cardio exercises
+  restTime: z.number().min(0).optional(), // manual rest input in seconds
   completed: z.boolean().default(false),
-  restTime: z.number().default(150), // 2:30 in seconds
 });
 
 export type ExerciseSet = z.infer<typeof exerciseSetSchema>;
@@ -17,6 +19,8 @@ export const exerciseSchema = z.object({
   name: z.string().min(1),
   sets: z.array(exerciseSetSchema),
   notes: z.string().optional(),
+  type: z.enum(["strength", "cardio"]).default("strength"),
+  cardioType: z.enum(["zone2", "low_intensity", "high_intensity", "intervals", "sprints", "steps"]).optional(),
 });
 
 export type Exercise = z.infer<typeof exerciseSchema>;
@@ -27,8 +31,8 @@ export const workoutSchema = z.object({
   name: z.string().min(1),
   date: z.string(), // ISO date string
   exercises: z.array(exerciseSchema),
-  duration: z.number().optional(), // in minutes
   notes: z.string().optional(),
+  type: z.enum(["strength", "cardio", "mixed"]).default("strength"),
 });
 
 export type Workout = z.infer<typeof workoutSchema>;
@@ -43,9 +47,14 @@ export const templateSchema = z.object({
     sets: z.number().min(1),
     suggestedWeight: z.number().optional(),
     suggestedReps: z.number().optional(),
+    suggestedDuration: z.number().optional(), // for cardio
+    suggestedDistance: z.number().optional(), // for cardio
+    type: z.enum(["strength", "cardio"]).default("strength"),
+    cardioType: z.enum(["zone2", "low_intensity", "high_intensity", "intervals", "sprints", "steps"]).optional(),
   })),
   estimatedDuration: z.number().optional(), // in minutes
   category: z.string().optional(), // e.g., "Push", "Pull", "Legs", "Cardio"
+  type: z.enum(["strength", "cardio", "mixed"]).default("strength"),
 });
 
 export type Template = z.infer<typeof templateSchema>;
