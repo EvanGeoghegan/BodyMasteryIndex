@@ -49,6 +49,15 @@ export default function ActivityCalendar({ workoutDays }: ActivityCalendarProps)
     return workoutDays.includes(dateString);
   };
 
+  const isConsecutiveRestDay = (date: Date) => {
+    const dateString = date.toISOString().split('T')[0];
+    const prevDay = new Date(date);
+    prevDay.setDate(prevDay.getDate() - 1);
+    const prevDayString = prevDay.toISOString().split('T')[0];
+    
+    return !hasWorkout(date) && !workoutDays.includes(prevDayString);
+  };
+
   return (
     <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
       <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center">
@@ -90,13 +99,18 @@ export default function ActivityCalendar({ workoutDays }: ActivityCalendarProps)
           const isCurrentMonthDay = isCurrentMonth(date);
           const isTodayDate = isToday(date);
           const hasWorkoutDay = hasWorkout(date);
+          const isConsecutiveRest = isConsecutiveRestDay(date);
 
           return (
             <div
               key={index}
               className={`h-8 flex items-center justify-center text-sm rounded cursor-pointer relative transition-colors ${
                 isTodayDate
-                  ? 'bg-accent-green text-dark-primary font-semibold'
+                  ? 'bg-accent-navy text-white font-semibold'
+                  : hasWorkoutDay && isCurrentMonthDay
+                  ? 'bg-accent-green/20 text-accent-green hover:bg-accent-green/30'
+                  : !hasWorkoutDay && isCurrentMonthDay
+                  ? 'bg-accent-red/10 text-accent-red hover:bg-accent-red/20'
                   : isCurrentMonthDay
                   ? 'text-text-primary hover:bg-dark-elevated'
                   : 'text-text-disabled'
@@ -104,10 +118,13 @@ export default function ActivityCalendar({ workoutDays }: ActivityCalendarProps)
             >
               {date.getDate()}
               {hasWorkoutDay && !isTodayDate && (
-                <div className="absolute bottom-0 w-1 h-1 bg-accent-green rounded-full"></div>
+                <div className="absolute top-1 right-1 w-2 h-2 bg-accent-green rounded-full"></div>
               )}
-              {!hasWorkoutDay && !isTodayDate && isCurrentMonthDay && (
-                <Minus className="absolute bottom-0 right-0 text-text-disabled" size={8} />
+              {!hasWorkoutDay && !isTodayDate && isCurrentMonthDay && !isConsecutiveRest && (
+                <div className="absolute top-1 right-1 w-2 h-2 bg-accent-red rounded-full"></div>
+              )}
+              {isConsecutiveRest && !isTodayDate && isCurrentMonthDay && (
+                <div className="absolute top-1 right-1 text-accent-red">🐌</div>
               )}
             </div>
           );
@@ -117,7 +134,7 @@ export default function ActivityCalendar({ workoutDays }: ActivityCalendarProps)
       {/* Calendar Legend */}
       <div className="flex items-center justify-center space-x-4 mt-4 pt-4 border-t border-dark-border">
         <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 bg-accent-green rounded-full"></div>
+          <div className="w-3 h-3 bg-accent-navy rounded-full"></div>
           <span className="text-text-secondary text-sm">Today</span>
         </div>
         <div className="flex items-center space-x-2">
@@ -125,8 +142,12 @@ export default function ActivityCalendar({ workoutDays }: ActivityCalendarProps)
           <span className="text-text-secondary text-sm">Workout</span>
         </div>
         <div className="flex items-center space-x-2">
-          <Minus className="text-text-disabled" size={10} />
+          <div className="w-2 h-2 bg-accent-red rounded-full"></div>
           <span className="text-text-secondary text-sm">Rest Day</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <span className="text-accent-red">🐌</span>
+          <span className="text-text-secondary text-sm">Consecutive Rest</span>
         </div>
       </div>
     </div>

@@ -158,7 +158,7 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseF
                   value={set.distance || ''}
                   onChange={(e) => updateSet(index, { distance: parseFloat(e.target.value) || 0 })}
                   className="w-20 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
-                  placeholder="miles"
+                  placeholder="km"
                 />
               </>
             ) : (
@@ -168,7 +168,7 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseF
                   value={set.weight || ''}
                   onChange={(e) => updateSet(index, { weight: parseFloat(e.target.value) || 0 })}
                   className="w-20 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
-                  placeholder="lbs"
+                  placeholder="kg"
                 />
                 <Input
                   type="number"

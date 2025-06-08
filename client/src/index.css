@@ -24,16 +24,18 @@
   --ring: hsl(20, 14.3%, 4.1%);
   --radius: 0.5rem;
 
-  /* Custom dark theme colors */
-  --dark-primary: hsl(0, 0%, 7.1%);
-  --dark-secondary: hsl(0, 0%, 11.8%);
-  --dark-elevated: hsl(0, 0%, 17.6%);
-  --dark-border: hsl(0, 0%, 25.1%);
-  --accent-green: hsl(142, 100%, 70%);
-  --accent-red: hsl(14, 100%, 57%);
-  --text-primary: hsl(0, 0%, 100%);
-  --text-secondary: hsl(0, 0%, 70%);
-  --text-disabled: hsl(0, 0%, 45.9%);
+  /* Custom navy theme colors */
+  --dark-primary: hsl(220, 20%, 8%);
+  --dark-secondary: hsl(220, 20%, 12%);
+  --dark-elevated: hsl(220, 15%, 18%);
+  --dark-border: hsl(220, 15%, 25%);
+  --accent-navy: hsl(215, 100%, 45%);
+  --accent-light-navy: hsl(210, 80%, 55%);
+  --accent-green: hsl(130, 60%, 50%);
+  --accent-red: hsl(0, 84%, 60%);
+  --text-primary: hsl(220, 15%, 95%);
+  --text-secondary: hsl(220, 10%, 75%);
+  --text-disabled: hsl(220, 8%, 50%);
 }
 
 .dark {
@@ -98,6 +100,22 @@
     color: var(--text-disabled);
   }
 
+  .bg-accent-navy {
+    background-color: var(--accent-navy);
+  }
+
+  .text-accent-navy {
+    color: var(--accent-navy);
+  }
+
+  .bg-accent-light-navy {
+    background-color: var(--accent-light-navy);
+  }
+
+  .text-accent-light-navy {
+    color: var(--accent-light-navy);
+  }
+
   .bg-accent-green {
     background-color: var(--accent-green);
   }
@@ -114,12 +132,12 @@
     color: var(--accent-red);
   }
 
-  .hover\:bg-green-500:hover {
-    background-color: hsl(142, 100%, 60%);
+  .hover\:bg-accent-navy:hover {
+    background-color: var(--accent-navy);
   }
 
-  .hover\:text-green-400:hover {
-    color: hsl(142, 100%, 75%);
+  .hover\:text-accent-navy:hover {
+    color: var(--accent-navy);
   }
 
   .hover\:bg-dark-elevated:hover {
