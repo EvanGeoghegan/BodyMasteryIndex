@@ -1,0 +1,113 @@
+import { useState, useEffect } from "react";
+import { Trophy, TrendingUp } from "lucide-react";
+import { storage } from "@/lib/storage";
+import { PersonalBest } from "@shared/schema";
+
+export default function PersonalBests() {
+  const [personalBests, setPersonalBests] = useState<PersonalBest[]>([]);
+
+  useEffect(() => {
+    loadPersonalBests();
+  }, []);
+
+  const loadPersonalBests = () => {
+    const allBests = storage.getPersonalBests();
+    
+    // Group by exercise name and get the best for each
+    const bestsByExercise = allBests.reduce((acc, pb) => {
+      const exerciseName = pb.exerciseName.toLowerCase();
+      
+      if (!acc[exerciseName] || pb.weight > acc[exerciseName].weight) {
+        acc[exerciseName] = pb;
+      }
+      
+      return acc;
+    }, {} as Record<string, PersonalBest>);
+
+    setPersonalBests(Object.values(bestsByExercise).sort((a, b) => b.weight - a.weight));
+  };
+
+  const formatDate = (dateString: string): string => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  const getCategoryIcon = (category?: string) => {
+    switch (category?.toLowerCase()) {
+      case 'chest':
+        return '🏋️';
+      case 'back':
+        return '💪';
+      case 'legs':
+        return '🦵';
+      case 'shoulders':
+        return '🏆';
+      default:
+        return '💪';
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-dark-primary pb-20">
+      <header className="bg-dark-secondary p-4 shadow-lg">
+        <h2 className="text-xl font-bold text-text-primary flex items-center">
+          <Trophy className="mr-2 text-accent-green" size={24} />
+          Personal Bests
+        </h2>
+      </header>
+
+      <div className="p-4 space-y-4">
+        {personalBests.length === 0 ? (
+          <div className="text-center py-8">
+            <Trophy className="mx-auto text-text-disabled mb-4" size={48} />
+            <p className="text-text-secondary mb-2">No personal bests recorded yet</p>
+            <p className="text-text-disabled text-sm">
+              Complete some workouts to start tracking your progress!
+            </p>
+          </div>
+        ) : (
+          personalBests.map((pb, index) => (
+            <div key={pb.id} className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="text-2xl">{getCategoryIcon(pb.category)}</div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-text-primary">
+                      {pb.exerciseName}
+                    </h3>
+                    {pb.category && (
+                      <p className="text-text-secondary text-sm">{pb.category}</p>
+                    )}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-accent-green">
+                    {pb.weight} lbs
+                  </div>
+                  <p className="text-text-secondary text-sm">
+                    {formatDate(pb.date)}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="mt-3 flex items-center space-x-4 text-sm">
+                <span className="text-text-disabled flex items-center">
+                  <TrendingUp className="mr-1" size={14} />
+                  {pb.type === '1RM' ? '1RM' : 'Volume PR'}: {pb.weight} lbs × {pb.reps}
+                </span>
+                {index === 0 && (
+                  <span className="bg-accent-green text-dark-primary px-2 py-1 rounded text-xs font-medium">
+                    Strongest Lift
+                  </span>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}

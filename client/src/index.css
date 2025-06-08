@@ -1,0 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+
+  /* Custom dark theme colors */
+  --dark-primary: hsl(0, 0%, 7.1%);
+  --dark-secondary: hsl(0, 0%, 11.8%);
+  --dark-elevated: hsl(0, 0%, 17.6%);
+  --dark-border: hsl(0, 0%, 25.1%);
+  --accent-green: hsl(142, 100%, 70%);
+  --accent-red: hsl(14, 100%, 57%);
+  --text-primary: hsl(0, 0%, 100%);
+  --text-secondary: hsl(0, 0%, 70%);
+  --text-disabled: hsl(0, 0%, 45.9%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Custom utility classes for the dark theme */
+  .bg-dark-primary {
+    background-color: var(--dark-primary);
+  }
+
+  .bg-dark-secondary {
+    background-color: var(--dark-secondary);
+  }
+
+  .bg-dark-elevated {
+    background-color: var(--dark-elevated);
+  }
+
+  .border-dark-border {
+    border-color: var(--dark-border);
+  }
+
+  .text-text-primary {
+    color: var(--text-primary);
+  }
+
+  .text-text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-text-disabled {
+    color: var(--text-disabled);
+  }
+
+  .bg-accent-green {
+    background-color: var(--accent-green);
+  }
+
+  .text-accent-green {
+    color: var(--accent-green);
+  }
+
+  .bg-accent-red {
+    background-color: var(--accent-red);
+  }
+
+  .text-accent-red {
+    color: var(--accent-red);
+  }
+
+  .hover\:bg-green-500:hover {
+    background-color: hsl(142, 100%, 60%);
+  }
+
+  .hover\:text-green-400:hover {
+    color: hsl(142, 100%, 75%);
+  }
+
+  .hover\:bg-dark-elevated:hover {
+    background-color: var(--dark-elevated);
+  }
+
+  .hover\:bg-dark-border:hover {
+    background-color: var(--dark-border);
+  }
+
+  .hover\:text-text-primary:hover {
+    color: var(--text-primary);
+  }
+
+  .hover\:text-accent-green:hover {
+    color: var(--accent-green);
+  }
+
+  .hover\:text-accent-red:hover {
+    color: var(--accent-red);
+  }
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--dark-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-disabled);
+}

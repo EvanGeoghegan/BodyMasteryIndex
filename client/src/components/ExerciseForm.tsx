@@ -1,0 +1,144 @@
+import { useState } from "react";
+import { Exercise, ExerciseSet } from "@shared/schema";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Trash2, Plus, Check, Circle } from "lucide-react";
+
+interface ExerciseFormProps {
+  exercise: Exercise;
+  onUpdate: (exercise: Exercise) => void;
+  onDelete: () => void;
+  onStartRest: (restTime: number) => void;
+}
+
+export default function ExerciseForm({ exercise, onUpdate, onDelete, onStartRest }: ExerciseFormProps) {
+  const updateExerciseName = (name: string) => {
+    onUpdate({ ...exercise, name });
+  };
+
+  const updateSet = (setIndex: number, updates: Partial<ExerciseSet>) => {
+    const updatedSets = exercise.sets.map((set, index) => 
+      index === setIndex ? { ...set, ...updates } : set
+    );
+    onUpdate({ ...exercise, sets: updatedSets });
+  };
+
+  const addSet = () => {
+    const newSet: ExerciseSet = {
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      weight: exercise.sets.length > 0 ? exercise.sets[exercise.sets.length - 1].weight : 0,
+      reps: exercise.sets.length > 0 ? exercise.sets[exercise.sets.length - 1].reps : 0,
+      completed: false,
+      restTime: 150,
+    };
+    onUpdate({ ...exercise, sets: [...exercise.sets, newSet] });
+  };
+
+  const removeSet = (setIndex: number) => {
+    const updatedSets = exercise.sets.filter((_, index) => index !== setIndex);
+    onUpdate({ ...exercise, sets: updatedSets });
+  };
+
+  const toggleSetCompleted = (setIndex: number) => {
+    const set = exercise.sets[setIndex];
+    updateSet(setIndex, { completed: !set.completed });
+    
+    if (!set.completed) {
+      // Start rest timer when set is completed
+      onStartRest(set.restTime);
+    }
+  };
+
+  const formatRestTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="bg-dark-elevated rounded-lg p-4 border border-dark-border">
+      <div className="flex items-center justify-between mb-3">
+        <Input
+          value={exercise.name}
+          onChange={(e) => updateExerciseName(e.target.value)}
+          className="bg-transparent text-text-primary font-medium text-lg border-none outline-none p-0 h-auto"
+          placeholder="Exercise name"
+        />
+        <Button
+          onClick={onDelete}
+          variant="ghost"
+          size="sm"
+          className="text-text-secondary hover:text-accent-red p-1"
+        >
+          <Trash2 size={16} />
+        </Button>
+      </div>
+      
+      {/* Sets Header */}
+      <div className="flex items-center space-x-2 text-sm mb-2">
+        <span className="text-text-secondary w-8">Set</span>
+        <span className="text-text-secondary w-20">Weight</span>
+        <span className="text-text-secondary w-16">Reps</span>
+        <span className="text-text-secondary w-16">Rest</span>
+        <span className="text-text-secondary w-8"></span>
+      </div>
+      
+      {/* Sets */}
+      <div className="space-y-2">
+        {exercise.sets.map((set, index) => (
+          <div key={set.id} className="flex items-center space-x-2">
+            <span className="text-text-primary w-8 text-sm">{index + 1}</span>
+            <Input
+              type="number"
+              value={set.weight || ''}
+              onChange={(e) => updateSet(index, { weight: parseFloat(e.target.value) || 0 })}
+              className="w-20 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
+              placeholder="0"
+            />
+            <Input
+              type="number"
+              value={set.reps || ''}
+              onChange={(e) => updateSet(index, { reps: parseInt(e.target.value) || 0 })}
+              className="w-16 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
+              placeholder="0"
+            />
+            <div className="w-16 text-text-secondary text-sm">
+              {formatRestTime(set.restTime)}
+            </div>
+            <Button
+              onClick={() => toggleSetCompleted(index)}
+              variant="ghost"
+              size="sm"
+              className={`w-8 p-1 ${
+                set.completed 
+                  ? 'text-accent-green hover:text-green-400' 
+                  : 'text-text-secondary hover:text-accent-green'
+              }`}
+            >
+              {set.completed ? <Check size={16} /> : <Circle size={16} />}
+            </Button>
+            {exercise.sets.length > 1 && (
+              <Button
+                onClick={() => removeSet(index)}
+                variant="ghost"
+                size="sm"
+                className="text-text-secondary hover:text-accent-red p-1"
+              >
+                <Trash2 size={12} />
+              </Button>
+            )}
+          </div>
+        ))}
+      </div>
+      
+      <Button
+        onClick={addSet}
+        variant="ghost"
+        className="mt-3 text-accent-green hover:text-green-400 text-sm font-medium p-0 h-auto"
+      >
+        <Plus className="mr-1" size={16} />
+        Add Set
+      </Button>
+    </div>
+  );
+}
