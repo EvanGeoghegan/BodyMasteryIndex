@@ -61,6 +61,18 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+        "dark-primary": "var(--dark-primary)",
+        "dark-secondary": "var(--dark-secondary)",
+        "dark-elevated": "var(--dark-elevated)",
+        "dark-border": "var(--dark-border)",
+        "accent-navy": "var(--accent-navy)",
+        "accent-light-navy": "var(--accent-light-navy)",
+        "accent-green": "var(--accent-green)",
+        "accent-red": "var(--accent-red)",
+        "text-primary": "var(--text-primary)",
+        "text-secondary": "var(--text-secondary)",
+        "text-disabled": "var(--text-disabled)",
+        "dropdown-text": "var(--dropdown-text)",
       },
       keyframes: {
         "accordion-down": {

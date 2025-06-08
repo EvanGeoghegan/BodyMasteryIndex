@@ -9,7 +9,9 @@ export const exerciseSetSchema = z.object({
   reps: z.number().min(0).optional(),
   duration: z.number().min(0).optional(), // for cardio exercises in minutes
   distance: z.number().min(0).optional(), // for cardio exercises
-  restTime: z.number().min(0).optional(), // manual rest input in seconds
+  restTime: z.number().min(0).optional(), // manual rest input in seconds (strength only)
+  steps: z.number().min(0).optional(), // for cardio exercises
+  intervals: z.number().min(0).optional(), // for cardio exercises
   completed: z.boolean().default(false),
 });
 

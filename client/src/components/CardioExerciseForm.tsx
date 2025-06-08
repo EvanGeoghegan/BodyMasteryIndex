@@ -91,20 +91,32 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
         </div>
       </div>
 
-      {/* Rest Time */}
-      <div className="mb-4">
-        <label className="text-text-secondary text-sm font-medium mb-1 block">
-          Rest Time
-        </label>
-        <div className="flex items-center space-x-1">
+      {/* Optional Fields */}
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <div>
+          <label className="text-text-secondary text-sm font-medium mb-1 block">
+            Steps (optional)
+          </label>
           <Input
             type="number"
-            value={set.restTime || 0}
-            onChange={(e) => updateSet(0, { restTime: parseInt(e.target.value) || 0 })}
-            className="w-24 bg-dark-primary border-dark-border text-text-primary font-medium"
+            value={set.steps || ""}
+            onChange={(e) => updateSet(0, { steps: parseInt(e.target.value) || undefined })}
+            className="bg-dark-primary border-dark-border text-text-primary font-medium"
             placeholder="0"
           />
-          <span className="text-accent-navy font-medium text-sm">sec</span>
+        </div>
+        
+        <div>
+          <label className="text-text-secondary text-sm font-medium mb-1 block">
+            Intervals (optional)
+          </label>
+          <Input
+            type="number"
+            value={set.intervals || ""}
+            onChange={(e) => updateSet(0, { intervals: parseInt(e.target.value) || undefined })}
+            className="bg-dark-primary border-dark-border text-text-primary font-medium"
+            placeholder="0"
+          />
         </div>
       </div>
 

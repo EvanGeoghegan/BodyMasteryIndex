@@ -7,10 +7,10 @@ interface NavigationProps {
 
 export default function Navigation({ activeTab, onTabChange }: NavigationProps) {
   const tabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
+    { id: 'dashboard', label: 'Home', icon: Home },
     { id: 'workout', label: 'Workout', icon: Dumbbell },
-    { id: 'templates', label: 'Templates', icon: Copy },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
+    { id: 'templates', label: 'Templates', icon: Copy },
     { id: 'records', label: 'Records', icon: Trophy },
   ];
 

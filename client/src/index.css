@@ -36,6 +36,7 @@
   --text-primary: hsl(220, 15%, 95%);
   --text-secondary: hsl(220, 10%, 75%);
   --text-disabled: hsl(220, 8%, 50%);
+  --dropdown-text: hsl(220, 15%, 90%);
 }
 
 .dark {
