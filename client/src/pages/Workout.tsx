@@ -84,11 +84,6 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
     setExercises(updatedExercises);
   };
 
-  const startRestTimer = (time: number) => {
-    setRestTime(time);
-    setShowRestTimer(true);
-  };
-
   const saveWorkout = () => {
     if (!workoutName.trim()) {
       toast({
@@ -108,24 +103,22 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
       return;
     }
 
-    const duration = startTime ? Math.round((Date.now() - startTime.getTime()) / (1000 * 60)) : undefined;
-
     const workout: Omit<Workout, 'id'> = {
       name: workoutName,
       date: new Date().toISOString(),
       exercises: exercises.filter(ex => ex.name.trim()), // Only save exercises with names
-      duration,
+      type: workoutType,
     };
 
     try {
       storage.createWorkout(workout);
       
-      // Update personal bests
+      // Update personal bests for strength exercises only
       exercises.forEach(exercise => {
-        if (!exercise.name.trim()) return;
+        if (!exercise.name.trim() || exercise.type !== "strength") return;
         
         exercise.sets.forEach(set => {
-          if (set.completed && set.weight > 0 && set.reps > 0) {
+          if (set.completed && set.weight && set.reps && set.weight > 0 && set.reps > 0) {
             const existingBests = storage.getPersonalBests()
               .filter(pb => pb.exerciseName.toLowerCase() === exercise.name.toLowerCase());
             
@@ -153,7 +146,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
       // Reset form
       setWorkoutName("");
       setExercises([]);
-      setStartTime(new Date());
+      setWorkoutType("strength");
       addExercise();
       
       onWorkoutSaved();
@@ -173,17 +166,38 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
       </header>
 
       <div className="p-4 space-y-4">
-        {/* Workout Name */}
+        {/* Workout Name and Template Selection */}
         <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
-          <label className="block text-text-secondary text-sm font-medium mb-2">
-            Workout Name
-          </label>
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-text-secondary text-sm font-medium">
+              Workout Name
+            </label>
+            <Button
+              onClick={() => setShowTemplateDialog(true)}
+              variant="outline"
+              size="sm"
+              className="bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-green"
+            >
+              <Copy className="mr-1" size={14} />
+              From Template
+            </Button>
+          </div>
           <Input
             value={workoutName}
             onChange={(e) => setWorkoutName(e.target.value)}
-            className="w-full bg-dark-elevated text-text-primary border-dark-border"
+            className="w-full bg-dark-elevated text-text-primary border-dark-border mb-3"
             placeholder="e.g., Push Day, Leg Day"
           />
+          <Select value={workoutType} onValueChange={(value: "strength" | "cardio" | "mixed") => setWorkoutType(value)}>
+            <SelectTrigger className="w-full bg-dark-elevated text-text-primary border-dark-border">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-dark-secondary border-dark-border">
+              <SelectItem value="strength">Strength Training</SelectItem>
+              <SelectItem value="cardio">Cardio</SelectItem>
+              <SelectItem value="mixed">Mixed</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Exercise List */}
@@ -206,31 +220,8 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
                 exercise={exercise}
                 onUpdate={(updatedExercise) => updateExercise(index, updatedExercise)}
                 onDelete={() => deleteExercise(index)}
-                onStartRest={startRestTimer}
               />
             ))}
-          </div>
-        </div>
-
-        {/* Rest Timer Section */}
-        <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-text-primary">Rest Timer</h3>
-              <p className="text-text-secondary text-sm">Between sets</p>
-            </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-accent-green">
-                {Math.floor(restTime / 60)}:{(restTime % 60).toString().padStart(2, '0')}
-              </div>
-              <Button
-                onClick={() => startRestTimer(restTime)}
-                className="bg-accent-green hover:bg-green-500 text-dark-primary px-4 py-1 text-sm mt-1"
-              >
-                <Timer className="mr-1" size={14} />
-                Start Timer
-              </Button>
-            </div>
           </div>
         </div>
 
@@ -244,11 +235,43 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
         </Button>
       </div>
 
-      <RestTimer
-        isOpen={showRestTimer}
-        onClose={() => setShowRestTimer(false)}
-        initialTime={restTime}
-      />
+      {/* Template Selection Dialog */}
+      <Dialog open={showTemplateDialog} onOpenChange={setShowTemplateDialog}>
+        <DialogContent className="bg-dark-secondary border border-dark-border max-w-lg mx-4 max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-text-primary">Choose Template</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            {templates.map((template) => (
+              <div
+                key={template.id}
+                onClick={() => {
+                  loadFromTemplate(template);
+                  setShowTemplateDialog(false);
+                }}
+                className="bg-dark-elevated rounded-lg p-3 border border-dark-border hover:border-accent-green transition-colors cursor-pointer"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-text-primary font-medium">{template.name}</h4>
+                    <p className="text-text-secondary text-sm">{template.description}</p>
+                    <div className="flex items-center space-x-3 mt-1">
+                      <span className="text-text-disabled text-xs">
+                        {template.exercises.length} exercises
+                      </span>
+                      {template.category && (
+                        <span className="text-text-disabled text-xs bg-dark-primary px-2 py-1 rounded">
+                          {template.category}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

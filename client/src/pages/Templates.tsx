@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Plus, Edit } from "lucide-react";
 import TemplateCard from "@/components/TemplateCard";
@@ -21,6 +22,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
     name: "",
     description: "",
     category: "",
+    type: "strength",
     estimatedDuration: 60,
     exercises: [],
   });
@@ -46,6 +48,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
       name: "",
       description: "",
       category: "",
+      type: "strength",
       estimatedDuration: 60,
       exercises: [],
     });
@@ -58,6 +61,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
       name: template.name,
       description: template.description || "",
       category: template.category || "",
+      type: template.type || "strength",
       estimatedDuration: template.estimatedDuration || 60,
       exercises: template.exercises,
     });
@@ -125,7 +129,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
       ...formData,
       exercises: [
         ...formData.exercises,
-        { name: "", sets: 3, suggestedWeight: 0, suggestedReps: 10 }
+        { name: "", sets: 3, suggestedWeight: 0, suggestedReps: 10, type: "strength" }
       ]
     });
   };
@@ -238,6 +242,24 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
               </div>
             </div>
 
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-text-secondary text-sm font-medium mb-2 block">
+                  Template Type
+                </label>
+                <Select value={formData.type || "strength"} onValueChange={(value: "strength" | "cardio" | "mixed") => setFormData({ ...formData, type: value })}>
+                  <SelectTrigger className="bg-dark-elevated text-text-primary border-dark-border">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-dark-secondary border-dark-border">
+                    <SelectItem value="strength">Strength Training</SelectItem>
+                    <SelectItem value="cardio">Cardio</SelectItem>
+                    <SelectItem value="mixed">Mixed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-text-secondary text-sm font-medium">
@@ -270,30 +292,86 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
                         className="bg-dark-primary text-text-primary border-dark-border text-sm"
                       />
                     </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <Input
-                        type="number"
-                        value={exercise.suggestedWeight || ''}
-                        onChange={(e) => updateExercise(index, 'suggestedWeight', parseFloat(e.target.value) || 0)}
-                        placeholder="Weight"
-                        className="bg-dark-primary text-text-primary border-dark-border text-sm"
-                      />
-                      <Input
-                        type="number"
-                        value={exercise.suggestedReps || ''}
-                        onChange={(e) => updateExercise(index, 'suggestedReps', parseInt(e.target.value) || 0)}
-                        placeholder="Reps"
-                        className="bg-dark-primary text-text-primary border-dark-border text-sm"
-                      />
-                      <Button
-                        onClick={() => removeExercise(index)}
-                        size="sm"
-                        variant="outline"
-                        className="border-dark-border text-text-secondary hover:text-accent-red"
-                      >
-                        Remove
-                      </Button>
+                    
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      <Select value={exercise.type || "strength"} onValueChange={(value: "strength" | "cardio") => updateExercise(index, 'type', value)}>
+                        <SelectTrigger className="bg-dark-primary text-text-primary border-dark-border text-sm">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-dark-secondary border-dark-border">
+                          <SelectItem value="strength">Strength</SelectItem>
+                          <SelectItem value="cardio">Cardio</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      
+                      {exercise.type === "cardio" && (
+                        <Select value={exercise.cardioType || ""} onValueChange={(value) => updateExercise(index, 'cardioType', value)}>
+                          <SelectTrigger className="bg-dark-primary text-text-primary border-dark-border text-sm">
+                            <SelectValue placeholder="Cardio type" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-dark-secondary border-dark-border">
+                            <SelectItem value="zone2">Zone 2</SelectItem>
+                            <SelectItem value="low_intensity">Low Intensity</SelectItem>
+                            <SelectItem value="high_intensity">High Intensity</SelectItem>
+                            <SelectItem value="intervals">Intervals</SelectItem>
+                            <SelectItem value="sprints">Sprints</SelectItem>
+                            <SelectItem value="steps">Steps</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
                     </div>
+                    
+                    {exercise.type === "cardio" ? (
+                      <div className="grid grid-cols-3 gap-2">
+                        <Input
+                          type="number"
+                          value={exercise.suggestedDuration || ''}
+                          onChange={(e) => updateExercise(index, 'suggestedDuration', parseFloat(e.target.value) || 0)}
+                          placeholder="Duration (min)"
+                          className="bg-dark-primary text-text-primary border-dark-border text-sm"
+                        />
+                        <Input
+                          type="number"
+                          value={exercise.suggestedDistance || ''}
+                          onChange={(e) => updateExercise(index, 'suggestedDistance', parseFloat(e.target.value) || 0)}
+                          placeholder="Distance"
+                          className="bg-dark-primary text-text-primary border-dark-border text-sm"
+                        />
+                        <Button
+                          onClick={() => removeExercise(index)}
+                          size="sm"
+                          variant="outline"
+                          className="border-dark-border text-text-secondary hover:text-accent-red"
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-3 gap-2">
+                        <Input
+                          type="number"
+                          value={exercise.suggestedWeight || ''}
+                          onChange={(e) => updateExercise(index, 'suggestedWeight', parseFloat(e.target.value) || 0)}
+                          placeholder="Weight"
+                          className="bg-dark-primary text-text-primary border-dark-border text-sm"
+                        />
+                        <Input
+                          type="number"
+                          value={exercise.suggestedReps || ''}
+                          onChange={(e) => updateExercise(index, 'suggestedReps', parseInt(e.target.value) || 0)}
+                          placeholder="Reps"
+                          className="bg-dark-primary text-text-primary border-dark-border text-sm"
+                        />
+                        <Button
+                          onClick={() => removeExercise(index)}
+                          size="sm"
+                          variant="outline"
+                          className="border-dark-border text-text-secondary hover:text-accent-red"
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

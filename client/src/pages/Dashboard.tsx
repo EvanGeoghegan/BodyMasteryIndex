@@ -97,14 +97,7 @@ export default function Dashboard({ onNavigateToWorkout }: DashboardProps) {
                   {formatDate(lastWorkout.date)}
                 </span>
               </div>
-              {lastWorkout.duration && (
-                <div className="flex justify-between items-center">
-                  <span className="text-text-secondary">Duration</span>
-                  <span className="text-text-primary font-medium">
-                    {lastWorkout.duration} minutes
-                  </span>
-                </div>
-              )}
+
               <div className="flex justify-between items-center">
                 <span className="text-text-secondary">Exercises</span>
                 <span className="text-text-primary font-medium">
