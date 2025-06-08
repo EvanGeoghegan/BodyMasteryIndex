@@ -47,23 +47,27 @@ export default function Dashboard({ onNavigateToWorkout }: DashboardProps) {
             <p className="text-text-secondary text-sm">{getCurrentDate()}</p>
           </div>
           <div className="w-12 h-12 bg-dark-elevated rounded-full flex items-center justify-center">
-            <Dumbbell className="text-accent-green" size={24} />
+            <Dumbbell className="text-accent-navy" size={24} />
           </div>
         </div>
       </header>
 
       {/* Daily Quote Section */}
       <div className="p-4">
-        <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
-          <div className="flex items-start space-x-3">
-            <Quote className="text-accent-green mt-1" size={20} />
-            <div>
-              <p className="text-text-primary text-base italic leading-relaxed">
-                "{dailyQuote.text}"
-              </p>
-              <p className="text-text-secondary text-sm mt-2">- {dailyQuote.author}</p>
+        <div className="bg-gradient-to-br from-accent-navy/20 to-accent-light-navy/10 rounded-lg p-6 border border-accent-navy/30 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-black/40 to-transparent"></div>
+          <div className="relative z-10">
+            <div className="flex items-start space-x-3">
+              <Quote className="text-accent-light-navy mt-1" size={20} />
+              <div>
+                <p className="text-text-primary text-base italic leading-relaxed font-medium">
+                  "{dailyQuote.text}"
+                </p>
+                <p className="text-accent-light-navy text-sm mt-3 font-medium">- {dailyQuote.author}</p>
+              </div>
             </div>
           </div>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-accent-navy/20 to-transparent rounded-full transform translate-x-16 -translate-y-16"></div>
         </div>
       </div>
 
@@ -71,7 +75,7 @@ export default function Dashboard({ onNavigateToWorkout }: DashboardProps) {
       <div className="px-4 pb-4">
         <Button 
           onClick={onNavigateToWorkout}
-          className="w-full bg-accent-green hover:bg-green-500 text-dark-primary font-semibold py-4 px-6 h-auto shadow-lg"
+          className="w-full bg-accent-navy hover:bg-accent-light-navy text-white font-semibold py-4 px-6 h-auto shadow-lg"
         >
           <Dumbbell className="mr-2" size={20} />
           <span className="text-lg">Log Workout</span>
@@ -82,7 +86,7 @@ export default function Dashboard({ onNavigateToWorkout }: DashboardProps) {
       <div className="px-4 pb-4">
         <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
           <h3 className="text-lg font-semibold text-text-primary mb-3 flex items-center">
-            <History className="text-accent-green mr-2" size={20} />
+            <History className="text-accent-navy mr-2" size={20} />
             Last Activity
           </h3>
           {lastWorkout ? (

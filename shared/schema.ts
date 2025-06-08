@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { pgTable, text, integer, boolean, jsonb, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
 
 // Exercise Set Schema
 export const exerciseSetSchema = z.object({
@@ -88,3 +90,56 @@ export const quoteSchema = z.object({
 });
 
 export type Quote = z.infer<typeof quoteSchema>;
+
+// Database Tables
+export const users = pgTable("users", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  username: text("username").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const workouts = pgTable("workouts", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  name: text("name").notNull(),
+  date: text("date").notNull(),
+  exercises: jsonb("exercises").notNull(),
+  notes: text("notes"),
+  type: text("type").notNull().default("strength"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const templates = pgTable("templates", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  exercises: jsonb("exercises").notNull(),
+  estimatedDuration: integer("estimated_duration"),
+  category: text("category"),
+  type: text("type").notNull().default("strength"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const personalBests = pgTable("personal_bests", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  exerciseName: text("exercise_name").notNull(),
+  weight: integer("weight").notNull(),
+  reps: integer("reps").notNull(),
+  date: text("date").notNull(),
+  type: text("type").notNull(),
+  category: text("category"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Database types
+export type User = typeof users.$inferSelect;
+export type InsertUser = typeof users.$inferInsert;
+export type DbWorkout = typeof workouts.$inferSelect;
+export type InsertDbWorkout = typeof workouts.$inferInsert;
+export type DbTemplate = typeof templates.$inferSelect;
+export type InsertDbTemplate = typeof templates.$inferInsert;
+export type DbPersonalBest = typeof personalBests.$inferSelect;
+export type InsertDbPersonalBest = typeof personalBests.$inferInsert;
