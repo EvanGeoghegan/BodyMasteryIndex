@@ -56,6 +56,13 @@ export default function Dashboard({ onNavigateToWorkout }: DashboardProps) {
       <div className="p-4">
         <div className="bg-gradient-to-br from-accent-navy/20 to-accent-light-navy/10 rounded-lg p-6 border border-accent-navy/30 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-black/40 to-transparent"></div>
+          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-white/10 to-transparent rounded-full opacity-50"></div>
+          <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-accent-navy/30 to-transparent rounded-full"></div>
+          <div className="absolute top-2 right-2 w-12 h-12 rounded-full bg-gradient-to-br from-accent-light-navy/40 to-accent-navy/60 flex items-center justify-center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
+              <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
           <div className="relative z-10">
             <div className="flex items-start space-x-3">
               <Quote className="text-accent-light-navy mt-1" size={20} />
@@ -67,7 +74,6 @@ export default function Dashboard({ onNavigateToWorkout }: DashboardProps) {
               </div>
             </div>
           </div>
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-accent-navy/20 to-transparent rounded-full transform translate-x-16 -translate-y-16"></div>
         </div>
       </div>
 
@@ -115,10 +121,7 @@ export default function Dashboard({ onNavigateToWorkout }: DashboardProps) {
         </div>
       </div>
 
-      {/* Activity Calendar */}
-      <div className="px-4 pb-6">
-        <ActivityCalendar workoutDays={workoutDays} />
-      </div>
+
     </div>
   );
 }

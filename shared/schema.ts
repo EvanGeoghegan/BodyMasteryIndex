@@ -22,7 +22,6 @@ export const exerciseSchema = z.object({
   sets: z.array(exerciseSetSchema),
   notes: z.string().optional(),
   type: z.enum(["strength", "cardio"]).default("strength"),
-  cardioType: z.enum(["zone2", "low_intensity", "high_intensity", "intervals", "sprints", "steps"]).optional(),
 });
 
 export type Exercise = z.infer<typeof exerciseSchema>;
@@ -52,7 +51,6 @@ export const templateSchema = z.object({
     suggestedDuration: z.number().optional(), // for cardio
     suggestedDistance: z.number().optional(), // for cardio
     type: z.enum(["strength", "cardio"]).default("strength"),
-    cardioType: z.enum(["zone2", "low_intensity", "high_intensity", "intervals", "sprints", "steps"]).optional(),
   })),
   estimatedDuration: z.number().optional(), // in minutes
   category: z.string().optional(), // e.g., "Push", "Pull", "Legs", "Cardio"

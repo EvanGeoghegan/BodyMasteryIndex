@@ -7,6 +7,7 @@ import Navigation from "@/components/Navigation";
 import Dashboard from "@/pages/Dashboard";
 import Workout from "@/pages/Workout";
 import Templates from "@/pages/Templates";
+import CalendarPage from "@/pages/CalendarPage";
 import PersonalBests from "@/pages/PersonalBests";
 import { storage } from "@/lib/storage";
 import { Template, Exercise, ExerciseSet } from "@shared/schema";
@@ -41,6 +42,8 @@ function App() {
         return <Workout onWorkoutSaved={handleWorkoutSaved} />;
       case "templates":
         return <Templates onUseTemplate={handleUseTemplate} />;
+      case "calendar":
+        return <CalendarPage />;
       case "records":
         return <PersonalBests />;
       default:

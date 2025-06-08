@@ -1,4 +1,4 @@
-import { Home, Dumbbell, Copy, Trophy } from "lucide-react";
+import { Home, Dumbbell, Copy, Trophy, Calendar } from "lucide-react";
 
 interface NavigationProps {
   activeTab: string;
@@ -10,6 +10,7 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'workout', label: 'Workout', icon: Dumbbell },
     { id: 'templates', label: 'Templates', icon: Copy },
+    { id: 'calendar', label: 'Calendar', icon: Calendar },
     { id: 'records', label: 'Records', icon: Trophy },
   ];
 
