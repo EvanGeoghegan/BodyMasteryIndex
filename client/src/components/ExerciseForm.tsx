@@ -65,7 +65,7 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseF
 
 
   return (
-    <div className="bg-dark-elevated rounded-lg p-4 border border-dark-border">
+    <div className="bg-dark-elevated rounded-xl p-5 border border-dark-border shadow-lg">
       <div className="flex items-center justify-between mb-3">
         <Input
           value={exercise.name}

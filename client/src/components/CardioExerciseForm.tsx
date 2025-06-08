@@ -29,7 +29,7 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
   const set = exercise.sets[0] || { id: "1", completed: false };
 
   return (
-    <div className="bg-dark-elevated rounded-lg p-4 border border-dark-border">
+    <div className="bg-dark-elevated rounded-xl p-5 border border-dark-border shadow-lg">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <Input

@@ -54,11 +54,11 @@ export default function Dashboard({ onNavigateToWorkout }: DashboardProps) {
 
       {/* Daily Quote Section */}
       <div className="p-4">
-        <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
+        <div className="bg-gradient-to-br from-dark-secondary to-dark-elevated rounded-xl p-6 border border-dark-border shadow-lg">
           <p className="text-text-primary text-base italic leading-relaxed font-medium">
             "{dailyQuote.text}"
           </p>
-          <p className="text-accent-light-navy text-sm mt-3 font-medium">- {dailyQuote.author}</p>
+          <p className="text-accent-light-navy text-sm mt-4 font-medium">— {dailyQuote.author}</p>
         </div>
       </div>
 
@@ -66,17 +66,17 @@ export default function Dashboard({ onNavigateToWorkout }: DashboardProps) {
       <div className="px-4 pb-4">
         <Button 
           onClick={onNavigateToWorkout}
-          className="w-full bg-accent-navy hover:bg-accent-light-navy text-white font-semibold py-4 px-6 h-auto shadow-lg"
+          className="w-full bg-accent-navy hover:bg-accent-light-navy text-white font-medium py-3 px-4 shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105"
         >
-          <Dumbbell className="mr-2" size={20} />
-          <span className="text-lg">Log Workout</span>
+          <Dumbbell className="mr-2" size={18} />
+          <span>Log Workout</span>
         </Button>
       </div>
 
       {/* Last Activity Section */}
       <div className="px-4 pb-4">
-        <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
-          <h3 className="text-lg font-semibold text-text-primary mb-3 flex items-center">
+        <div className="bg-dark-secondary rounded-xl p-5 border border-dark-border shadow-lg">
+          <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center">
             <History className="text-accent-navy mr-2" size={20} />
             Last Activity
           </h3>

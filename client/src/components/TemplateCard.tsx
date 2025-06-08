@@ -13,7 +13,7 @@ export default function TemplateCard({ template, onUse, onEdit, onDelete }: Temp
   return (
     <div 
       onClick={onUse}
-      className="bg-dark-secondary rounded-lg p-4 border border-dark-border hover:border-accent-green transition-colors cursor-pointer"
+      className="bg-dark-secondary rounded-xl p-5 border border-dark-border hover:border-accent-green transition-all duration-200 cursor-pointer shadow-lg hover:shadow-xl hover:scale-105"
     >
       <div className="flex items-center justify-between">
         <div className="flex-1">
