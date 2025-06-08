@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, X, Dumbbell, Clock } from "lucide-react";
 import { storage } from "@/lib/storage";
+import { Workout } from "@shared/schema";
+import { Button } from "@/components/ui/button";
 
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [workoutDays, setWorkoutDays] = useState<string[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
 
   useEffect(() => {
     setWorkoutDays(storage.getWorkoutDays());
@@ -66,6 +70,27 @@ export default function CalendarPage() {
     return !hasWorkout(date) && !workoutDays.includes(prevDayString);
   };
 
+  const handleDateClick = (date: Date) => {
+    if (isFutureDate(date)) return;
+    
+    const dateString = date.toISOString().split('T')[0];
+    const workouts = storage.getWorkouts();
+    const workout = workouts.find(w => w.date.startsWith(dateString));
+    
+    setSelectedDate(date);
+    setSelectedWorkout(workout || null);
+  };
+
+  const closeModal = () => {
+    setSelectedDate(null);
+    setSelectedWorkout(null);
+  };
+
+  const formatWorkoutDuration = (exercises: any[]) => {
+    const totalSets = exercises.reduce((acc, ex) => acc + ex.sets.length, 0);
+    return `${exercises.length} exercises, ${totalSets} sets`;
+  };
+
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
       <header className="bg-dark-secondary p-4 shadow-lg">
@@ -117,6 +142,7 @@ export default function CalendarPage() {
               return (
                 <div
                   key={index}
+                  onClick={() => handleDateClick(date)}
                   className={`h-16 flex items-center justify-center text-lg rounded-lg cursor-pointer relative transition-all duration-200 ${
                     isTodayDate
                       ? 'bg-accent-navy text-white font-bold shadow-lg'
@@ -127,7 +153,7 @@ export default function CalendarPage() {
                       : isCurrentMonthDay
                       ? 'text-text-primary hover:bg-dark-elevated'
                       : 'text-text-disabled'
-                  }`}
+                  } ${!isFuture && isCurrentMonthDay ? 'hover:scale-105' : ''}`}
                 >
                   <span className="z-10">{date.getDate()}</span>
                   
@@ -171,6 +197,132 @@ export default function CalendarPage() {
           </div>
         </div>
       </div>
+
+      {/* Workout Details Modal */}
+      {selectedDate && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-dark-secondary rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto border border-dark-border shadow-2xl">
+            <div className="p-4 border-b border-dark-border flex items-center justify-between">
+              <h3 className="text-lg font-bold text-text-primary">
+                {selectedDate.toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </h3>
+              <Button
+                onClick={closeModal}
+                variant="ghost"
+                size="sm"
+                className="text-text-secondary hover:text-text-primary p-1"
+              >
+                <X size={20} />
+              </Button>
+            </div>
+            
+            <div className="p-4">
+              {selectedWorkout ? (
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <Dumbbell className="text-accent-navy" size={20} />
+                    <div>
+                      <h4 className="font-semibold text-text-primary">{selectedWorkout.name}</h4>
+                      <p className="text-text-secondary text-sm">{formatWorkoutDuration(selectedWorkout.exercises)}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {selectedWorkout.exercises.map((exercise, index) => (
+                      <div key={index} className="bg-dark-elevated rounded-lg p-3 border border-dark-border">
+                        <div className="flex items-center justify-between mb-2">
+                          <h5 className="font-medium text-text-primary">{exercise.name}</h5>
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${
+                            exercise.type === 'cardio' 
+                              ? 'bg-accent-navy/20 text-accent-navy' 
+                              : 'bg-accent-green/20 text-accent-green'
+                          }`}>
+                            {exercise.type}
+                          </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          {exercise.sets.filter(set => set.completed).map((set, setIndex) => (
+                            <div key={setIndex} className="bg-dark-primary rounded p-2">
+                              {exercise.type === 'cardio' ? (
+                                <div className="space-y-1">
+                                  {set.duration && (
+                                    <div className="flex justify-between">
+                                      <span className="text-text-secondary">Duration:</span>
+                                      <span className="text-text-primary">{set.duration}min</span>
+                                    </div>
+                                  )}
+                                  {set.distance && (
+                                    <div className="flex justify-between">
+                                      <span className="text-text-secondary">Distance:</span>
+                                      <span className="text-text-primary">{set.distance}km</span>
+                                    </div>
+                                  )}
+                                  {set.steps && (
+                                    <div className="flex justify-between">
+                                      <span className="text-text-secondary">Steps:</span>
+                                      <span className="text-text-primary">{set.steps}</span>
+                                    </div>
+                                  )}
+                                  {set.intervals && (
+                                    <div className="flex justify-between">
+                                      <span className="text-text-secondary">Intervals:</span>
+                                      <span className="text-text-primary">{set.intervals}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="space-y-1">
+                                  <div className="flex justify-between">
+                                    <span className="text-text-secondary">Set {setIndex + 1}:</span>
+                                    <span className="text-text-primary">{set.weight}kg × {set.reps}</span>
+                                  </div>
+                                  {set.restTime && (
+                                    <div className="flex justify-between">
+                                      <span className="text-text-secondary">Rest:</span>
+                                      <span className="text-text-primary">{set.restTime}s</span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        
+                        {exercise.notes && (
+                          <div className="mt-2 p-2 bg-dark-primary rounded text-sm">
+                            <span className="text-text-secondary">Notes: </span>
+                            <span className="text-text-primary">{exercise.notes}</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {selectedWorkout.notes && (
+                    <div className="bg-dark-elevated rounded-lg p-3 border border-dark-border">
+                      <h5 className="font-medium text-text-primary mb-2">Workout Notes</h5>
+                      <p className="text-text-secondary text-sm">{selectedWorkout.notes}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Calendar className="mx-auto text-text-disabled mb-4" size={48} />
+                  <p className="text-text-secondary mb-2">No workout logged</p>
+                  <p className="text-text-disabled text-sm">
+                    This was a rest day
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

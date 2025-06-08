@@ -50,6 +50,27 @@ export default function PersonalBests() {
     }
   };
 
+  // Calculate predicted 1RM using Epley formula: weight × (1 + reps/30)
+  const calculate1RM = (weight: number, reps: number): number => {
+    if (reps === 1) return weight;
+    return Math.round(weight * (1 + reps / 30));
+  };
+
+  // Calculate predicted weight for target reps using reverse Epley formula
+  const calculateRepMax = (oneRM: number, targetReps: number): number => {
+    if (targetReps === 1) return oneRM;
+    return Math.round(oneRM / (1 + targetReps / 30));
+  };
+
+  const getPredictedMaxes = (pb: PersonalBest) => {
+    const oneRM = calculate1RM(pb.weight, pb.reps);
+    return {
+      oneRM,
+      sixRM: calculateRepMax(oneRM, 6),
+      tenRM: calculateRepMax(oneRM, 10)
+    };
+  };
+
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
       <header className="bg-dark-secondary p-4 shadow-lg">
@@ -93,15 +114,38 @@ export default function PersonalBests() {
                 </div>
               </div>
               
-              <div className="mt-3 flex items-center space-x-4 text-sm">
-                <span className="text-text-disabled flex items-center">
-                  <TrendingUp className="mr-1" size={14} />
-                  {pb.type === '1RM' ? '1RM' : 'Volume PR'}: {pb.weight} kg × {pb.reps}
-                </span>
+              <div className="mt-4 border-t border-dark-border pt-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-text-secondary text-sm font-medium">Predicted Rep Maxes</span>
+                  <span className="text-text-disabled text-xs">Based on {pb.weight}kg × {pb.reps}</span>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  {(() => {
+                    const maxes = getPredictedMaxes(pb);
+                    return (
+                      <>
+                        <div className="bg-dark-elevated rounded-lg p-3 text-center">
+                          <div className="text-lg font-bold text-accent-navy">{maxes.oneRM}</div>
+                          <div className="text-xs text-text-secondary">1RM</div>
+                        </div>
+                        <div className="bg-dark-elevated rounded-lg p-3 text-center">
+                          <div className="text-lg font-bold text-accent-light-navy">{maxes.sixRM}</div>
+                          <div className="text-xs text-text-secondary">6RM</div>
+                        </div>
+                        <div className="bg-dark-elevated rounded-lg p-3 text-center">
+                          <div className="text-lg font-bold text-text-secondary">{maxes.tenRM}</div>
+                          <div className="text-xs text-text-secondary">10RM</div>
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
                 {index === 0 && (
-                  <span className="bg-accent-navy text-white px-2 py-1 rounded text-xs font-medium">
-                    Strongest Lift
-                  </span>
+                  <div className="mt-3 flex justify-center">
+                    <span className="bg-accent-navy text-white px-3 py-1 rounded-full text-xs font-medium">
+                      Strongest Lift
+                    </span>
+                  </div>
                 )}
               </div>
             </div>
