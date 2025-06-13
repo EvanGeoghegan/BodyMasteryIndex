@@ -170,7 +170,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
       <header className="bg-dark-secondary p-4 shadow-lg">
-        <h2 className="text-xl font-bold text-text-primary">Log Workout</h2>
+        <h2 className="text-xl font-bold text-text-primary font-heading">Log Workout</h2>
       </header>
 
       <div className="p-4 space-y-4">
@@ -230,7 +230,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
         {/* Exercise List */}
         <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-text-primary">Exercises</h3>
+            <h3 className="text-lg font-semibold text-text-primary font-heading">Exercises</h3>
             <Button
               onClick={addExercise}
               className="bg-accent-red hover:bg-accent-light-red text-white px-4 py-2"

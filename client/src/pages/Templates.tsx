@@ -149,7 +149,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
       <header className="bg-dark-secondary p-4 shadow-lg flex items-center justify-between">
-        <h2 className="text-xl font-bold text-text-primary">Templates</h2>
+        <h2 className="text-xl font-bold text-text-primary font-heading">Templates</h2>
         <Button
           onClick={openCreateDialog}
           className="bg-accent-green hover:bg-green-500 text-dark-primary px-4 py-2"
