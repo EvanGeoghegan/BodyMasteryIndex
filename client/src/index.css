@@ -46,12 +46,28 @@
 }
 
 [data-radix-select-item] {
-  color: var(--dropdown-text) !important;
+  color: white !important;
+  background-color: transparent !important;
 }
 
 [data-radix-select-item]:focus,
 [data-radix-select-item][data-highlighted] {
   background-color: var(--accent-navy) !important;
+  color: white !important;
+}
+
+[data-radix-select-trigger] {
+  color: white !important;
+}
+
+[data-radix-select-value] {
+  color: white !important;
+}
+
+/* Ensure all select components have white text */
+.bg-dark-primary select,
+.bg-dark-secondary select,
+.border-dark-border select {
   color: white !important;
 }
 

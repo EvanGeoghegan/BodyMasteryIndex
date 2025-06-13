@@ -56,10 +56,8 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseF
   };
 
   const formatRestTime = (seconds?: number): string => {
-    if (!seconds) return "0:00";
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    if (!seconds) return "0s";
+    return `${seconds}s`;
   };
 
 
@@ -112,7 +110,7 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseF
             <span className="text-text-secondary w-16">Reps</span>
           </>
         )}
-        <span className="text-text-secondary w-16">Rest</span>
+        <span className="text-text-secondary w-16">Rest (s)</span>
         <span className="text-text-secondary w-8"></span>
       </div>
       
@@ -160,10 +158,10 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseF
             
             <Input
               type="number"
-              value={set.restTime ? Math.floor(set.restTime / 60) : ''}
-              onChange={(e) => updateSet(index, { restTime: (parseInt(e.target.value) || 0) * 60 })}
+              value={set.restTime || ''}
+              onChange={(e) => updateSet(index, { restTime: parseInt(e.target.value) || 0 })}
               className="w-16 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
-              placeholder="min"
+              placeholder="sec"
             />
             
             <Button
