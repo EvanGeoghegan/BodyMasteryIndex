@@ -62,7 +62,7 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
           <SelectTrigger className="w-full bg-dark-primary text-text-primary border-dark-border">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(220, 20%, 12%)', color: 'white' }}>
+          <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(0, 15%, 10%)', color: 'white' }}>
             <SelectItem value="run" style={{ color: 'white' }}>Running</SelectItem>
             <SelectItem value="cycle" style={{ color: 'white' }}>Cycling</SelectItem>
             <SelectItem value="swim" style={{ color: 'white' }}>Swimming</SelectItem>
@@ -87,7 +87,7 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
               className="bg-dark-primary border-dark-border text-text-primary font-medium"
               placeholder="0"
             />
-            <span className="text-accent-navy font-medium text-sm">min</span>
+            <span className="text-accent-red font-medium text-sm">min</span>
           </div>
         </div>
         
@@ -104,7 +104,7 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
               placeholder="0"
               step="0.1"
             />
-            <span className="text-accent-navy font-medium text-sm">km</span>
+            <span className="text-accent-red font-medium text-sm">km</span>
           </div>
         </div>
       </div>

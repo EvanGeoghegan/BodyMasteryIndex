@@ -217,7 +217,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
                 <SelectTrigger className="w-full bg-dark-elevated text-text-primary border-dark-border">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(220, 20%, 12%)', color: 'white' }}>
+                <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(0, 15%, 10%)', color: 'white' }}>
                   <SelectItem value="strength" style={{ color: 'white' }}>Strength Training</SelectItem>
                   <SelectItem value="cardio" style={{ color: 'white' }}>Cardio</SelectItem>
                   <SelectItem value="mixed" style={{ color: 'white' }}>Mixed</SelectItem>
@@ -233,7 +233,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
             <h3 className="text-lg font-semibold text-text-primary">Exercises</h3>
             <Button
               onClick={addExercise}
-              className="bg-accent-navy hover:bg-accent-light-navy text-white px-4 py-2"
+              className="bg-accent-red hover:bg-accent-light-red text-white px-4 py-2"
             >
               <Plus className="mr-1" size={16} />
               Add Exercise

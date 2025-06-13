@@ -28,8 +28,8 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
               onClick={() => onTabChange(tab.id)}
               className={`flex flex-col items-center py-2 px-1 transition-colors rounded-lg ${
                 isActive 
-                  ? 'text-accent-navy bg-accent-navy/10' 
-                  : 'text-text-secondary hover:text-accent-light-navy hover:bg-dark-elevated'
+                  ? 'text-accent-red bg-accent-red/10' 
+                  : 'text-text-secondary hover:text-accent-light-red hover:bg-dark-elevated'
               }`}
             >
               <Icon className="mb-1" size={18} />
