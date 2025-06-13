@@ -268,7 +268,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
                 <Button
                   onClick={addExercise}
                   size="sm"
-                  className="bg-accent-navy hover:bg-accent-light-navy text-white"
+                  className="bg-accent-red hover:bg-accent-light-red text-white"
                 >
                   <Plus size={14} />
                 </Button>
@@ -298,7 +298,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
                         <SelectTrigger className="bg-dark-primary text-text-primary border-dark-border text-sm">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-dark-secondary border-dark-border">
+                        <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(0, 15%, 10%)', color: 'white' }}>
                           <SelectItem value="strength">Strength</SelectItem>
                           <SelectItem value="cardio">Cardio</SelectItem>
                         </SelectContent>

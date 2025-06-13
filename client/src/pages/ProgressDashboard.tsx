@@ -280,7 +280,7 @@ export default function ProgressDashboard() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border shadow-lg">
             <div className="flex items-center space-x-3">
-              <Calendar className="text-accent-navy" size={20} />
+              <Calendar className="text-accent-red" size={20} />
               <div>
                 <p className="text-text-secondary text-sm">Total Workouts</p>
                 <p className="text-text-primary text-lg font-bold">{stats.totalWorkouts}</p>
@@ -300,7 +300,7 @@ export default function ProgressDashboard() {
           
           <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border shadow-lg">
             <div className="flex items-center space-x-3">
-              <Target className="text-accent-light-navy" size={20} />
+              <Target className="text-accent-light-red" size={20} />
               <div>
                 <p className="text-text-secondary text-sm">Avg Volume</p>
                 <p className="text-text-primary text-lg font-bold">{stats.avgVolume.toLocaleString()}kg</p>

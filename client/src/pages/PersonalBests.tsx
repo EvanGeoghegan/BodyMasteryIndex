@@ -105,7 +105,7 @@ export default function PersonalBests() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-accent-navy">
+                  <div className="text-2xl font-bold text-accent-red">
                     {pb.weight} kg
                   </div>
                   <p className="text-text-secondary text-sm">
