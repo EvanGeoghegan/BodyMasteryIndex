@@ -126,8 +126,8 @@ export default function CalendarPage() {
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
       <header className="bg-dark-secondary p-4 shadow-lg">
-        <h2 className="text-xl font-bold text-text-primary flex items-center">
-          <Calendar className="mr-2 text-accent-navy" size={24} />
+        <h2 className="text-xl font-bold text-text-primary font-heading flex items-center">
+          <Calendar className="mr-2 text-accent-red" size={24} />
           Activity Calendar
         </h2>
       </header>

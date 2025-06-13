@@ -96,7 +96,7 @@ export default function PersonalBests() {
                 <div className="flex items-center space-x-3">
                   <div className="text-2xl">{getCategoryIcon(pb.category)}</div>
                   <div>
-                    <h3 className="text-lg font-semibold text-text-primary">
+                    <h3 className="text-lg font-semibold text-text-primary font-heading">
                       {pb.exerciseName}
                     </h3>
                     {pb.category && (

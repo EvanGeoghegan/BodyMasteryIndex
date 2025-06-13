@@ -358,7 +358,7 @@ export default function ProgressDashboard() {
 
         {chartType === "weight" && selectedExercise !== "all" && (
           <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border shadow-lg">
-            <h3 className="text-lg font-semibold text-text-primary mb-4">
+            <h3 className="text-lg font-semibold text-text-primary font-heading mb-4">
               Weight Progress - {selectedExercise}
             </h3>
             <div className="h-80">
@@ -394,7 +394,7 @@ export default function ProgressDashboard() {
 
         {chartType === "frequency" && (
           <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border shadow-lg">
-            <h3 className="text-lg font-semibold text-text-primary mb-4">Workout Frequency by Day</h3>
+            <h3 className="text-lg font-semibold text-text-primary font-heading mb-4">Workout Frequency by Day</h3>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={workoutFrequencyData}>
@@ -418,7 +418,7 @@ export default function ProgressDashboard() {
 
         {chartType === "distribution" && (
           <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border shadow-lg">
-            <h3 className="text-lg font-semibold text-text-primary mb-4">Muscle Group Distribution</h3>
+            <h3 className="text-lg font-semibold text-text-primary font-heading mb-4">Muscle Group Distribution</h3>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>

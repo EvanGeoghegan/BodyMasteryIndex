@@ -187,7 +187,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="bg-dark-secondary border border-dark-border max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-text-primary">
+            <DialogTitle className="text-text-primary font-heading">
               {editingTemplate ? 'Edit Template' : 'Create Template'}
             </DialogTitle>
           </DialogHeader>
