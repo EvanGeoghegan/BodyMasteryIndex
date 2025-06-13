@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Calendar, X, Dumbbell, Clock } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, X, Dumbbell, Clock, Minus } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { Workout } from "@shared/schema";
 import { Button } from "@/components/ui/button";
@@ -86,9 +86,22 @@ export default function CalendarPage() {
     setSelectedWorkout(null);
   };
 
-  const formatWorkoutDuration = (exercises: any[]) => {
-    const totalSets = exercises.reduce((acc, ex) => acc + ex.sets.length, 0);
-    return `${exercises.length} exercises, ${totalSets} sets`;
+  const formatWorkoutSummary = (workout: Workout) => {
+    const completedSets = workout.exercises.reduce((acc, ex) => 
+      acc + ex.sets.filter(set => set.completed).length, 0
+    );
+    const totalVolume = workout.exercises.reduce((vol, ex) => 
+      vol + ex.sets.reduce((setVol, set) => 
+        set.completed && set.weight && set.reps ? setVol + (set.weight * set.reps) : setVol, 0
+      ), 0
+    );
+    
+    return {
+      exercises: workout.exercises.length,
+      completedSets,
+      totalVolume: Math.round(totalVolume),
+      duration: workout.exercises.length * 15 // Rough estimate
+    };
   };
 
   return (
@@ -167,9 +180,11 @@ export default function CalendarPage() {
                     <div className="absolute top-2 right-2 w-3 h-3 bg-accent-red rounded-full shadow-sm"></div>
                   )}
                   
-                  {/* Consecutive rest day emoji */}
+                  {/* Consecutive rest day icon */}
                   {isConsecutiveRest && !isTodayDate && isCurrentMonthDay && (
-                    <div className="absolute top-1 right-1 text-2xl">🐌</div>
+                    <div className="absolute top-1 right-1 p-1 bg-text-disabled/20 rounded-full">
+                      <Minus className="text-text-disabled" size={12} />
+                    </div>
                   )}
                 </div>
               );
@@ -191,7 +206,9 @@ export default function CalendarPage() {
               <span className="text-text-secondary">Rest Day</span>
             </div>
             <div className="flex items-center space-x-3">
-              <span className="text-2xl">🐌</span>
+              <div className="p-1 bg-text-disabled/20 rounded-full">
+                <Minus className="text-text-disabled" size={12} />
+              </div>
               <span className="text-text-secondary">Consecutive Rest</span>
             </div>
           </div>
@@ -227,80 +244,84 @@ export default function CalendarPage() {
                     <Dumbbell className="text-accent-navy" size={20} />
                     <div>
                       <h4 className="font-semibold text-text-primary">{selectedWorkout.name}</h4>
-                      <p className="text-text-secondary text-sm">{formatWorkoutDuration(selectedWorkout.exercises)}</p>
+                      <p className="text-text-secondary text-sm">
+                        {(() => {
+                          const summary = formatWorkoutSummary(selectedWorkout);
+                          return `${summary.exercises} exercises • ${summary.completedSets} sets • ${summary.totalVolume}kg volume`;
+                        })()}
+                      </p>
                     </div>
                   </div>
-                  
-                  <div className="space-y-3">
-                    {selectedWorkout.exercises.map((exercise, index) => (
-                      <div key={index} className="bg-dark-elevated rounded-lg p-3 border border-dark-border">
-                        <div className="flex items-center justify-between mb-2">
-                          <h5 className="font-medium text-text-primary">{exercise.name}</h5>
-                          <span className={`px-2 py-1 rounded text-xs font-medium ${
-                            exercise.type === 'cardio' 
-                              ? 'bg-accent-navy/20 text-accent-navy' 
-                              : 'bg-accent-green/20 text-accent-green'
-                          }`}>
-                            {exercise.type}
-                          </span>
-                        </div>
+
+                  {/* Quick Stats */}
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="bg-dark-elevated rounded-lg p-3 text-center border border-dark-border">
+                      <div className="text-lg font-bold text-accent-navy">
+                        {formatWorkoutSummary(selectedWorkout).exercises}
+                      </div>
+                      <div className="text-xs text-text-secondary">Exercises</div>
+                    </div>
+                    <div className="bg-dark-elevated rounded-lg p-3 text-center border border-dark-border">
+                      <div className="text-lg font-bold text-accent-green">
+                        {formatWorkoutSummary(selectedWorkout).completedSets}
+                      </div>
+                      <div className="text-xs text-text-secondary">Sets</div>
+                    </div>
+                    <div className="bg-dark-elevated rounded-lg p-3 text-center border border-dark-border">
+                      <div className="text-lg font-bold text-accent-light-navy">
+                        {formatWorkoutSummary(selectedWorkout).totalVolume}kg
+                      </div>
+                      <div className="text-xs text-text-secondary">Volume</div>
+                    </div>
+                  </div>
+
+                  {/* Exercise List */}
+                  <div>
+                    <h5 className="font-medium text-text-primary mb-3">Exercises Completed</h5>
+                    <div className="space-y-2">
+                      {selectedWorkout.exercises.map((exercise, index) => {
+                        const completedSets = exercise.sets.filter(set => set.completed);
+                        if (completedSets.length === 0) return null;
                         
-                        <div className="grid grid-cols-2 gap-2 text-sm">
-                          {exercise.sets.filter(set => set.completed).map((set, setIndex) => (
-                            <div key={setIndex} className="bg-dark-primary rounded p-2">
+                        return (
+                          <div key={index} className="bg-dark-elevated rounded-lg p-3 border border-dark-border">
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium text-text-primary">{exercise.name}</span>
+                              <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                exercise.type === 'cardio' 
+                                  ? 'bg-accent-navy/20 text-accent-navy' 
+                                  : 'bg-accent-green/20 text-accent-green'
+                              }`}>
+                                {exercise.type}
+                              </span>
+                            </div>
+                            <div className="mt-2 text-sm text-text-secondary">
                               {exercise.type === 'cardio' ? (
-                                <div className="space-y-1">
-                                  {set.duration && (
-                                    <div className="flex justify-between">
-                                      <span className="text-text-secondary">Duration:</span>
-                                      <span className="text-text-primary">{set.duration}min</span>
-                                    </div>
+                                <div className="flex space-x-4">
+                                  {completedSets[0]?.duration && (
+                                    <span>{completedSets[0].duration} min</span>
                                   )}
-                                  {set.distance && (
-                                    <div className="flex justify-between">
-                                      <span className="text-text-secondary">Distance:</span>
-                                      <span className="text-text-primary">{set.distance}km</span>
-                                    </div>
+                                  {completedSets[0]?.distance && (
+                                    <span>{completedSets[0].distance} km</span>
                                   )}
-                                  {set.steps && (
-                                    <div className="flex justify-between">
-                                      <span className="text-text-secondary">Steps:</span>
-                                      <span className="text-text-primary">{set.steps}</span>
-                                    </div>
-                                  )}
-                                  {set.intervals && (
-                                    <div className="flex justify-between">
-                                      <span className="text-text-secondary">Intervals:</span>
-                                      <span className="text-text-primary">{set.intervals}</span>
-                                    </div>
+                                  {completedSets[0]?.steps && (
+                                    <span>{completedSets[0].steps} steps</span>
                                   )}
                                 </div>
                               ) : (
-                                <div className="space-y-1">
-                                  <div className="flex justify-between">
-                                    <span className="text-text-secondary">Set {setIndex + 1}:</span>
-                                    <span className="text-text-primary">{set.weight}kg × {set.reps}</span>
-                                  </div>
-                                  {set.restTime && (
-                                    <div className="flex justify-between">
-                                      <span className="text-text-secondary">Rest:</span>
-                                      <span className="text-text-primary">{set.restTime}s</span>
-                                    </div>
-                                  )}
-                                </div>
+                                <span>
+                                  {completedSets.length} sets • Best: {
+                                    Math.max(...completedSets.map(set => set.weight || 0))
+                                  }kg × {
+                                    completedSets.find(set => set.weight === Math.max(...completedSets.map(s => s.weight || 0)))?.reps || 0
+                                  }
+                                </span>
                               )}
                             </div>
-                          ))}
-                        </div>
-                        
-                        {exercise.notes && (
-                          <div className="mt-2 p-2 bg-dark-primary rounded text-sm">
-                            <span className="text-text-secondary">Notes: </span>
-                            <span className="text-text-primary">{exercise.notes}</span>
                           </div>
-                        )}
-                      </div>
-                    ))}
+                        );
+                      })}
+                    </div>
                   </div>
                   
                   {selectedWorkout.notes && (
