@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Dumbbell, Quote, History } from "lucide-react";
+import { Dumbbell, Quote, History, Sparkles } from "lucide-react";
 import ActivityCalendar from "@/components/ActivityCalendar";
 import { storage } from "@/lib/storage";
 import { getDailyQuote } from "@/lib/quotes";
 import { Workout } from "@shared/schema";
+import confetti from 'canvas-confetti';
 
 interface DashboardProps {
   onNavigateToWorkout: () => void;
@@ -13,12 +14,37 @@ interface DashboardProps {
 export default function Dashboard({ onNavigateToWorkout }: DashboardProps) {
   const [lastWorkout, setLastWorkout] = useState<Workout | undefined>();
   const [workoutDays, setWorkoutDays] = useState<string[]>([]);
+  const [showCongrats, setShowCongrats] = useState(false);
   const dailyQuote = getDailyQuote();
 
   useEffect(() => {
     setLastWorkout(storage.getLastWorkout());
     setWorkoutDays(storage.getWorkoutDays());
+    
+    // Check if there's a workout completed today
+    const today = new Date().toISOString().split('T')[0];
+    const todayWorkouts = storage.getWorkouts().filter(workout => 
+      workout.date.split('T')[0] === today
+    );
+    
+    if (todayWorkouts.length > 0) {
+      setShowCongrats(true);
+    }
   }, []);
+
+  const triggerCelebration = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  };
+
+  useEffect(() => {
+    if (showCongrats) {
+      triggerCelebration();
+    }
+  }, [showCongrats]);
 
   const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -51,6 +77,29 @@ export default function Dashboard({ onNavigateToWorkout }: DashboardProps) {
           </div>
         </div>
       </header>
+
+      {/* Congratulations Section */}
+      {showCongrats && (
+        <div className="p-4">
+          <div className="bg-gradient-to-br from-accent-green/20 to-accent-green/10 rounded-xl p-6 border border-accent-green/30 shadow-lg">
+            <div className="flex items-center justify-center mb-3">
+              <Sparkles className="text-accent-green mr-2" size={24} />
+              <h2 className="text-xl font-bold text-accent-green">Congratulations!</h2>
+              <Sparkles className="text-accent-green ml-2" size={24} />
+            </div>
+            <p className="text-text-primary text-center font-medium">
+              You've completed a workout today! Keep up the great work and stay consistent with your fitness journey.
+            </p>
+            <Button
+              onClick={() => setShowCongrats(false)}
+              variant="ghost"
+              className="w-full mt-4 text-accent-green hover:text-accent-green hover:bg-accent-green/10"
+            >
+              Dismiss
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Daily Quote Section */}
       <div className="p-4">

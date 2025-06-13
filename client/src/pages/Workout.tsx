@@ -21,6 +21,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
   const [templates, setTemplates] = useState<Template[]>([]);
   const [showTemplateDialog, setShowTemplateDialog] = useState(false);
   const [workoutType, setWorkoutType] = useState<"strength" | "cardio" | "mixed">("strength");
+  const [workoutDate, setWorkoutDate] = useState(new Date().toISOString().split('T')[0]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -105,7 +106,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
 
     const workout: Omit<Workout, 'id'> = {
       name: workoutName,
-      date: new Date().toISOString(),
+      date: new Date(workoutDate + 'T' + new Date().toTimeString().split(' ')[0]).toISOString(),
       exercises: exercises.filter(ex => ex.name.trim()), // Only save exercises with names
       type: workoutType,
     };
@@ -188,16 +189,35 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
             className="w-full bg-dark-elevated text-text-primary border-dark-border mb-3"
             placeholder="e.g., Push Day, Leg Day"
           />
-          <Select value={workoutType} onValueChange={(value: "strength" | "cardio" | "mixed") => setWorkoutType(value)}>
-            <SelectTrigger className="w-full bg-dark-elevated text-text-primary border-dark-border">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(220, 20%, 12%)', color: 'white' }}>
-              <SelectItem value="strength" style={{ color: 'white' }}>Strength Training</SelectItem>
-              <SelectItem value="cardio" style={{ color: 'white' }}>Cardio</SelectItem>
-              <SelectItem value="mixed" style={{ color: 'white' }}>Mixed</SelectItem>
-            </SelectContent>
-          </Select>
+          
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <div>
+              <label className="text-text-secondary text-sm font-medium mb-1 block">
+                Workout Date
+              </label>
+              <Input
+                type="date"
+                value={workoutDate}
+                onChange={(e) => setWorkoutDate(e.target.value)}
+                className="w-full bg-dark-elevated text-text-primary border-dark-border"
+              />
+            </div>
+            <div>
+              <label className="text-text-secondary text-sm font-medium mb-1 block">
+                Workout Type
+              </label>
+              <Select value={workoutType} onValueChange={(value: "strength" | "cardio" | "mixed") => setWorkoutType(value)}>
+                <SelectTrigger className="w-full bg-dark-elevated text-text-primary border-dark-border">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(220, 20%, 12%)', color: 'white' }}>
+                  <SelectItem value="strength" style={{ color: 'white' }}>Strength Training</SelectItem>
+                  <SelectItem value="cardio" style={{ color: 'white' }}>Cardio</SelectItem>
+                  <SelectItem value="mixed" style={{ color: 'white' }}>Mixed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
 
         {/* Exercise List */}
