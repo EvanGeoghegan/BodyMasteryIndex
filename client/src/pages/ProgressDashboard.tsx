@@ -201,7 +201,7 @@ export default function ProgressDashboard() {
     return Array.from(muscleGroups.entries()).map(([name, value]) => ({ name, value }));
   }, [filteredWorkouts]);
 
-  const COLORS = ['#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#dbeafe'];
+  const COLORS = ['#dc2626', '#ef4444', '#f87171', '#fca5a5', '#fecaca'];
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -346,8 +346,8 @@ export default function ProgressDashboard() {
                   <Area 
                     type="monotone" 
                     dataKey="totalVolume" 
-                    stroke="#2563eb" 
-                    fill="#2563eb"
+                    stroke="#dc2626" 
+                    fill="#dc2626"
                     fillOpacity={0.3}
                   />
                 </AreaChart>
@@ -409,7 +409,7 @@ export default function ProgressDashboard() {
                     }}
                     labelStyle={{ color: '#f3f4f6' }}
                   />
-                  <Bar dataKey="workouts" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="workouts" fill="#dc2626" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

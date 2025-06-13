@@ -108,7 +108,8 @@ TrainLog is a comprehensive offline fitness training application built with Reac
 
 ```
 Changelog:
-- June 13, 2025. Initial setup
+- June 13, 2025. Initial setup with blue navy theme
+- June 13, 2025. Implemented darker red theme replacing blue accents throughout app
 ```
 
 ## User Preferences
