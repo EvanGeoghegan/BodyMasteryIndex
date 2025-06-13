@@ -87,9 +87,9 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseF
           <SelectTrigger className="w-32 bg-dark-primary text-text-primary border-dark-border text-sm h-8">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-dark-secondary border-dark-border">
-            <SelectItem value="strength">Strength</SelectItem>
-            <SelectItem value="cardio">Cardio</SelectItem>
+          <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(220, 20%, 12%)', color: 'white' }}>
+            <SelectItem value="strength" style={{ color: 'white' }}>Strength</SelectItem>
+            <SelectItem value="cardio" style={{ color: 'white' }}>Cardio</SelectItem>
           </SelectContent>
         </Select>
 

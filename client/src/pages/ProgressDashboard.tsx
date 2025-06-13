@@ -236,11 +236,11 @@ export default function ProgressDashboard() {
               <SelectTrigger className="bg-dark-secondary border-dark-border text-dropdown-text">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-dark-secondary border-dark-border">
-                <SelectItem value="7">Last 7 days</SelectItem>
-                <SelectItem value="30">Last 30 days</SelectItem>
-                <SelectItem value="90">Last 3 months</SelectItem>
-                <SelectItem value="365">Last year</SelectItem>
+              <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(220, 20%, 12%)', color: 'white' }}>
+                <SelectItem value="7" style={{ color: 'white' }}>Last 7 days</SelectItem>
+                <SelectItem value="30" style={{ color: 'white' }}>Last 30 days</SelectItem>
+                <SelectItem value="90" style={{ color: 'white' }}>Last 3 months</SelectItem>
+                <SelectItem value="365" style={{ color: 'white' }}>Last year</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -251,10 +251,10 @@ export default function ProgressDashboard() {
               <SelectTrigger className="bg-dark-secondary border-dark-border text-dropdown-text">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-dark-secondary border-dark-border">
-                <SelectItem value="all">All Exercises</SelectItem>
+              <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(220, 20%, 12%)', color: 'white' }}>
+                <SelectItem value="all" style={{ color: 'white' }}>All Exercises</SelectItem>
                 {uniqueExercises.map(exercise => (
-                  <SelectItem key={exercise} value={exercise}>{exercise}</SelectItem>
+                  <SelectItem key={exercise} value={exercise} style={{ color: 'white' }}>{exercise}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -266,11 +266,11 @@ export default function ProgressDashboard() {
               <SelectTrigger className="bg-dark-secondary border-dark-border text-dropdown-text">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-dark-secondary border-dark-border">
-                <SelectItem value="volume">Volume Progress</SelectItem>
-                <SelectItem value="weight">Weight Progress</SelectItem>
-                <SelectItem value="frequency">Workout Frequency</SelectItem>
-                <SelectItem value="distribution">Muscle Groups</SelectItem>
+              <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(220, 20%, 12%)', color: 'white' }}>
+                <SelectItem value="volume" style={{ color: 'white' }}>Volume Progress</SelectItem>
+                <SelectItem value="weight" style={{ color: 'white' }}>Weight Progress</SelectItem>
+                <SelectItem value="frequency" style={{ color: 'white' }}>Workout Frequency</SelectItem>
+                <SelectItem value="distribution" style={{ color: 'white' }}>Muscle Groups</SelectItem>
               </SelectContent>
             </Select>
           </div>

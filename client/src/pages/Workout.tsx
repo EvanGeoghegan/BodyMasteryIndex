@@ -192,10 +192,10 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
             <SelectTrigger className="w-full bg-dark-elevated text-text-primary border-dark-border">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-dark-secondary border-dark-border">
-              <SelectItem value="strength">Strength Training</SelectItem>
-              <SelectItem value="cardio">Cardio</SelectItem>
-              <SelectItem value="mixed">Mixed</SelectItem>
+            <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(220, 20%, 12%)', color: 'white' }}>
+              <SelectItem value="strength" style={{ color: 'white' }}>Strength Training</SelectItem>
+              <SelectItem value="cardio" style={{ color: 'white' }}>Cardio</SelectItem>
+              <SelectItem value="mixed" style={{ color: 'white' }}>Mixed</SelectItem>
             </SelectContent>
           </Select>
         </div>
