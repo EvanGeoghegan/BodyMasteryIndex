@@ -191,7 +191,7 @@ export default function Supplements() {
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button 
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-accent-red hover:bg-accent-light-red text-white"
               onClick={() => {
                 setEditingSupplement(null);
                 form.reset();
@@ -376,7 +376,7 @@ export default function Supplements() {
                 />
                 
                 <div className="flex gap-2">
-                  <Button type="submit" className="flex-1 bg-red-600 hover:bg-red-700">
+                  <Button type="submit" className="flex-1 bg-accent-red hover:bg-accent-light-red">
                     {editingSupplement ? 'Update' : 'Add'} Supplement
                   </Button>
                   <Button 
@@ -404,37 +404,19 @@ export default function Supplements() {
         </TabsList>
         
         <TabsContent value="today" className="space-y-6">
-          <div className="grid gap-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-['Montserrat'] flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  Daily Progress
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <p className="text-2xl font-bold text-red-600">
-                      {getCompletionRate()}%
-                    </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {supplements.filter(s => getSupplementStatus(s)).length} of {supplements.length} taken
-                    </p>
-                  </div>
-                  <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
-                    <Pill className="w-8 h-8 text-red-600" />
-                  </div>
-                </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div 
-                    className="bg-red-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${getCompletionRate()}%` }}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          {supplements.length > 0 && (
+            <div className="text-center p-4 bg-dark-elevated rounded-lg border border-dark-border">
+              <p className="text-sm text-text-secondary mb-1">
+                {supplements.filter(s => getSupplementStatus(s)).length} of {supplements.length} taken today
+              </p>
+              <div className="w-full bg-dark-border rounded-full h-2">
+                <div 
+                  className="bg-accent-red h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${getCompletionRate()}%` }}
+                />
+              </div>
+            </div>
+          )}
 
           <div className="space-y-3">
             {supplements.length === 0 ? (

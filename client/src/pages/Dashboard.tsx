@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dumbbell, Quote, History, Sparkles } from "lucide-react";
 import ActivityCalendar from "@/components/ActivityCalendar";
+import MuscleGroupHeatmap from "@/components/MuscleGroupHeatmap";
 import { storage } from "@/lib/storage";
 import { getDailyQuote } from "@/lib/quotes";
 import { Workout } from "@shared/schema";
