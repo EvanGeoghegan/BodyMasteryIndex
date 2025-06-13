@@ -1,4 +1,4 @@
-import { Home, Dumbbell, Copy, Trophy, Calendar, BarChart3 } from "lucide-react";
+import { Home, Dumbbell, Copy, Trophy, Calendar, BarChart3, Pill } from "lucide-react";
 
 interface NavigationProps {
   activeTab: string;
@@ -11,13 +11,14 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
     { id: 'workout', label: 'Workout', icon: Dumbbell },
     { id: 'progress', label: 'Progress', icon: BarChart3 },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
+    { id: 'supplements', label: 'Supplements', icon: Pill },
     { id: 'templates', label: 'Templates', icon: Copy },
     { id: 'records', label: 'Records', icon: Trophy },
   ];
 
   return (
     <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-dark-secondary border-t border-dark-border">
-      <div className="grid grid-cols-6 gap-1 py-2 px-1">
+      <div className="grid grid-cols-7 gap-1 py-2 px-1">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;

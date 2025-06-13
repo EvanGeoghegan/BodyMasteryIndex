@@ -261,6 +261,67 @@ export class DatabaseStorage implements IStorage {
     return userWorkouts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
   }
 
+  // Supplement methods - placeholder implementations for database integration
+  async getSupplements(userId: number): Promise<Supplement[]> {
+    // TODO: Implement database query when ready for database migration
+    return [];
+  }
+
+  async getSupplement(userId: number, id: string): Promise<Supplement | undefined> {
+    const supplements = await this.getSupplements(userId);
+    return supplements.find(s => s.id === id);
+  }
+
+  async createSupplement(userId: number, supplement: InsertSupplement): Promise<Supplement> {
+    const newSupplement: Supplement = {
+      ...supplement,
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString(),
+    };
+    // TODO: Implement database insert when ready for database migration
+    return newSupplement;
+  }
+
+  async updateSupplement(userId: number, id: string, updates: Partial<Supplement>): Promise<Supplement | undefined> {
+    // TODO: Implement database update when ready for database migration
+    return undefined;
+  }
+
+  async deleteSupplement(userId: number, id: string): Promise<boolean> {
+    // TODO: Implement database delete when ready for database migration
+    return false;
+  }
+
+  // Supplement log methods - placeholder implementations for database integration
+  async getSupplementLogs(userId: number, date?: string): Promise<SupplementLog[]> {
+    // TODO: Implement database query when ready for database migration
+    return [];
+  }
+
+  async getSupplementLog(userId: number, id: string): Promise<SupplementLog | undefined> {
+    const logs = await this.getSupplementLogs(userId);
+    return logs.find(l => l.id === id);
+  }
+
+  async createSupplementLog(userId: number, log: InsertSupplementLog): Promise<SupplementLog> {
+    const newLog: SupplementLog = {
+      ...log,
+      id: crypto.randomUUID(),
+    };
+    // TODO: Implement database insert when ready for database migration
+    return newLog;
+  }
+
+  async updateSupplementLog(userId: number, id: string, updates: Partial<SupplementLog>): Promise<SupplementLog | undefined> {
+    // TODO: Implement database update when ready for database migration
+    return undefined;
+  }
+
+  async deleteSupplementLog(userId: number, id: string): Promise<boolean> {
+    // TODO: Implement database delete when ready for database migration
+    return false;
+  }
+
   // Helper methods to convert database objects to app objects
   private dbWorkoutToWorkout(dbWorkout: DbWorkout): Workout {
     return {
