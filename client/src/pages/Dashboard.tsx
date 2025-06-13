@@ -22,14 +22,20 @@ export default function Dashboard({ onNavigateToWorkout, refreshTrigger }: Dashb
     setLastWorkout(storage.getLastWorkout());
     setWorkoutDays(storage.getWorkoutDays());
     
-    // Check if there's a workout completed today
+    // Check if there's a workout completed today and we haven't shown congrats yet
     const today = new Date().toISOString().split('T')[0];
     const todayWorkouts = storage.getWorkouts().filter(workout => 
       workout.date.split('T')[0] === today
     );
     
-    if (todayWorkouts.length > 0) {
+    const lastCongratsDate = localStorage.getItem('lastCongratsDate');
+    const congratsDismissedDate = localStorage.getItem('congratsDismissedDate');
+    const hasShownCongratsToday = lastCongratsDate === today;
+    const wasDismissedToday = congratsDismissedDate === today;
+    
+    if (todayWorkouts.length > 0 && !hasShownCongratsToday && !wasDismissedToday) {
       setShowCongrats(true);
+      localStorage.setItem('lastCongratsDate', today);
     }
   };
 
@@ -102,7 +108,12 @@ export default function Dashboard({ onNavigateToWorkout, refreshTrigger }: Dashb
               You've completed a workout today! Keep up the great work and stay consistent with your fitness journey.
             </p>
             <Button
-              onClick={() => setShowCongrats(false)}
+              onClick={() => {
+                setShowCongrats(false);
+                // Mark as dismissed for today so it won't show again until next workout completion
+                const today = new Date().toISOString().split('T')[0];
+                localStorage.setItem('congratsDismissedDate', today);
+              }}
               variant="ghost"
               className="w-full mt-4 text-accent-green hover:text-accent-green hover:bg-accent-green/10"
             >

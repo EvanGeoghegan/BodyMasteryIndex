@@ -114,6 +114,13 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
     try {
       storage.createWorkout(workout);
       
+      // Reset congratulations dismissal state for new workout
+      const workoutDate = workout.date.split('T')[0];
+      const today = new Date().toISOString().split('T')[0];
+      if (workoutDate === today) {
+        localStorage.removeItem('congratsDismissedDate');
+      }
+      
       // Update personal bests for strength exercises only
       exercises.forEach(exercise => {
         if (!exercise.name.trim() || exercise.type !== "strength") return;
