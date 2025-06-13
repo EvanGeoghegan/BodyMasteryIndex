@@ -9,15 +9,16 @@ import confetti from 'canvas-confetti';
 
 interface DashboardProps {
   onNavigateToWorkout: () => void;
+  refreshTrigger?: number; // Add a prop to trigger refresh
 }
 
-export default function Dashboard({ onNavigateToWorkout }: DashboardProps) {
+export default function Dashboard({ onNavigateToWorkout, refreshTrigger }: DashboardProps) {
   const [lastWorkout, setLastWorkout] = useState<Workout | undefined>();
   const [workoutDays, setWorkoutDays] = useState<string[]>([]);
   const [showCongrats, setShowCongrats] = useState(false);
   const dailyQuote = getDailyQuote();
 
-  useEffect(() => {
+  const refreshData = () => {
     setLastWorkout(storage.getLastWorkout());
     setWorkoutDays(storage.getWorkoutDays());
     
@@ -30,7 +31,17 @@ export default function Dashboard({ onNavigateToWorkout }: DashboardProps) {
     if (todayWorkouts.length > 0) {
       setShowCongrats(true);
     }
+  };
+
+  useEffect(() => {
+    refreshData();
   }, []);
+
+  useEffect(() => {
+    if (refreshTrigger) {
+      refreshData();
+    }
+  }, [refreshTrigger]);
 
   const triggerCelebration = () => {
     confetti({

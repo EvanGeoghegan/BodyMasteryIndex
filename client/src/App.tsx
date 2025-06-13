@@ -15,6 +15,7 @@ import { Template, Exercise, ExerciseSet } from "@shared/schema";
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [dashboardRefreshTrigger, setDashboardRefreshTrigger] = useState(0);
 
   useEffect(() => {
     // Initialize default templates on first load
@@ -23,6 +24,7 @@ function App() {
 
   const handleWorkoutSaved = () => {
     setActiveTab("dashboard");
+    setDashboardRefreshTrigger(prev => prev + 1); // Trigger dashboard refresh
   };
 
   const handleNavigateToWorkout = () => {
@@ -38,7 +40,7 @@ function App() {
   const renderActiveTab = () => {
     switch (activeTab) {
       case "dashboard":
-        return <Dashboard onNavigateToWorkout={handleNavigateToWorkout} />;
+        return <Dashboard onNavigateToWorkout={handleNavigateToWorkout} refreshTrigger={dashboardRefreshTrigger} />;
       case "workout":
         return <Workout onWorkoutSaved={handleWorkoutSaved} />;
       case "templates":
@@ -50,7 +52,7 @@ function App() {
       case "progress":
         return <ProgressDashboard />;
       default:
-        return <Dashboard onNavigateToWorkout={handleNavigateToWorkout} />;
+        return <Dashboard onNavigateToWorkout={handleNavigateToWorkout} refreshTrigger={dashboardRefreshTrigger} />;
     }
   };
 
