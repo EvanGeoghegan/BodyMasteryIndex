@@ -24,19 +24,19 @@
   --ring: hsl(20, 14.3%, 4.1%);
   --radius: 0.5rem;
 
-  /* Custom navy theme colors */
-  --dark-primary: hsl(220, 20%, 8%);
-  --dark-secondary: hsl(220, 20%, 12%);
-  --dark-elevated: hsl(220, 15%, 18%);
-  --dark-border: hsl(220, 15%, 25%);
-  --accent-navy: hsl(215, 100%, 45%);
-  --accent-light-navy: hsl(210, 80%, 55%);
+  /* Custom dark red theme colors */
+  --dark-primary: hsl(0, 15%, 6%);
+  --dark-secondary: hsl(0, 15%, 10%);
+  --dark-elevated: hsl(0, 10%, 14%);
+  --dark-border: hsl(0, 10%, 20%);
+  --accent-red: hsl(0, 85%, 55%);
+  --accent-light-red: hsl(10, 80%, 60%);
   --accent-green: hsl(130, 60%, 50%);
-  --accent-red: hsl(0, 84%, 60%);
-  --text-primary: hsl(220, 15%, 95%);
-  --text-secondary: hsl(220, 10%, 75%);
-  --text-disabled: hsl(220, 8%, 50%);
-  --dropdown-text: hsl(220, 15%, 90%);
+  --accent-warning: hsl(25, 85%, 60%);
+  --text-primary: hsl(0, 5%, 95%);
+  --text-secondary: hsl(0, 5%, 75%);
+  --text-disabled: hsl(0, 5%, 50%);
+  --dropdown-text: hsl(0, 5%, 90%);
 }
 
 /* Improve dropdown text visibility - comprehensive approach */
@@ -55,7 +55,7 @@
 [data-radix-select-item][data-highlighted],
 [data-radix-select-item][data-state="checked"],
 [data-radix-select-item]:hover {
-  background-color: hsl(215, 100%, 45%) !important;
+  background-color: hsl(0, 85%, 55%) !important;
   color: white !important;
 }
 
@@ -84,13 +84,13 @@
 [data-radix-select-item][data-highlighted] *,
 [data-radix-select-item]:focus *,
 [data-radix-select-item]:hover * {
-  background-color: hsl(215, 100%, 45%) !important;
+  background-color: hsl(0, 85%, 55%) !important;
   color: white !important;
 }
 
 /* Target by role attribute */
 [role="listbox"] {
-  background-color: hsl(220, 20%, 12%) !important;
+  background-color: hsl(0, 15%, 10%) !important;
 }
 
 [role="option"] {
@@ -102,7 +102,7 @@
 [role="option"]:hover,
 [role="option"][data-highlighted],
 [role="option"][aria-selected="true"] {
-  background-color: hsl(215, 100%, 45%) !important;
+  background-color: hsl(0, 85%, 55%) !important;
   color: white !important;
 }
 

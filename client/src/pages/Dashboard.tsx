@@ -90,7 +90,7 @@ export default function Dashboard({ onNavigateToWorkout, refreshTrigger }: Dashb
             <p className="text-text-secondary text-sm">{getCurrentDate()}</p>
           </div>
           <div className="w-12 h-12 bg-dark-elevated rounded-full flex items-center justify-center">
-            <Dumbbell className="text-accent-navy" size={24} />
+            <Dumbbell className="text-accent-red" size={24} />
           </div>
         </div>
       </header>
@@ -129,7 +129,7 @@ export default function Dashboard({ onNavigateToWorkout, refreshTrigger }: Dashb
           <p className="text-text-primary text-base italic leading-relaxed font-medium">
             "{dailyQuote.text}"
           </p>
-          <p className="text-accent-light-navy text-sm mt-4 font-medium">— {dailyQuote.author}</p>
+          <p className="text-accent-light-red text-sm mt-4 font-medium">— {dailyQuote.author}</p>
         </div>
       </div>
 
@@ -137,7 +137,7 @@ export default function Dashboard({ onNavigateToWorkout, refreshTrigger }: Dashb
       <div className="px-4 pb-4">
         <Button 
           onClick={onNavigateToWorkout}
-          className="w-full bg-accent-navy hover:bg-accent-light-navy text-white font-medium py-3 px-4 shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105"
+          className="w-full bg-accent-red hover:bg-accent-light-red text-white font-medium py-3 px-4 shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105"
         >
           <Dumbbell className="mr-2" size={18} />
           <span>Log Workout</span>
