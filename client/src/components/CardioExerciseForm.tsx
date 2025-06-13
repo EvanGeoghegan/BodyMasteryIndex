@@ -64,8 +64,8 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
           <div className="flex items-center space-x-1">
             <Input
               type="number"
-              value={set.duration || 0}
-              onChange={(e) => updateSet(0, { duration: parseInt(e.target.value) || 0 })}
+              value={set.duration || ""}
+              onChange={(e) => updateSet(0, { duration: parseInt(e.target.value) || undefined })}
               className="bg-dark-primary border-dark-border text-text-primary font-medium"
               placeholder="0"
             />
@@ -80,8 +80,8 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
           <div className="flex items-center space-x-1">
             <Input
               type="number"
-              value={set.distance || 0}
-              onChange={(e) => updateSet(0, { distance: parseFloat(e.target.value) || 0 })}
+              value={set.distance || ""}
+              onChange={(e) => updateSet(0, { distance: parseFloat(e.target.value) || undefined })}
               className="bg-dark-primary border-dark-border text-text-primary font-medium"
               placeholder="0"
               step="0.1"
