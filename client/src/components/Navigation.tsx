@@ -1,4 +1,4 @@
-import { Home, Dumbbell, Copy, Trophy, Calendar } from "lucide-react";
+import { Home, Dumbbell, Copy, Trophy, Calendar, BarChart3 } from "lucide-react";
 
 interface NavigationProps {
   activeTab: string;
@@ -9,6 +9,7 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
   const tabs = [
     { id: 'dashboard', label: 'Home', icon: Home },
     { id: 'workout', label: 'Workout', icon: Dumbbell },
+    { id: 'progress', label: 'Progress', icon: BarChart3 },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
     { id: 'templates', label: 'Templates', icon: Copy },
     { id: 'records', label: 'Records', icon: Trophy },
@@ -16,7 +17,7 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
 
   return (
     <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-dark-secondary border-t border-dark-border">
-      <div className="flex items-center justify-around py-2">
+      <div className="grid grid-cols-6 gap-1 py-2 px-1">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -25,14 +26,14 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex flex-col items-center py-2 px-4 transition-colors ${
+              className={`flex flex-col items-center py-2 px-1 transition-colors rounded-lg ${
                 isActive 
-                  ? 'text-accent-navy' 
-                  : 'text-text-secondary hover:text-accent-light-navy'
+                  ? 'text-accent-navy bg-accent-navy/10' 
+                  : 'text-text-secondary hover:text-accent-light-navy hover:bg-dark-elevated'
               }`}
             >
-              <Icon className="text-xl mb-1" size={20} />
-              <span className="text-xs font-medium">{tab.label}</span>
+              <Icon className="mb-1" size={18} />
+              <span className="text-xs font-medium truncate">{tab.label}</span>
             </button>
           );
         })}
