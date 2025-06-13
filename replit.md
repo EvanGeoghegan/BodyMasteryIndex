@@ -33,6 +33,8 @@ TrainLog is a comprehensive offline fitness training application built with Reac
 - **Templates**: Predefined workout structures for quick workout creation
 - **Personal Bests**: Track maximum achievements for strength exercises
 - **Exercise Sets**: Individual set data including completion status and rest timing
+- **Supplements**: Daily supplement tracking with dosage, timing, and adherence monitoring
+- **Supplement Logs**: Daily tracking records for supplement intake with completion status
 
 ### User Interface Components
 - **Navigation**: Bottom tab navigation for mobile-first experience
@@ -40,6 +42,7 @@ TrainLog is a comprehensive offline fitness training application built with Reac
 - **Activity Calendar**: Visual representation of workout consistency
 - **Rest Timer**: Built-in timer for rest periods between sets
 - **Progress Dashboard**: Charts and analytics for workout progression
+- **Supplement Tracker**: Daily supplement management with intake logging and progress tracking
 
 ### Storage Abstraction Layer
 - **IStorage Interface**: Defines CRUD operations for all data entities
@@ -111,6 +114,7 @@ Changelog:
 - June 13, 2025. Initial setup with blue navy theme
 - June 13, 2025. Implemented darker red theme replacing blue accents throughout app
 - June 13, 2025. Updated typography: Montserrat for headings, Inter for body text
+- June 13, 2025. Added comprehensive supplement tracker with daily logging, progress tracking, and management features
 ```
 
 ## User Preferences
