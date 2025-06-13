@@ -53,8 +53,9 @@
 
 [data-radix-select-item]:focus,
 [data-radix-select-item][data-highlighted],
-[data-radix-select-item][data-state="checked"] {
-  background-color: var(--accent-navy) !important;
+[data-radix-select-item][data-state="checked"],
+[data-radix-select-item]:hover {
+  background-color: hsl(215, 100%, 45%) !important;
   color: white !important;
 }
 
