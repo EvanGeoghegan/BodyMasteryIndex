@@ -39,10 +39,10 @@
   --dropdown-text: hsl(220, 15%, 90%);
 }
 
-/* Improve dropdown text visibility */
+/* Improve dropdown text visibility - comprehensive approach */
 [data-radix-select-content] {
-  background-color: var(--dark-secondary) !important;
-  border-color: var(--dark-border) !important;
+  background-color: hsl(220, 20%, 12%) !important;
+  border-color: hsl(220, 15%, 25%) !important;
   color: white !important;
 }
 
@@ -67,27 +67,42 @@
   color: white !important;
 }
 
-/* Additional overrides for stubborn text */
-[data-radix-select-content] * {
+/* Nuclear option - override everything */
+[data-radix-select-content] *,
+[data-radix-select-content] *:before,
+[data-radix-select-content] *:after {
   color: white !important;
 }
 
-/* Specific overrides by class name */
-[class*="select-content"] {
-  background-color: var(--dark-secondary) !important;
+[data-radix-select-item] *,
+[data-radix-select-item] *:before,
+[data-radix-select-item] *:after {
   color: white !important;
 }
 
-[class*="select-item"] {
+/* Override any potential CSS-in-JS styles */
+[data-radix-select-item][data-highlighted] *,
+[data-radix-select-item]:focus *,
+[data-radix-select-item]:hover * {
+  background-color: hsl(215, 100%, 45%) !important;
   color: white !important;
 }
 
-/* Target the SelectContent and SelectItem components specifically */
-.bg-dark-secondary.border-dark-border {
-  color: white !important;
+/* Target by role attribute */
+[role="listbox"] {
+  background-color: hsl(220, 20%, 12%) !important;
 }
 
-.bg-dark-secondary.border-dark-border [role="option"] {
+[role="option"] {
+  color: white !important;
+  background-color: transparent !important;
+}
+
+[role="option"]:focus,
+[role="option"]:hover,
+[role="option"][data-highlighted],
+[role="option"][aria-selected="true"] {
+  background-color: hsl(215, 100%, 45%) !important;
   color: white !important;
 }
 
