@@ -1,6 +1,7 @@
 import { Exercise, ExerciseSet } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash2, Check, Circle } from "lucide-react";
 
 interface CardioExerciseFormProps {
@@ -19,6 +20,10 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
       index === setIndex ? { ...set, ...updates } : set
     );
     onUpdate({ ...exercise, sets: updatedSets });
+  };
+
+  const updateCardioType = (cardioType: "run" | "cycle" | "swim" | "hike" | "sauna" | "other") => {
+    onUpdate({ ...exercise, cardioType });
   };
 
   const toggleCompleted = () => {
@@ -48,11 +53,24 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
         </Button>
       </div>
 
-      {/* Cardio Badge */}
+      {/* Cardio Type Selection */}
       <div className="mb-3">
-        <span className="inline-block bg-accent-navy/20 text-accent-navy px-2 py-1 rounded text-xs font-medium">
-          Cardio Exercise
-        </span>
+        <label className="text-text-secondary text-sm font-medium mb-2 block">
+          Cardio Type
+        </label>
+        <Select value={exercise.cardioType || "other"} onValueChange={(value) => updateCardioType(value as "run" | "cycle" | "swim" | "hike" | "sauna" | "other")}>
+          <SelectTrigger className="w-full bg-dark-primary text-text-primary border-dark-border">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(220, 20%, 12%)', color: 'white' }}>
+            <SelectItem value="run" style={{ color: 'white' }}>Running</SelectItem>
+            <SelectItem value="cycle" style={{ color: 'white' }}>Cycling</SelectItem>
+            <SelectItem value="swim" style={{ color: 'white' }}>Swimming</SelectItem>
+            <SelectItem value="hike" style={{ color: 'white' }}>Hiking</SelectItem>
+            <SelectItem value="sauna" style={{ color: 'white' }}>Sauna</SelectItem>
+            <SelectItem value="other" style={{ color: 'white' }}>Other</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Cardio Stats */}
