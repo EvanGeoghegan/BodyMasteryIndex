@@ -59,15 +59,34 @@ export default function CalendarPage() {
     return workoutDays.includes(dateString);
   };
 
+  const getConsecutiveRestDays = (date: Date) => {
+    if (isFutureDate(date) || hasWorkout(date)) return 0;
+    
+    let consecutiveDays = 1; // Current day is a rest day
+    const currentDate = new Date(date);
+    
+    // Count backwards to find consecutive rest days
+    for (let i = 1; i <= 7; i++) { // Check up to 7 days back
+      const checkDate = new Date(currentDate);
+      checkDate.setDate(checkDate.getDate() - i);
+      const checkDateString = checkDate.toISOString().split('T')[0];
+      
+      if (!workoutDays.includes(checkDateString)) {
+        consecutiveDays++;
+      } else {
+        break;
+      }
+    }
+    
+    return consecutiveDays;
+  };
+
   const isConsecutiveRestDay = (date: Date) => {
-    if (isFutureDate(date)) return false;
-    
-    const dateString = date.toISOString().split('T')[0];
-    const prevDay = new Date(date);
-    prevDay.setDate(prevDay.getDate() - 1);
-    const prevDayString = prevDay.toISOString().split('T')[0];
-    
-    return !hasWorkout(date) && !workoutDays.includes(prevDayString);
+    return getConsecutiveRestDays(date) >= 2;
+  };
+
+  const isLongRestPeriod = (date: Date) => {
+    return getConsecutiveRestDays(date) >= 3;
   };
 
   const handleDateClick = (date: Date) => {
@@ -150,6 +169,7 @@ export default function CalendarPage() {
               const isTodayDate = isToday(date);
               const hasWorkoutDay = hasWorkout(date);
               const isConsecutiveRest = isConsecutiveRestDay(date);
+              const isLongRest = isLongRestPeriod(date);
               const isFuture = isFutureDate(date);
 
               return (
@@ -180,11 +200,16 @@ export default function CalendarPage() {
                     <div className="absolute top-2 right-2 w-3 h-3 bg-accent-red rounded-full shadow-sm"></div>
                   )}
                   
-                  {/* Consecutive rest day icon */}
-                  {isConsecutiveRest && !isTodayDate && isCurrentMonthDay && (
+                  {/* Short consecutive rest day icon */}
+                  {isConsecutiveRest && !isLongRest && !isTodayDate && isCurrentMonthDay && (
                     <div className="absolute top-1 right-1 p-1 bg-text-disabled/20 rounded-full">
                       <Minus className="text-text-disabled" size={12} />
                     </div>
+                  )}
+                  
+                  {/* Long rest period snail */}
+                  {isLongRest && !isTodayDate && isCurrentMonthDay && (
+                    <div className="absolute top-1 right-1 text-lg">🐌</div>
                   )}
                 </div>
               );
@@ -203,13 +228,17 @@ export default function CalendarPage() {
             </div>
             <div className="flex items-center space-x-3">
               <div className="w-3 h-3 bg-accent-red rounded-full"></div>
-              <span className="text-text-secondary">Rest Day</span>
+              <span className="text-text-secondary">Single Rest Day</span>
             </div>
             <div className="flex items-center space-x-3">
               <div className="p-1 bg-text-disabled/20 rounded-full">
                 <Minus className="text-text-disabled" size={12} />
               </div>
-              <span className="text-text-secondary">Consecutive Rest</span>
+              <span className="text-text-secondary">2+ Rest Days</span>
+            </div>
+            <div className="flex items-center space-x-3 col-span-2 justify-center">
+              <span className="text-lg">🐌</span>
+              <span className="text-text-secondary">3+ Rest Days</span>
             </div>
           </div>
         </div>
