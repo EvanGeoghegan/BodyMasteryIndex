@@ -1,4 +1,4 @@
-import { Workout, Template, PersonalBest, InsertWorkout, InsertTemplate, InsertPersonalBest } from "@shared/schema";
+import { Workout, Template, PersonalBest, InsertWorkout, InsertTemplate, InsertPersonalBest, Supplement, InsertSupplement, SupplementLog, InsertSupplementLog } from "@shared/schema";
 
 class LocalStorage {
   private getStorageKey(key: string): string {

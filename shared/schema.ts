@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { pgTable, text, integer, boolean, jsonb, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, boolean, jsonb, timestamp, real } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
 // Exercise Set Schema
@@ -166,6 +166,31 @@ export const personalBests = pgTable("personal_bests", {
   type: text("type").notNull(),
   category: text("category"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const supplements = pgTable("supplements", {
+  id: text("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  name: text("name").notNull(),
+  brand: text("brand"),
+  type: text("type").notNull(),
+  dosage: integer("dosage").notNull(),
+  unit: text("unit").notNull(),
+  frequency: text("frequency").notNull(),
+  timingPreference: text("timing_preference"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const supplementLogs = pgTable("supplement_logs", {
+  id: text("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  supplementId: text("supplement_id").references(() => supplements.id).notNull(),
+  date: text("date").notNull(),
+  time: text("time"),
+  taken: boolean("taken").notNull(),
+  dosageTaken: integer("dosage_taken"),
+  notes: text("notes"),
 });
 
 // Database types
