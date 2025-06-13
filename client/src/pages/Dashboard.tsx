@@ -134,6 +134,11 @@ export default function Dashboard({ onNavigateToWorkout, refreshTrigger }: Dashb
         </div>
       </div>
 
+      {/* Weekly Muscle Group Heat Map */}
+      <div className="px-4 pb-4">
+        <MuscleGroupHeatmap />
+      </div>
+
       {/* Quick Actions */}
       <div className="px-4 pb-4">
         <Button 

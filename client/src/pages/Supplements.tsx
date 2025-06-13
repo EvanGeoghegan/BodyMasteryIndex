@@ -180,10 +180,10 @@ export default function Supplements() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white font-['Montserrat']">
+          <h1 className="text-2xl font-bold text-text-primary font-['Montserrat']">
             Supplements
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-text-secondary mt-1">
             Track your daily supplement intake
           </p>
         </div>
@@ -423,15 +423,15 @@ export default function Supplements() {
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
                   <Pill className="w-16 h-16 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2 font-['Montserrat']">
+                  <h3 className="text-lg font-medium text-text-primary mb-2 font-['Montserrat']">
                     No supplements added yet
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
+                  <p className="text-text-secondary text-center mb-6">
                     Start tracking your supplements by adding them to your routine.
                   </p>
                   <Button 
                     onClick={() => setIsAddDialogOpen(true)}
-                    className="bg-red-600 hover:bg-red-700"
+                    className="bg-accent-red hover:bg-accent-light-red"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Add Your First Supplement
@@ -458,16 +458,16 @@ export default function Supplements() {
                           </Button>
                           
                           <div>
-                            <h3 className="font-medium text-gray-900 dark:text-white font-['Montserrat']">
+                            <h3 className="font-medium text-text-primary font-['Montserrat']">
                               {supplement.name}
-                              {supplement.brand && <span className="text-gray-600 dark:text-gray-400 font-normal"> by {supplement.brand}</span>}
+                              {supplement.brand && <span className="text-text-secondary font-normal"> by {supplement.brand}</span>}
                             </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <p className="text-sm text-text-secondary">
                               {supplement.dosage} {supplement.unit} • {supplement.frequency.replace('_', ' ')}
                               {supplement.timingPreference && ` • ${supplement.timingPreference.replace('_', ' ')}`}
                             </p>
                             {log?.time && (
-                              <p className="text-xs text-gray-500 dark:text-gray-500 flex items-center gap-1">
+                              <p className="text-xs text-text-tertiary flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
                                 Taken at {log.time}
                               </p>
@@ -492,15 +492,15 @@ export default function Supplements() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <Pill className="w-16 h-16 text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2 font-['Montserrat']">
+                <h3 className="text-lg font-medium text-text-primary mb-2 font-['Montserrat']">
                   No supplements to manage
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
+                <p className="text-text-secondary text-center mb-6">
                   Add some supplements to start managing your routine.
                 </p>
                 <Button 
                   onClick={() => setIsAddDialogOpen(true)}
-                  className="bg-red-600 hover:bg-red-700"
+                  className="bg-accent-red hover:bg-accent-light-red"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Supplement
@@ -513,16 +513,16 @@ export default function Supplements() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-medium text-gray-900 dark:text-white font-['Montserrat']">
+                      <h3 className="font-medium text-text-primary font-['Montserrat']">
                         {supplement.name}
-                        {supplement.brand && <span className="text-gray-600 dark:text-gray-400 font-normal"> by {supplement.brand}</span>}
+                        {supplement.brand && <span className="text-text-secondary font-normal"> by {supplement.brand}</span>}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-text-secondary">
                         {supplement.dosage} {supplement.unit} • {supplement.frequency.replace('_', ' ')}
                         {supplement.timingPreference && ` • ${supplement.timingPreference.replace('_', ' ')}`}
                       </p>
                       {supplement.notes && (
-                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                        <p className="text-xs text-text-tertiary mt-1">
                           {supplement.notes}
                         </p>
                       )}
@@ -545,7 +545,7 @@ export default function Supplements() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleDelete(supplement)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="text-accent-red hover:text-accent-light-red hover:bg-accent-red/10"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
