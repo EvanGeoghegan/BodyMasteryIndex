@@ -92,6 +92,39 @@ export const quoteSchema = z.object({
 
 export type Quote = z.infer<typeof quoteSchema>;
 
+// Supplement schemas
+export const supplementSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  brand: z.string().optional(),
+  type: z.enum(["vitamin", "mineral", "protein", "creatine", "pre_workout", "bcaa", "omega3", "probiotic", "other"]),
+  dosage: z.number(), // amount per serving
+  unit: z.enum(["mg", "g", "mcg", "iu", "ml", "tablets", "capsules", "scoops"]),
+  frequency: z.enum(["daily", "twice_daily", "three_times_daily", "weekly", "as_needed"]),
+  timingPreference: z.enum(["morning", "afternoon", "evening", "pre_workout", "post_workout", "with_meals", "empty_stomach"]).optional(),
+  notes: z.string().optional(),
+  createdAt: z.string(),
+});
+
+export const supplementLogSchema = z.object({
+  id: z.string(),
+  supplementId: z.string(),
+  date: z.string(),
+  time: z.string().optional(),
+  taken: z.boolean(),
+  dosageTaken: z.number().optional(), // actual amount taken if different
+  notes: z.string().optional(),
+});
+
+export type Supplement = z.infer<typeof supplementSchema>;
+export type SupplementLog = z.infer<typeof supplementLogSchema>;
+
+export const insertSupplementSchema = supplementSchema.omit({ id: true, createdAt: true });
+export const insertSupplementLogSchema = supplementLogSchema.omit({ id: true });
+
+export type InsertSupplement = z.infer<typeof insertSupplementSchema>;
+export type InsertSupplementLog = z.infer<typeof insertSupplementLogSchema>;
+
 // Database Tables
 export const users = pgTable("users", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),

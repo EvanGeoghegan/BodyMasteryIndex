@@ -11,6 +11,10 @@ import {
   type InsertTemplate,
   type PersonalBest,
   type InsertPersonalBest,
+  type Supplement,
+  type InsertSupplement,
+  type SupplementLog,
+  type InsertSupplementLog,
   type DbWorkout,
   type InsertDbWorkout,
   type DbTemplate,
@@ -47,6 +51,20 @@ export interface IStorage {
   createPersonalBest(userId: number, personalBest: InsertPersonalBest): Promise<PersonalBest>;
   updatePersonalBest(userId: number, id: string, updates: Partial<PersonalBest>): Promise<PersonalBest | undefined>;
   deletePersonalBest(userId: number, id: string): Promise<boolean>;
+  
+  // Supplement methods
+  getSupplements(userId: number): Promise<Supplement[]>;
+  getSupplement(userId: number, id: string): Promise<Supplement | undefined>;
+  createSupplement(userId: number, supplement: InsertSupplement): Promise<Supplement>;
+  updateSupplement(userId: number, id: string, updates: Partial<Supplement>): Promise<Supplement | undefined>;
+  deleteSupplement(userId: number, id: string): Promise<boolean>;
+  
+  // Supplement log methods
+  getSupplementLogs(userId: number, date?: string): Promise<SupplementLog[]>;
+  getSupplementLog(userId: number, id: string): Promise<SupplementLog | undefined>;
+  createSupplementLog(userId: number, log: InsertSupplementLog): Promise<SupplementLog>;
+  updateSupplementLog(userId: number, id: string, updates: Partial<SupplementLog>): Promise<SupplementLog | undefined>;
+  deleteSupplementLog(userId: number, id: string): Promise<boolean>;
   
   // Utility methods
   getWorkoutDays(userId: number): Promise<string[]>;

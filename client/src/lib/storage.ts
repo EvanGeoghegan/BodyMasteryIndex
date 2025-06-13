@@ -167,6 +167,103 @@ class LocalStorage {
   }
 
   // Initialize default templates
+  // Supplement methods
+  getSupplements(): Supplement[] {
+    return this.getData<Supplement>('supplements');
+  }
+
+  getSupplement(id: string): Supplement | undefined {
+    const supplements = this.getSupplements();
+    return supplements.find(s => s.id === id);
+  }
+
+  createSupplement(supplement: InsertSupplement): Supplement {
+    const newSupplement: Supplement = {
+      ...supplement,
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString(),
+    };
+
+    const supplements = this.getSupplements();
+    supplements.push(newSupplement);
+    this.setData('supplements', supplements);
+    return newSupplement;
+  }
+
+  updateSupplement(id: string, updates: Partial<Supplement>): Supplement | undefined {
+    const supplements = this.getSupplements();
+    const index = supplements.findIndex(s => s.id === id);
+    
+    if (index === -1) return undefined;
+    
+    supplements[index] = { ...supplements[index], ...updates };
+    this.setData('supplements', supplements);
+    return supplements[index];
+  }
+
+  deleteSupplement(id: string): boolean {
+    const supplements = this.getSupplements();
+    const filteredSupplements = supplements.filter(s => s.id !== id);
+    
+    if (filteredSupplements.length === supplements.length) return false;
+    
+    this.setData('supplements', filteredSupplements);
+    
+    // Also delete all logs for this supplement
+    const logs = this.getSupplementLogs();
+    const filteredLogs = logs.filter(l => l.supplementId !== id);
+    this.setData('supplementLogs', filteredLogs);
+    
+    return true;
+  }
+
+  // Supplement log methods
+  getSupplementLogs(date?: string): SupplementLog[] {
+    const logs = this.getData<SupplementLog>('supplementLogs');
+    if (date) {
+      return logs.filter(log => log.date === date);
+    }
+    return logs;
+  }
+
+  getSupplementLog(id: string): SupplementLog | undefined {
+    const logs = this.getSupplementLogs();
+    return logs.find(l => l.id === id);
+  }
+
+  createSupplementLog(log: InsertSupplementLog): SupplementLog {
+    const newLog: SupplementLog = {
+      ...log,
+      id: crypto.randomUUID(),
+    };
+
+    const logs = this.getSupplementLogs();
+    logs.push(newLog);
+    this.setData('supplementLogs', logs);
+    return newLog;
+  }
+
+  updateSupplementLog(id: string, updates: Partial<SupplementLog>): SupplementLog | undefined {
+    const logs = this.getSupplementLogs();
+    const index = logs.findIndex(l => l.id === id);
+    
+    if (index === -1) return undefined;
+    
+    logs[index] = { ...logs[index], ...updates };
+    this.setData('supplementLogs', logs);
+    return logs[index];
+  }
+
+  deleteSupplementLog(id: string): boolean {
+    const logs = this.getSupplementLogs();
+    const filteredLogs = logs.filter(l => l.id !== id);
+    
+    if (filteredLogs.length === logs.length) return false;
+    
+    this.setData('supplementLogs', filteredLogs);
+    return true;
+  }
+
   initializeDefaultTemplates(): void {
     const existingTemplates = this.getTemplates();
     if (existingTemplates.length > 0) return;
