@@ -221,8 +221,8 @@ export default function ProgressDashboard() {
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
       <header className="bg-dark-secondary p-4 shadow-lg">
-        <h2 className="text-xl font-bold text-text-primary flex items-center">
-          <BarChart3 className="mr-2 text-accent-navy" size={24} />
+        <h2 className="text-xl font-bold text-text-primary font-heading flex items-center">
+          <BarChart3 className="mr-2 text-accent-red" size={24} />
           Progress Dashboard
         </h2>
       </header>
@@ -236,7 +236,7 @@ export default function ProgressDashboard() {
               <SelectTrigger className="bg-dark-secondary border-dark-border text-dropdown-text">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(220, 20%, 12%)', color: 'white' }}>
+              <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(0, 15%, 10%)', color: 'white' }}>
                 <SelectItem value="7" style={{ color: 'white' }}>Last 7 days</SelectItem>
                 <SelectItem value="30" style={{ color: 'white' }}>Last 30 days</SelectItem>
                 <SelectItem value="90" style={{ color: 'white' }}>Last 3 months</SelectItem>
@@ -251,7 +251,7 @@ export default function ProgressDashboard() {
               <SelectTrigger className="bg-dark-secondary border-dark-border text-dropdown-text">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(220, 20%, 12%)', color: 'white' }}>
+              <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(0, 15%, 10%)', color: 'white' }}>
                 <SelectItem value="all" style={{ color: 'white' }}>All Exercises</SelectItem>
                 {uniqueExercises.map(exercise => (
                   <SelectItem key={exercise} value={exercise} style={{ color: 'white' }}>{exercise}</SelectItem>
@@ -266,7 +266,7 @@ export default function ProgressDashboard() {
               <SelectTrigger className="bg-dark-secondary border-dark-border text-dropdown-text">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(220, 20%, 12%)', color: 'white' }}>
+              <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(0, 15%, 10%)', color: 'white' }}>
                 <SelectItem value="volume" style={{ color: 'white' }}>Volume Progress</SelectItem>
                 <SelectItem value="weight" style={{ color: 'white' }}>Weight Progress</SelectItem>
                 <SelectItem value="frequency" style={{ color: 'white' }}>Workout Frequency</SelectItem>
@@ -324,7 +324,7 @@ export default function ProgressDashboard() {
       <div className="px-4 pb-4">
         {chartType === "volume" && (
           <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border shadow-lg">
-            <h3 className="text-lg font-semibold text-text-primary mb-4">Volume Progress</h3>
+            <h3 className="text-lg font-semibold text-text-primary font-heading mb-4">Volume Progress</h3>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={progressData}>

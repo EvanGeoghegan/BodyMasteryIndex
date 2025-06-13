@@ -75,7 +75,7 @@ export default function PersonalBests() {
     <div className="min-h-screen bg-dark-primary pb-20">
       <header className="bg-dark-secondary p-4 shadow-lg">
         <h2 className="text-xl font-bold text-text-primary font-heading flex items-center">
-          <Trophy className="mr-2 text-accent-navy" size={24} />
+          <Trophy className="mr-2 text-accent-red" size={24} />
           Personal Bests
         </h2>
       </header>
