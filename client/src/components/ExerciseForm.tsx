@@ -16,7 +16,7 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseF
     onUpdate({ ...exercise, name });
   };
 
-  const updateExerciseType = (type: "strength" | "cardio") => {
+  const updateExerciseType = (type: "strength" | "cardio" | "core") => {
     onUpdate({ ...exercise, type });
   };
 
@@ -90,6 +90,7 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseF
           <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(0, 15%, 10%)', color: 'white' }}>
             <SelectItem value="strength" style={{ color: 'white' }}>Strength</SelectItem>
             <SelectItem value="cardio" style={{ color: 'white' }}>Cardio</SelectItem>
+            <SelectItem value="core" style={{ color: 'white' }}>Core</SelectItem>
           </SelectContent>
         </Select>
 

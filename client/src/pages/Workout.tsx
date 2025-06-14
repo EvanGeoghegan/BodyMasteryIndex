@@ -206,6 +206,65 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
       </header>
 
       <div className="p-4 space-y-4">
+        {/* Today's Workouts */}
+        {todaysWorkouts.length > 0 && (
+          <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
+            <h3 className="text-lg font-semibold text-text-primary font-heading mb-3">Today's Workouts</h3>
+            <div className="space-y-2">
+              {todaysWorkouts.map((workout) => (
+                <div key={workout.id} className="flex items-center justify-between p-3 bg-dark-elevated rounded-lg border border-dark-border">
+                  <div>
+                    <h4 className="font-medium text-text-primary">{workout.name}</h4>
+                    <p className="text-sm text-text-secondary">
+                      {workout.exercises.length} exercise{workout.exercises.length !== 1 ? 's' : ''} • {workout.type}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => editWorkout(workout)}
+                      className="bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-red"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        storage.deleteWorkout(workout.id);
+                        loadTodaysWorkouts();
+                        toast({
+                          title: "Success",
+                          description: "Workout deleted successfully!",
+                        });
+                      }}
+                      className="bg-dark-elevated border-dark-border text-red-500 hover:text-red-700"
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {editingWorkout && (
+              <div className="mt-3 pt-3 border-t border-dark-border">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-accent-red">Editing: {editingWorkout.name}</p>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearWorkout}
+                    className="text-text-secondary hover:text-text-primary"
+                  >
+                    Cancel Edit
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Workout Name and Template Selection */}
         <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
           <div className="flex items-center justify-between mb-3">
@@ -245,13 +304,14 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
               <label className="text-text-secondary text-sm font-medium mb-1 block">
                 Workout Type
               </label>
-              <Select value={workoutType} onValueChange={(value: "strength" | "cardio" | "mixed") => setWorkoutType(value)}>
+              <Select value={workoutType} onValueChange={(value: "strength" | "cardio" | "core" | "mixed") => setWorkoutType(value)}>
                 <SelectTrigger className="w-full bg-dark-elevated text-text-primary border-dark-border">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(0, 15%, 10%)', color: 'white' }}>
                   <SelectItem value="strength" style={{ color: 'white' }}>Strength Training</SelectItem>
                   <SelectItem value="cardio" style={{ color: 'white' }}>Cardio</SelectItem>
+                  <SelectItem value="core" style={{ color: 'white' }}>Core</SelectItem>
                   <SelectItem value="mixed" style={{ color: 'white' }}>Mixed</SelectItem>
                 </SelectContent>
               </Select>
@@ -273,23 +333,36 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
           </div>
 
           <div className="space-y-4">
-            {exercises.map((exercise, index) => (
-              exercise.type === "cardio" ? (
-                <CardioExerciseForm
-                  key={exercise.id}
-                  exercise={exercise}
-                  onUpdate={(updatedExercise) => updateExercise(index, updatedExercise)}
-                  onDelete={() => deleteExercise(index)}
-                />
-              ) : (
-                <ExerciseForm
-                  key={exercise.id}
-                  exercise={exercise}
-                  onUpdate={(updatedExercise) => updateExercise(index, updatedExercise)}
-                  onDelete={() => deleteExercise(index)}
-                />
-              )
-            ))}
+            {exercises.map((exercise, index) => {
+              if (exercise.type === "cardio") {
+                return (
+                  <CardioExerciseForm
+                    key={exercise.id}
+                    exercise={exercise}
+                    onUpdate={(updatedExercise) => updateExercise(index, updatedExercise)}
+                    onDelete={() => deleteExercise(index)}
+                  />
+                );
+              } else if (exercise.type === "core") {
+                return (
+                  <CoreExerciseForm
+                    key={exercise.id}
+                    exercise={exercise}
+                    onUpdate={(updatedExercise) => updateExercise(index, updatedExercise)}
+                    onDelete={() => deleteExercise(index)}
+                  />
+                );
+              } else {
+                return (
+                  <ExerciseForm
+                    key={exercise.id}
+                    exercise={exercise}
+                    onUpdate={(updatedExercise) => updateExercise(index, updatedExercise)}
+                    onDelete={() => deleteExercise(index)}
+                  />
+                );
+              }
+            })}
           </div>
         </div>
 
@@ -299,7 +372,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
           className="w-full bg-accent-navy hover:bg-accent-light-navy text-white font-semibold py-3 px-6"
         >
           <Save className="mr-2" size={20} />
-          Save Workout
+          {editingWorkout ? "Update Workout" : "Save Workout"}
         </Button>
       </div>
 
