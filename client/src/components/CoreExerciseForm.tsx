@@ -114,7 +114,7 @@ export default function CoreExerciseForm({ exercise, onUpdate, onDelete }: CoreE
                 type="number"
                 value={set.duration || ""}
                 onChange={(e) => updateSet(set.id, { duration: Number(e.target.value) || 0 })}
-                placeholder="30"
+placeholder=""
                 className="w-full bg-transparent text-text-primary text-center text-sm border-none outline-none"
               />
               <div className="text-xs text-text-secondary text-center">sec</div>
@@ -128,7 +128,7 @@ export default function CoreExerciseForm({ exercise, onUpdate, onDelete }: CoreE
                 type="number"
                 value={set.reps || ""}
                 onChange={(e) => updateSet(set.id, { reps: Number(e.target.value) || 0 })}
-                placeholder="10"
+placeholder=""
                 className="w-full bg-transparent text-text-primary text-center text-sm border-none outline-none"
               />
               <div className="text-xs text-text-secondary text-center">reps</div>
@@ -140,7 +140,7 @@ export default function CoreExerciseForm({ exercise, onUpdate, onDelete }: CoreE
                 type="number"
                 value={set.restTime || ""}
                 onChange={(e) => updateSet(set.id, { restTime: Number(e.target.value) || 0 })}
-                placeholder="60"
+placeholder=""
                 className="w-full bg-transparent text-text-primary text-center text-sm border-none outline-none"
               />
               <div className="text-xs text-text-secondary text-center">sec</div>

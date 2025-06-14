@@ -149,6 +149,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
       date: new Date(workoutDate + 'T' + new Date().toTimeString().split(' ')[0]).toISOString(),
       exercises: exercises.filter(ex => ex.name.trim()), // Only save exercises with names
       type: workoutType,
+      notes: workoutNotes,
     };
 
     try {

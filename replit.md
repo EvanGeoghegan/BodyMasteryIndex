@@ -118,6 +118,10 @@ Changelog:
 - June 14, 2025. Removed muscle group heat map component and added data reset functionality
 - June 14, 2025. Streamlined navigation from 7 tabs to 5 tabs, improved spacing and removed Progress/Supplements from main navigation
 - June 14, 2025. Restored all 7 tabs with horizontal scrolling navigation for better accessibility and reduced crowding
+- June 14, 2025. Added Core exercise type with sets containing duration or reps and rest periods, matching strength exercise format
+- June 14, 2025. Implemented workout editing from dashboard - Edit Workout button in Last Activity section
+- June 14, 2025. Moved notes from individual exercises to general workout notes section
+- June 14, 2025. Removed auto-populated placeholder values from Core exercise inputs for cleaner interface
 ```
 
 ## User Preferences
