@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Plus, Save, Copy } from "lucide-react";
 import ExerciseForm from "@/components/ExerciseForm";
 import CardioExerciseForm from "@/components/CardioExerciseForm";
+import CoreExerciseForm from "@/components/CoreExerciseForm";
 import { storage } from "@/lib/storage";
 import { Exercise, ExerciseSet, Workout, Template } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
@@ -20,12 +21,15 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [showTemplateDialog, setShowTemplateDialog] = useState(false);
-  const [workoutType, setWorkoutType] = useState<"strength" | "cardio" | "mixed">("strength");
+  const [workoutType, setWorkoutType] = useState<"strength" | "cardio" | "core" | "mixed">("strength");
   const [workoutDate, setWorkoutDate] = useState(new Date().toISOString().split('T')[0]);
+  const [todaysWorkouts, setTodaysWorkouts] = useState<Workout[]>([]);
+  const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     setTemplates(storage.getTemplates());
+    loadTodaysWorkouts();
     
     // Initialize from template if provided
     if (initialTemplate) {
@@ -34,6 +38,30 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
       addExercise();
     }
   }, [initialTemplate]);
+
+  const loadTodaysWorkouts = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const allWorkouts = storage.getWorkouts();
+    const todaysWorkouts = allWorkouts.filter(workout => workout.date === today);
+    setTodaysWorkouts(todaysWorkouts);
+  };
+
+  const editWorkout = (workout: Workout) => {
+    setEditingWorkout(workout);
+    setWorkoutName(workout.name);
+    setWorkoutType(workout.type);
+    setExercises(workout.exercises);
+    setWorkoutDate(workout.date);
+  };
+
+  const clearWorkout = () => {
+    setEditingWorkout(null);
+    setWorkoutName("");
+    setExercises([]);
+    setWorkoutType("strength");
+    setWorkoutDate(new Date().toISOString().split('T')[0]);
+    addExercise();
+  };
 
   const loadFromTemplate = (template: Template) => {
     setWorkoutName(template.name);
@@ -112,7 +140,11 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
     };
 
     try {
-      storage.createWorkout(workout);
+      if (editingWorkout) {
+        storage.updateWorkout(editingWorkout.id, workout);
+      } else {
+        storage.createWorkout(workout);
+      }
       
       // Reset congratulations dismissal state for new workout
       const workoutDate = workout.date.split('T')[0];
@@ -148,14 +180,14 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
 
       toast({
         title: "Success",
-        description: "Workout saved successfully!",
+        description: editingWorkout ? "Workout updated successfully!" : "Workout saved successfully!",
       });
 
+      // Reload today's workouts
+      loadTodaysWorkouts();
+
       // Reset form
-      setWorkoutName("");
-      setExercises([]);
-      setWorkoutType("strength");
-      addExercise();
+      clearWorkout();
       
       onWorkoutSaved();
     } catch (error) {
