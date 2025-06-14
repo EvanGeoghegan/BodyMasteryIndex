@@ -24,6 +24,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
   const [showTemplateDialog, setShowTemplateDialog] = useState(false);
   const [workoutType, setWorkoutType] = useState<"strength" | "cardio" | "core" | "mixed">("strength");
   const [workoutDate, setWorkoutDate] = useState(new Date().toISOString().split('T')[0]);
+  const [workoutNotes, setWorkoutNotes] = useState("");
   const [todaysWorkouts, setTodaysWorkouts] = useState<Workout[]>([]);
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
   const { toast } = useToast();
@@ -39,6 +40,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
       setWorkoutType(initialWorkout.type);
       setExercises(initialWorkout.exercises);
       setWorkoutDate(initialWorkout.date.split('T')[0]);
+      setWorkoutNotes(initialWorkout.notes || "");
     }
     // Initialize from template if provided
     else if (initialTemplate) {
@@ -69,6 +71,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
     setExercises([]);
     setWorkoutType("strength");
     setWorkoutDate(new Date().toISOString().split('T')[0]);
+    setWorkoutNotes("");
     addExercise();
   };
 
@@ -373,6 +376,20 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
               }
             })}
           </div>
+        </div>
+
+        {/* Workout Notes */}
+        <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
+          <label className="block text-text-secondary text-sm font-medium mb-2">
+            Workout Notes
+          </label>
+          <textarea
+            value={workoutNotes}
+            onChange={(e) => setWorkoutNotes(e.target.value)}
+            placeholder="Add notes about your workout..."
+            className="w-full bg-dark-elevated text-text-primary border border-dark-border rounded-lg p-3 text-sm resize-none"
+            rows={3}
+          />
         </div>
 
         {/* Save Workout */}

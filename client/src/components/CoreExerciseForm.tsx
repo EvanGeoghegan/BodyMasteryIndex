@@ -14,15 +14,14 @@ interface CoreExerciseFormProps {
 
 export default function CoreExerciseForm({ exercise, onUpdate, onDelete }: CoreExerciseFormProps) {
   const addSet = () => {
-    const lastSet = exercise.sets[exercise.sets.length - 1];
     const newSet: ExerciseSet = {
       id: nanoid(),
-      reps: lastSet?.reps || 10,
+      reps: 0,
       weight: 0,
-      duration: lastSet?.duration || 30, // Default 30 seconds for core exercises
+      duration: 0,
       distance: 0,
       completed: false,
-      restTime: lastSet?.restTime || 60, // Default 60 seconds rest
+      restTime: 0,
     };
 
     onUpdate({
@@ -173,17 +172,7 @@ export default function CoreExerciseForm({ exercise, onUpdate, onDelete }: CoreE
         ))}
       </div>
 
-      {/* Notes */}
-      <div>
-        <label className="text-sm font-medium text-text-secondary mb-1 block">Notes</label>
-        <textarea
-          value={exercise.notes || ""}
-          onChange={(e) => updateNotes(e.target.value)}
-          placeholder="Exercise notes..."
-          className="w-full bg-dark-primary text-text-primary border border-dark-border rounded-lg p-2 text-sm resize-none"
-          rows={2}
-        />
-      </div>
+
     </div>
   );
 }
