@@ -23,7 +23,7 @@ export const exerciseSchema = z.object({
   name: z.string().min(1),
   sets: z.array(exerciseSetSchema),
   notes: z.string().optional(),
-  type: z.enum(["strength", "cardio"]).default("strength"),
+  type: z.enum(["strength", "cardio", "core"]).default("strength"),
   cardioType: z.enum(["run", "cycle", "swim", "hike", "sauna", "other"]).optional(),
 });
 
@@ -36,7 +36,7 @@ export const workoutSchema = z.object({
   date: z.string(), // ISO date string
   exercises: z.array(exerciseSchema),
   notes: z.string().optional(),
-  type: z.enum(["strength", "cardio", "mixed"]).default("strength"),
+  type: z.enum(["strength", "cardio", "core", "mixed"]).default("strength"),
 });
 
 export type Workout = z.infer<typeof workoutSchema>;
@@ -53,11 +53,11 @@ export const templateSchema = z.object({
     suggestedReps: z.number().optional(),
     suggestedDuration: z.number().optional(), // for cardio
     suggestedDistance: z.number().optional(), // for cardio
-    type: z.enum(["strength", "cardio"]).default("strength"),
+    type: z.enum(["strength", "cardio", "core"]).default("strength"),
   })),
   estimatedDuration: z.number().optional(), // in minutes
   category: z.string().optional(), // e.g., "Push", "Pull", "Legs", "Cardio"
-  type: z.enum(["strength", "cardio", "mixed"]).default("strength"),
+  type: z.enum(["strength", "cardio", "core", "mixed"]).default("strength"),
 });
 
 export type Template = z.infer<typeof templateSchema>;
