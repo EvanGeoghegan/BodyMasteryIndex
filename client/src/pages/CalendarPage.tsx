@@ -9,10 +9,34 @@ export default function CalendarPage() {
   const [workoutDays, setWorkoutDays] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    setWorkoutDays(storage.getWorkoutDays());
+    const refreshData = () => {
+      setWorkoutDays(storage.getWorkoutDays());
+      setRefreshKey(prev => prev + 1);
+    };
+    
+    refreshData();
+    
+    // Add event listener for when user returns to tab
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        refreshData();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
+
+  // Refresh data when the refreshKey changes
+  useEffect(() => {
+    setWorkoutDays(storage.getWorkoutDays());
+  }, [refreshKey]);
 
   const today = new Date();
   const currentMonth = currentDate.getMonth();
@@ -51,12 +75,24 @@ export default function CalendarPage() {
   };
 
   const isFutureDate = (date: Date) => {
-    return date > today;
+    const todayString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    return dateString > todayString;
   };
 
   const getWorkoutData = (date: Date) => {
-    const dateString = date.toISOString().split('T')[0];
-    const workouts = storage.getWorkouts().filter(w => w.date.startsWith(dateString));
+    // Use local timezone date string to avoid timezone issues
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    
+    const allWorkouts = storage.getWorkouts();
+    const workouts = allWorkouts.filter(w => {
+      // Handle both ISO strings and date-only strings
+      const workoutDateString = w.date.includes('T') ? w.date.split('T')[0] : w.date.split(' ')[0];
+      return workoutDateString === dateString;
+    });
     
     if (workouts.length === 0) return null;
     
@@ -151,9 +187,22 @@ export default function CalendarPage() {
             >
               <ChevronLeft size={24} />
             </button>
-            <h3 className="text-text-primary font-bold text-xl">
-              {monthNames[currentMonth]} {currentYear}
-            </h3>
+            <div className="flex items-center gap-3">
+              <h3 className="text-text-primary font-bold text-xl">
+                {monthNames[currentMonth]} {currentYear}
+              </h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setWorkoutDays(storage.getWorkoutDays());
+                  setRefreshKey(prev => prev + 1);
+                }}
+                className="text-text-secondary hover:text-text-primary"
+              >
+                Refresh
+              </Button>
+            </div>
             <button 
               onClick={() => navigateMonth(1)}
               className="text-text-secondary hover:text-text-primary transition-colors p-2 rounded-lg hover:bg-dark-elevated"
