@@ -48,13 +48,30 @@ export default function ProgressDashboard() {
 
   useEffect(() => {
     loadData();
+    
+    // Refresh data when tab becomes visible
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        loadData();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const loadData = () => {
-    const loadedWorkouts = storage.getWorkouts();
-    const loadedPersonalBests = storage.getPersonalBests();
-    setWorkouts(loadedWorkouts);
-    setPersonalBests(loadedPersonalBests);
+    try {
+      const loadedWorkouts = storage.getWorkouts();
+      const loadedPersonalBests = storage.getPersonalBests();
+      setWorkouts(loadedWorkouts);
+      setPersonalBests(loadedPersonalBests);
+    } catch (error) {
+      console.error('Error loading progress data:', error);
+    }
   };
 
   // Filter data based on timeframe

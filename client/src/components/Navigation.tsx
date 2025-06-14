@@ -1,4 +1,4 @@
-import { Home, Dumbbell, Copy, Trophy, Calendar, BarChart3, Pill } from "lucide-react";
+import { Home, Dumbbell, Copy, Trophy, Calendar, BarChart3, Pill, Settings } from "lucide-react";
 
 interface NavigationProps {
   activeTab: string;

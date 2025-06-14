@@ -184,38 +184,101 @@ export default function Supplements() {
             Supplements & Nutrition
           </h1>
           <p className="text-text-secondary mt-1">
-            Track your daily supplements and protein intake
+            Track your daily supplements, protein, and hydration
           </p>
         </div>
       </header>
 
-      <div className="p-4 space-y-6">
-        {/* Protein Tracker Card */}
-        <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
-              Daily Protein Goal
-            </h2>
-            <div className="text-sm text-text-secondary">
-              {new Date().toLocaleDateString()}
+      <div className="p-4 space-y-6 pb-24">
+        {/* Nutrition Tracker Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Protein Tracker */}
+          <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
+                Daily Protein
+              </h2>
+              <div className="text-sm text-text-secondary">
+                {new Date().toLocaleDateString()}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="bg-dark-elevated rounded-lg p-4 border border-dark-border text-center">
+                <div className="text-2xl font-bold text-accent-red">120g</div>
+                <div className="text-xs text-text-secondary">Target</div>
+              </div>
+              <div className="bg-dark-elevated rounded-lg p-4 border border-dark-border text-center">
+                <div className="text-2xl font-bold text-accent-green">85g</div>
+                <div className="text-xs text-text-secondary">Current</div>
+              </div>
+            </div>
+            
+            <div className="w-full bg-dark-elevated rounded-full h-3 mb-4">
+              <div className="bg-gradient-to-r from-accent-red to-accent-light-red h-3 rounded-full" style={{width: '71%'}}></div>
+            </div>
+            
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex-1 bg-dark-elevated border-dark-border text-text-secondary hover:bg-accent-green/20 hover:text-accent-green"
+              >
+                +25g
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex-1 bg-dark-elevated border-dark-border text-text-secondary hover:bg-accent-green/20 hover:text-accent-green"
+              >
+                +50g
+              </Button>
             </div>
           </div>
-          
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="bg-dark-elevated rounded-lg p-4 border border-dark-border text-center">
-              <div className="text-2xl font-bold text-accent-red">120g</div>
-              <div className="text-xs text-text-secondary">Target</div>
+
+          {/* Hydration Tracker */}
+          <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
+                Daily Water
+              </h2>
+              <div className="text-sm text-text-secondary">
+                {new Date().toLocaleDateString()}
+              </div>
             </div>
-            <div className="bg-dark-elevated rounded-lg p-4 border border-dark-border text-center">
-              <div className="text-2xl font-bold text-accent-green">85g</div>
-              <div className="text-xs text-text-secondary">Current</div>
+            
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="bg-dark-elevated rounded-lg p-4 border border-dark-border text-center">
+                <div className="text-2xl font-bold text-blue-400">3.0L</div>
+                <div className="text-xs text-text-secondary">Target</div>
+              </div>
+              <div className="bg-dark-elevated rounded-lg p-4 border border-dark-border text-center">
+                <div className="text-2xl font-bold text-accent-green">2.1L</div>
+                <div className="text-xs text-text-secondary">Current</div>
+              </div>
+            </div>
+            
+            <div className="w-full bg-dark-elevated rounded-full h-3 mb-4">
+              <div className="bg-gradient-to-r from-blue-500 to-blue-400 h-3 rounded-full" style={{width: '70%'}}></div>
+            </div>
+            
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex-1 bg-dark-elevated border-dark-border text-text-secondary hover:bg-blue-500/20 hover:text-blue-400"
+              >
+                +250ml
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex-1 bg-dark-elevated border-dark-border text-text-secondary hover:bg-blue-500/20 hover:text-blue-400"
+              >
+                +500ml
+              </Button>
             </div>
           </div>
-          
-          <div className="w-full bg-dark-elevated rounded-full h-3 mb-2">
-            <div className="bg-gradient-to-r from-accent-red to-accent-light-red h-3 rounded-full" style={{width: '71%'}}></div>
-          </div>
-          <div className="text-sm text-text-secondary text-center">71% complete • 35g remaining</div>
         </div>
 
         <div className="flex items-center justify-between">

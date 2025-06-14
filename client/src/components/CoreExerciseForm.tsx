@@ -92,18 +92,6 @@ export default function CoreExerciseForm({ exercise, onUpdate, onDelete }: CoreE
 
       {/* Sets */}
       <div className="space-y-2 mb-4">
-        <div className="flex items-center justify-between">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={addSet}
-            className="bg-dark-primary border-dark-border text-text-secondary hover:text-accent-red"
-          >
-            <Plus className="h-3 w-3 mr-1" />
-            Add Set
-          </Button>
-        </div>
-
         {exercise.sets.map((set, index) => (
           <div key={set.id} className="flex items-center space-x-2 p-2 bg-dark-primary rounded-lg border border-dark-border">
             <span className="text-sm font-medium text-text-secondary w-8">{index + 1}</span>
@@ -171,8 +159,15 @@ placeholder=""
           </div>
         ))}
       </div>
-
-
+      
+      <Button
+        onClick={addSet}
+        variant="ghost"
+        className="mt-3 text-accent-green hover:text-green-400 text-sm font-medium p-0 h-auto"
+      >
+        <Plus className="mr-1" size={16} />
+        Add Set
+      </Button>
     </div>
   );
 }
