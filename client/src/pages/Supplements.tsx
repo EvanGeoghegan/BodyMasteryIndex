@@ -177,19 +177,60 @@ export default function Supplements() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="min-h-screen bg-dark-primary">
+      <header className="bg-dark-secondary border-b border-dark-border">
+        <div className="p-4">
           <h1 className="text-2xl font-bold text-text-primary font-['Montserrat']">
-            Supplements
+            Supplements & Nutrition
           </h1>
           <p className="text-text-secondary mt-1">
-            Track your daily supplement intake
+            Track your daily supplements and protein intake
           </p>
+        </div>
+      </header>
+
+      <div className="p-4 space-y-6">
+        {/* Protein Tracker Card */}
+        <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
+              Daily Protein Goal
+            </h2>
+            <div className="text-sm text-text-secondary">
+              {new Date().toLocaleDateString()}
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="bg-dark-elevated rounded-lg p-4 border border-dark-border text-center">
+              <div className="text-2xl font-bold text-accent-red">120g</div>
+              <div className="text-xs text-text-secondary">Target</div>
+            </div>
+            <div className="bg-dark-elevated rounded-lg p-4 border border-dark-border text-center">
+              <div className="text-2xl font-bold text-accent-green">85g</div>
+              <div className="text-xs text-text-secondary">Current</div>
+            </div>
+          </div>
+          
+          <div className="w-full bg-dark-elevated rounded-full h-3 mb-2">
+            <div className="bg-gradient-to-r from-accent-red to-accent-light-red h-3 rounded-full" style={{width: '71%'}}></div>
+          </div>
+          <div className="text-sm text-text-secondary text-center">71% complete • 35g remaining</div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
+              Daily Supplements
+            </h2>
+            <p className="text-sm text-text-secondary">
+              {getCompletionRate()}% completed today
+            </p>
+          </div>
         </div>
         
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
+            <DialogTrigger asChild>
             <Button 
               className="bg-accent-red hover:bg-accent-light-red text-white"
               onClick={() => {
@@ -557,6 +598,7 @@ export default function Supplements() {
           )}
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 }
