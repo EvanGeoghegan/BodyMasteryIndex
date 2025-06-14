@@ -5,18 +5,19 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "@/components/Navigation";
 import Dashboard from "@/pages/Dashboard";
-import Workout from "@/pages/Workout";
+import WorkoutPage from "@/pages/Workout";
 import Templates from "@/pages/Templates";
 import CalendarPage from "@/pages/CalendarPage";
 import PersonalBests from "@/pages/PersonalBests";
 import ProgressDashboard from "@/pages/ProgressDashboard";
 import Supplements from "@/pages/Supplements";
 import { storage } from "@/lib/storage";
-import { Template, Exercise, ExerciseSet } from "@shared/schema";
+import { Template, Exercise, ExerciseSet, Workout as WorkoutType } from "@shared/schema";
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [dashboardRefreshTrigger, setDashboardRefreshTrigger] = useState(0);
+  const [workoutToEdit, setWorkoutToEdit] = useState<WorkoutType | null>(null);
 
   useEffect(() => {
     // Initialize default templates on first load

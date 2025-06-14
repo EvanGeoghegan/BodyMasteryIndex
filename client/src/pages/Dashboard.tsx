@@ -9,10 +9,11 @@ import confetti from 'canvas-confetti';
 
 interface DashboardProps {
   onNavigateToWorkout: () => void;
+  onEditWorkout?: (workout: Workout) => void;
   refreshTrigger?: number; // Add a prop to trigger refresh
 }
 
-export default function Dashboard({ onNavigateToWorkout, refreshTrigger }: DashboardProps) {
+export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshTrigger }: DashboardProps) {
   const [lastWorkout, setLastWorkout] = useState<Workout | undefined>();
   const [workoutDays, setWorkoutDays] = useState<string[]>([]);
   const [showCongrats, setShowCongrats] = useState(false);
@@ -172,6 +173,17 @@ export default function Dashboard({ onNavigateToWorkout, refreshTrigger }: Dashb
                   {lastWorkout.exercises.length} exercises
                 </span>
               </div>
+              
+              {onEditWorkout && (
+                <Button
+                  onClick={() => onEditWorkout(lastWorkout)}
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-3 bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-red"
+                >
+                  Edit Workout
+                </Button>
+              )}
             </div>
           ) : (
             <p className="text-text-secondary">No workouts logged yet. Start your first workout!</p>
