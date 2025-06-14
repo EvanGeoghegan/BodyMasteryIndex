@@ -40,8 +40,6 @@ export default function Dashboard({ onNavigateToWorkout, refreshTrigger }: Dashb
   };
 
   useEffect(() => {
-    // Reset all user data
-    storage.resetAllData();
     refreshData();
   }, []);
 
