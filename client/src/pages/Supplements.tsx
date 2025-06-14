@@ -227,9 +227,8 @@ export default function Supplements() {
               {getCompletionRate()}% completed today
             </p>
           </div>
-        </div>
-        
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
             <Button 
               className="bg-accent-red hover:bg-accent-light-red text-white"
@@ -438,61 +437,61 @@ export default function Supplements() {
         </Dialog>
       </div>
 
-      <Tabs defaultValue="today" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="today">Today's Supplements</TabsTrigger>
-          <TabsTrigger value="manage">Manage Supplements</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="today" className="space-y-6">
-          {supplements.length > 0 && (
-            <div className="text-center p-4 bg-dark-elevated rounded-lg border border-dark-border">
-              <p className="text-sm text-text-secondary mb-1">
-                {supplements.filter(s => getSupplementStatus(s)).length} of {supplements.length} taken today
-              </p>
-              <div className="w-full bg-dark-border rounded-full h-2">
-                <div 
-                  className="bg-accent-red h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${getCompletionRate()}%` }}
-                />
+        <Tabs defaultValue="today" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-dark-elevated border border-dark-border">
+            <TabsTrigger value="today" className="data-[state=active]:bg-accent-red data-[state=active]:text-white">Today's Supplements</TabsTrigger>
+            <TabsTrigger value="manage" className="data-[state=active]:bg-accent-red data-[state=active]:text-white">Manage Supplements</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="today" className="space-y-6 mt-6">
+            {supplements.length > 0 && (
+              <div className="text-center p-4 bg-dark-secondary rounded-lg border border-dark-border">
+                <p className="text-sm text-text-secondary mb-2">
+                  {supplements.filter(s => getSupplementStatus(s)).length} of {supplements.length} taken today
+                </p>
+                <div className="w-full bg-dark-elevated rounded-full h-3">
+                  <div 
+                    className="bg-gradient-to-r from-accent-red to-accent-light-red h-3 rounded-full transition-all duration-300"
+                    style={{ width: `${getCompletionRate()}%` }}
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <div className="space-y-3">
-            {supplements.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Pill className="w-16 h-16 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-text-primary mb-2 font-['Montserrat']">
-                    No supplements added yet
-                  </h3>
-                  <p className="text-text-secondary text-center mb-6">
-                    Start tracking your supplements by adding them to your routine.
-                  </p>
-                  <Button 
-                    onClick={() => setIsAddDialogOpen(true)}
-                    className="bg-accent-red hover:bg-accent-light-red"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Your First Supplement
-                  </Button>
-                </CardContent>
-              </Card>
+            <div className="space-y-3">
+              {supplements.length === 0 ? (
+                <div className="bg-dark-secondary rounded-lg border border-dark-border">
+                  <div className="flex flex-col items-center justify-center py-12 px-6">
+                    <Pill className="w-16 h-16 text-text-disabled mb-4" />
+                    <h3 className="text-lg font-medium text-text-primary mb-2 font-['Montserrat']">
+                      No supplements added yet
+                    </h3>
+                    <p className="text-text-secondary text-center mb-6">
+                      Start tracking your supplements by adding them to your routine.
+                    </p>
+                    <Button 
+                      onClick={() => setIsAddDialogOpen(true)}
+                      className="bg-accent-red hover:bg-accent-light-red text-white"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Your First Supplement
+                    </Button>
+                  </div>
+                </div>
             ) : (
               supplements.map((supplement) => {
                 const isTaken = getSupplementStatus(supplement);
                 const log = todayLogs.find(log => log.supplementId === supplement.id);
                 
                 return (
-                  <Card key={supplement.id} className={`transition-all duration-200 ${isTaken ? 'bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800' : ''}`}>
-                    <CardContent className="p-4">
+                  <div key={supplement.id} className={`bg-dark-secondary rounded-lg border transition-all duration-200 ${isTaken ? 'border-accent-green bg-accent-green/5' : 'border-dark-border'}`}>
+                    <div className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <Button
-                            variant="outline"
+                            variant="ghost"
                             size="sm"
-                            className={`h-8 w-8 p-0 ${isTaken ? 'bg-green-100 border-green-300 text-green-700 hover:bg-green-200' : 'border-gray-300 text-gray-500 hover:bg-gray-50'}`}
+                            className={`h-8 w-8 p-0 rounded-full ${isTaken ? 'bg-accent-green/20 text-accent-green hover:bg-accent-green/30' : 'border border-dark-border text-text-disabled hover:bg-dark-elevated'}`}
                             onClick={() => toggleSupplementLog(supplement)}
                           >
                             {isTaken ? <CheckCircle className="w-4 h-4" /> : <div className="w-4 h-4 rounded-full border-2 border-current" />}
@@ -508,7 +507,7 @@ export default function Supplements() {
                               {supplement.timingPreference && ` • ${supplement.timingPreference.replace('_', ' ')}`}
                             </p>
                             {log?.time && (
-                              <p className="text-xs text-text-tertiary flex items-center gap-1">
+                              <p className="text-xs text-text-secondary flex items-center gap-1 mt-1">
                                 <Clock className="w-3 h-3" />
                                 Taken at {log.time}
                               </p>
@@ -516,23 +515,23 @@ export default function Supplements() {
                           </div>
                         </div>
                         
-                        <Badge variant={isTaken ? "default" : "secondary"} className={isTaken ? "bg-green-100 text-green-800" : ""}>
+                        <div className={`px-2 py-1 rounded text-xs font-medium ${isTaken ? 'bg-accent-green/20 text-accent-green' : 'bg-dark-elevated text-text-secondary'}`}>
                           {supplement.type.replace('_', ' ')}
-                        </Badge>
+                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 );
               })
             )}
           </div>
         </TabsContent>
         
-        <TabsContent value="manage" className="space-y-4">
+        <TabsContent value="manage" className="space-y-4 mt-6">
           {supplements.length === 0 ? (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Pill className="w-16 h-16 text-gray-400 mb-4" />
+            <div className="bg-dark-secondary rounded-lg border border-dark-border">
+              <div className="flex flex-col items-center justify-center py-12 px-6">
+                <Pill className="w-16 h-16 text-text-disabled mb-4" />
                 <h3 className="text-lg font-medium text-text-primary mb-2 font-['Montserrat']">
                   No supplements to manage
                 </h3>
@@ -541,17 +540,17 @@ export default function Supplements() {
                 </p>
                 <Button 
                   onClick={() => setIsAddDialogOpen(true)}
-                  className="bg-accent-red hover:bg-accent-light-red"
+                  className="bg-accent-red hover:bg-accent-light-red text-white"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Supplement
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ) : (
             supplements.map((supplement) => (
-              <Card key={supplement.id}>
-                <CardContent className="p-4">
+              <div key={supplement.id} className="bg-dark-secondary rounded-lg border border-dark-border">
+                <div className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="font-medium text-text-primary font-['Montserrat']">
@@ -563,14 +562,14 @@ export default function Supplements() {
                         {supplement.timingPreference && ` • ${supplement.timingPreference.replace('_', ' ')}`}
                       </p>
                       {supplement.notes && (
-                        <p className="text-xs text-text-tertiary mt-1">
+                        <p className="text-xs text-text-secondary mt-1">
                           {supplement.notes}
                         </p>
                       )}
                       <div className="flex items-center gap-2 mt-2">
-                        <Badge variant="secondary">
+                        <div className="px-2 py-1 bg-dark-elevated rounded text-xs font-medium text-text-secondary">
                           {supplement.type.replace('_', ' ')}
-                        </Badge>
+                        </div>
                       </div>
                     </div>
                     
@@ -592,12 +591,12 @@ export default function Supplements() {
                       </Button>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))
           )}
         </TabsContent>
-      </Tabs>
+        </Tabs>
       </div>
     </div>
   );
