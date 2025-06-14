@@ -8,7 +8,7 @@ export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [workoutDays, setWorkoutDays] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
+  const [selectedWorkouts, setSelectedWorkouts] = useState<Workout[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
@@ -137,17 +137,25 @@ export default function CalendarPage() {
   const handleDateClick = (date: Date) => {
     if (isFutureDate(date)) return;
     
-    const dateString = date.toISOString().split('T')[0];
+    // Use same date formatting as getWorkoutData
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    
     const workouts = storage.getWorkouts();
-    const workout = workouts.find(w => w.date.startsWith(dateString));
+    const dayWorkouts = workouts.filter(w => {
+      const workoutDateString = w.date.includes('T') ? w.date.split('T')[0] : w.date.split(' ')[0];
+      return workoutDateString === dateString;
+    });
     
     setSelectedDate(date);
-    setSelectedWorkout(workout || null);
+    setSelectedWorkouts(dayWorkouts);
   };
 
   const closeModal = () => {
     setSelectedDate(null);
-    setSelectedWorkout(null);
+    setSelectedWorkouts([]);
   };
 
   const formatWorkoutSummary = (workout: Workout) => {
@@ -330,98 +338,118 @@ export default function CalendarPage() {
             </div>
             
             <div className="p-4">
-              {selectedWorkout ? (
+              {selectedWorkouts.length > 0 ? (
                 <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <Dumbbell className="text-accent-navy" size={20} />
-                    <div>
-                      <h4 className="font-semibold text-text-primary">{selectedWorkout.name}</h4>
-                      <p className="text-text-secondary text-sm">
-                        {(() => {
-                          const summary = formatWorkoutSummary(selectedWorkout);
-                          return `${summary.exercises} exercises • ${summary.completedSets} sets • ${summary.totalVolume}kg volume`;
-                        })()}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Quick Stats */}
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-dark-elevated rounded-lg p-3 text-center border border-dark-border">
-                      <div className="text-lg font-bold text-accent-navy">
-                        {formatWorkoutSummary(selectedWorkout).exercises}
-                      </div>
-                      <div className="text-xs text-text-secondary">Exercises</div>
-                    </div>
-                    <div className="bg-dark-elevated rounded-lg p-3 text-center border border-dark-border">
-                      <div className="text-lg font-bold text-accent-green">
-                        {formatWorkoutSummary(selectedWorkout).completedSets}
-                      </div>
-                      <div className="text-xs text-text-secondary">Sets</div>
-                    </div>
-                    <div className="bg-dark-elevated rounded-lg p-3 text-center border border-dark-border">
-                      <div className="text-lg font-bold text-accent-light-navy">
-                        {formatWorkoutSummary(selectedWorkout).totalVolume}kg
-                      </div>
-                      <div className="text-xs text-text-secondary">Volume</div>
-                    </div>
-                  </div>
-
-                  {/* Exercise List */}
-                  <div>
-                    <h5 className="font-medium text-text-primary mb-3">Exercises Completed</h5>
-                    <div className="space-y-2">
-                      {selectedWorkout.exercises.map((exercise, index) => {
-                        const completedSets = exercise.sets.filter(set => set.completed);
-                        if (completedSets.length === 0) return null;
-                        
-                        return (
-                          <div key={index} className="bg-dark-elevated rounded-lg p-3 border border-dark-border">
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium text-text-primary">{exercise.name}</span>
-                              <span className={`px-2 py-1 rounded text-xs font-medium ${
-                                exercise.type === 'cardio' 
-                                  ? 'bg-accent-navy/20 text-accent-navy' 
-                                  : 'bg-accent-green/20 text-accent-green'
-                              }`}>
-                                {exercise.type}
-                              </span>
-                            </div>
-                            <div className="mt-2 text-sm text-text-secondary">
-                              {exercise.type === 'cardio' ? (
-                                <div className="flex space-x-4">
-                                  {completedSets[0]?.duration && (
-                                    <span>{completedSets[0].duration} min</span>
-                                  )}
-                                  {completedSets[0]?.distance && (
-                                    <span>{completedSets[0].distance} km</span>
-                                  )}
-                                  {completedSets[0]?.steps && (
-                                    <span>{completedSets[0].steps} steps</span>
-                                  )}
-                                </div>
-                              ) : (
-                                <span>
-                                  {completedSets.length} sets • Best: {
-                                    Math.max(...completedSets.map(set => set.weight || 0))
-                                  }kg × {
-                                    completedSets.find(set => set.weight === Math.max(...completedSets.map(s => s.weight || 0)))?.reps || 0
-                                  }
-                                </span>
-                              )}
-                            </div>
+                  {selectedWorkouts.map((workout, workoutIndex) => {
+                    const summary = formatWorkoutSummary(workout);
+                    return (
+                      <div key={workoutIndex} className="space-y-4">
+                        {selectedWorkouts.length > 1 && (
+                          <div className="text-sm text-text-secondary font-medium border-b border-dark-border pb-2">
+                            Workout {workoutIndex + 1}
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  
-                  {selectedWorkout.notes && (
-                    <div className="bg-dark-elevated rounded-lg p-3 border border-dark-border">
-                      <h5 className="font-medium text-text-primary mb-2">Workout Notes</h5>
-                      <p className="text-text-secondary text-sm">{selectedWorkout.notes}</p>
-                    </div>
-                  )}
+                        )}
+                        
+                        <div className="flex items-center space-x-3">
+                          <Dumbbell className="text-accent-navy" size={20} />
+                          <div>
+                            <h4 className="font-semibold text-text-primary">{workout.name}</h4>
+                            <p className="text-text-secondary text-sm">
+                              {`${summary.exercises} exercises • ${summary.completedSets} sets • ${summary.totalVolume}kg volume`}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Quick Stats */}
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="bg-dark-elevated rounded-lg p-3 text-center border border-dark-border">
+                            <div className="text-lg font-bold text-accent-navy">
+                              {summary.exercises}
+                            </div>
+                            <div className="text-xs text-text-secondary">Exercises</div>
+                          </div>
+                          <div className="bg-dark-elevated rounded-lg p-3 text-center border border-dark-border">
+                            <div className="text-lg font-bold text-accent-green">
+                              {summary.completedSets}
+                            </div>
+                            <div className="text-xs text-text-secondary">Sets</div>
+                          </div>
+                          <div className="bg-dark-elevated rounded-lg p-3 text-center border border-dark-border">
+                            <div className="text-lg font-bold text-accent-light-navy">
+                              {summary.totalVolume}kg
+                            </div>
+                            <div className="text-xs text-text-secondary">Volume</div>
+                          </div>
+                        </div>
+
+                        {/* Exercise List */}
+                        <div>
+                          <h5 className="font-medium text-text-primary mb-3">Exercises Completed</h5>
+                          <div className="space-y-2">
+                            {workout.exercises.map((exercise, index) => {
+                              const completedSets = exercise.sets.filter(set => set.completed);
+                              if (completedSets.length === 0) return null;
+                              
+                              return (
+                                <div key={index} className="bg-dark-elevated rounded-lg p-3 border border-dark-border">
+                                  <div className="flex items-center justify-between">
+                                    <span className="font-medium text-text-primary">{exercise.name}</span>
+                                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                      exercise.type === 'cardio' 
+                                        ? 'bg-green-500/20 text-green-400' 
+                                        : exercise.type === 'core'
+                                        ? 'bg-yellow-500/20 text-yellow-400'
+                                        : 'bg-blue-500/20 text-blue-400'
+                                    }`}>
+                                      {exercise.type}
+                                    </span>
+                                  </div>
+                                  <div className="mt-2 text-sm text-text-secondary">
+                                    {exercise.type === 'cardio' ? (
+                                      <div className="flex space-x-4">
+                                        {completedSets[0]?.duration && (
+                                          <span>{completedSets[0].duration} min</span>
+                                        )}
+                                        {completedSets[0]?.distance && (
+                                          <span>{completedSets[0].distance} km</span>
+                                        )}
+                                        {completedSets[0]?.steps && (
+                                          <span>{completedSets[0].steps} steps</span>
+                                        )}
+                                      </div>
+                                    ) : exercise.type === 'core' ? (
+                                      <span>
+                                        {completedSets.length} sets completed
+                                      </span>
+                                    ) : (
+                                      <span>
+                                        {completedSets.length} sets • Best: {
+                                          Math.max(...completedSets.map(set => set.weight || 0))
+                                        }kg × {
+                                          completedSets.find(set => set.weight === Math.max(...completedSets.map(s => s.weight || 0)))?.reps || 0
+                                        }
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        
+                        {workout.notes && (
+                          <div className="bg-dark-elevated rounded-lg p-3 border border-dark-border">
+                            <h5 className="font-medium text-text-primary mb-2">Workout Notes</h5>
+                            <p className="text-text-secondary text-sm">{workout.notes}</p>
+                          </div>
+                        )}
+                        
+                        {workoutIndex < selectedWorkouts.length - 1 && (
+                          <div className="border-b border-dark-border"></div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-8">
