@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dumbbell, Quote, History, Sparkles } from "lucide-react";
 import ActivityCalendar from "@/components/ActivityCalendar";
-import MuscleGroupHeatmap from "@/components/MuscleGroupHeatmap";
 import { storage } from "@/lib/storage";
 import { getDailyQuote } from "@/lib/quotes";
 import { Workout } from "@shared/schema";
@@ -41,6 +40,8 @@ export default function Dashboard({ onNavigateToWorkout, refreshTrigger }: Dashb
   };
 
   useEffect(() => {
+    // Reset all user data
+    storage.resetAllData();
     refreshData();
   }, []);
 
@@ -134,10 +135,7 @@ export default function Dashboard({ onNavigateToWorkout, refreshTrigger }: Dashb
         </div>
       </div>
 
-      {/* Weekly Muscle Group Heat Map */}
-      <div className="px-4 pb-4">
-        <MuscleGroupHeatmap />
-      </div>
+
 
       {/* Quick Actions */}
       <div className="px-4 pb-4">

@@ -264,6 +264,23 @@ class LocalStorage {
     return true;
   }
 
+  // Reset all user data
+  resetAllData(): void {
+    // Clear all training log data
+    localStorage.removeItem(this.getStorageKey('workouts'));
+    localStorage.removeItem(this.getStorageKey('templates'));
+    localStorage.removeItem(this.getStorageKey('personalBests'));
+    localStorage.removeItem(this.getStorageKey('supplements'));
+    localStorage.removeItem(this.getStorageKey('supplementLogs'));
+    
+    // Clear other app data
+    localStorage.removeItem('congratsDismissedDate');
+    localStorage.removeItem('lastWorkoutDate');
+    
+    // Reinitialize default templates
+    this.initializeDefaultTemplates();
+  }
+
   initializeDefaultTemplates(): void {
     const existingTemplates = this.getTemplates();
     if (existingTemplates.length > 0) return;
