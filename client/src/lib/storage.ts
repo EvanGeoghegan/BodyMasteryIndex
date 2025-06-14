@@ -264,6 +264,15 @@ class LocalStorage {
     return true;
   }
 
+  // Clear only workout data
+  clearWorkouts(): void {
+    localStorage.removeItem(this.getStorageKey('workouts'));
+    localStorage.removeItem(this.getStorageKey('personalBests'));
+    localStorage.removeItem('congratsDismissedDate');
+    localStorage.removeItem('lastWorkoutDate');
+    localStorage.removeItem('lastCongratsDate');
+  }
+
   // Reset all user data
   resetAllData(): void {
     // Clear all training log data
@@ -276,6 +285,7 @@ class LocalStorage {
     // Clear other app data
     localStorage.removeItem('congratsDismissedDate');
     localStorage.removeItem('lastWorkoutDate');
+    localStorage.removeItem('lastCongratsDate');
     
     // Reinitialize default templates
     this.initializeDefaultTemplates();
