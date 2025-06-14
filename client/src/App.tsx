@@ -50,7 +50,10 @@ function App() {
         return <CalendarPage />;
       case "records":
         return <PersonalBests />;
-
+      case "progress":
+        return <ProgressDashboard />;
+      case "supplements":
+        return <Supplements />;
       default:
         return <Dashboard onNavigateToWorkout={handleNavigateToWorkout} refreshTrigger={dashboardRefreshTrigger} />;
     }

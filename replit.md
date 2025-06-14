@@ -117,6 +117,7 @@ Changelog:
 - June 13, 2025. Added comprehensive supplement tracker with daily logging, progress tracking, and management features
 - June 14, 2025. Removed muscle group heat map component and added data reset functionality
 - June 14, 2025. Streamlined navigation from 7 tabs to 5 tabs, improved spacing and removed Progress/Supplements from main navigation
+- June 14, 2025. Restored all 7 tabs with horizontal scrolling navigation for better accessibility and reduced crowding
 ```
 
 ## User Preferences
