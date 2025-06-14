@@ -54,24 +54,37 @@ export default function CalendarPage() {
     return date > today;
   };
 
-  const hasWorkout = (date: Date) => {
+  const getWorkoutData = (date: Date) => {
     const dateString = date.toISOString().split('T')[0];
-    return workoutDays.includes(dateString);
+    const workouts = storage.getWorkouts().filter(w => w.date.startsWith(dateString));
+    
+    if (workouts.length === 0) return null;
+    
+    // Determine workout types for the day
+    const workoutTypes = new Set(workouts.map(w => w.type));
+    return {
+      hasWorkouts: true,
+      types: Array.from(workoutTypes),
+      count: workouts.length
+    };
   };
 
   const getConsecutiveRestDays = (date: Date) => {
-    if (isFutureDate(date) || hasWorkout(date)) return 0;
+    if (isFutureDate(date)) return 0;
+    
+    const workoutData = getWorkoutData(date);
+    if (workoutData?.hasWorkouts) return 0;
     
     let consecutiveDays = 1; // Current day is a rest day
     const currentDate = new Date(date);
     
     // Count backwards to find consecutive rest days
-    for (let i = 1; i <= 7; i++) { // Check up to 7 days back
+    for (let i = 1; i <= 7; i++) {
       const checkDate = new Date(currentDate);
       checkDate.setDate(checkDate.getDate() - i);
-      const checkDateString = checkDate.toISOString().split('T')[0];
+      const checkWorkoutData = getWorkoutData(checkDate);
       
-      if (!workoutDays.includes(checkDateString)) {
+      if (!checkWorkoutData?.hasWorkouts) {
         consecutiveDays++;
       } else {
         break;
@@ -81,12 +94,8 @@ export default function CalendarPage() {
     return consecutiveDays;
   };
 
-  const isConsecutiveRestDay = (date: Date) => {
-    return getConsecutiveRestDays(date) >= 2;
-  };
-
-  const isLongRestPeriod = (date: Date) => {
-    return getConsecutiveRestDays(date) >= 3;
+  const hasMultipleMissedDays = (date: Date) => {
+    return getConsecutiveRestDays(date) > 1;
   };
 
   const handleDateClick = (date: Date) => {
@@ -167,50 +176,53 @@ export default function CalendarPage() {
             {days.map((date, index) => {
               const isCurrentMonthDay = isCurrentMonth(date);
               const isTodayDate = isToday(date);
-              const hasWorkoutDay = hasWorkout(date);
-              const isConsecutiveRest = isConsecutiveRestDay(date);
-              const isLongRest = isLongRestPeriod(date);
+              const workoutData = getWorkoutData(date);
+              const hasMissedDays = hasMultipleMissedDays(date);
               const isFuture = isFutureDate(date);
+
+              // Create workout type indicators
+              const getWorkoutIndicators = () => {
+                if (!workoutData) return null;
+                
+                const indicators = [];
+                if (workoutData.types.includes('strength')) {
+                  indicators.push(<div key="strength" className="w-2 h-2 bg-blue-500 rounded-full" />);
+                }
+                if (workoutData.types.includes('cardio')) {
+                  indicators.push(<div key="cardio" className="w-2 h-2 bg-green-500 rounded-full" />);
+                }
+                if (workoutData.types.includes('core')) {
+                  indicators.push(<div key="core" className="w-2 h-2 bg-yellow-500 rounded-full" />);
+                }
+                if (workoutData.types.includes('mixed')) {
+                  indicators.push(<div key="mixed" className="w-2 h-2 bg-purple-500 rounded-full" />);
+                }
+                
+                return (
+                  <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 flex gap-1">
+                    {indicators}
+                  </div>
+                );
+              };
 
               return (
                 <div
                   key={index}
                   onClick={() => handleDateClick(date)}
-                  className={`h-16 flex items-center justify-center text-lg rounded-lg cursor-pointer relative transition-all duration-200 ${
+                  className={`h-16 flex flex-col items-center justify-center text-lg rounded-lg cursor-pointer relative transition-all duration-200 border-2 ${
                     isTodayDate
-                      ? 'bg-accent-navy text-white font-bold shadow-lg'
-                      : hasWorkoutDay && isCurrentMonthDay && !isFuture
-                      ? 'bg-accent-green/20 text-accent-green hover:bg-accent-green/30 font-semibold'
-                      : !hasWorkoutDay && isCurrentMonthDay && !isFuture && !isConsecutiveRest
-                      ? 'bg-accent-red/10 text-accent-red hover:bg-accent-red/20'
+                      ? 'bg-accent-navy text-white font-bold shadow-lg border-accent-navy'
+                      : hasMissedDays && isCurrentMonthDay && !isFuture
+                      ? 'bg-dark-elevated text-text-primary hover:bg-dark-primary border-red-500'
+                      : workoutData && isCurrentMonthDay && !isFuture
+                      ? 'bg-dark-elevated text-text-primary hover:bg-dark-primary border-dark-border'
                       : isCurrentMonthDay
-                      ? 'text-text-primary hover:bg-dark-elevated'
-                      : 'text-text-disabled'
+                      ? 'bg-dark-elevated text-text-primary hover:bg-dark-primary border-dark-border'
+                      : 'bg-dark-primary text-text-disabled border-dark-border'
                   } ${!isFuture && isCurrentMonthDay ? 'hover:scale-105' : ''}`}
                 >
-                  <span className="z-10">{date.getDate()}</span>
-                  
-                  {/* Workout indicator */}
-                  {hasWorkoutDay && !isTodayDate && !isFuture && (
-                    <div className="absolute top-2 right-2 w-3 h-3 bg-accent-green rounded-full shadow-sm"></div>
-                  )}
-                  
-                  {/* Single rest day indicator */}
-                  {!hasWorkoutDay && !isTodayDate && isCurrentMonthDay && !isConsecutiveRest && !isFuture && (
-                    <div className="absolute top-2 right-2 w-3 h-3 bg-accent-red rounded-full shadow-sm"></div>
-                  )}
-                  
-                  {/* Short consecutive rest day icon */}
-                  {isConsecutiveRest && !isLongRest && !isTodayDate && isCurrentMonthDay && (
-                    <div className="absolute top-1 right-1 p-1 bg-text-disabled/20 rounded-full">
-                      <Minus className="text-text-disabled" size={12} />
-                    </div>
-                  )}
-                  
-                  {/* Long rest period snail */}
-                  {isLongRest && !isTodayDate && isCurrentMonthDay && (
-                    <div className="absolute top-1 right-1 text-lg">🐌</div>
-                  )}
+                  <span className="z-10 text-center">{date.getDate()}</span>
+                  {getWorkoutIndicators()}
                 </div>
               );
             })}
@@ -219,26 +231,28 @@ export default function CalendarPage() {
           {/* Calendar Legend */}
           <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-dark-border">
             <div className="flex items-center space-x-3">
-              <div className="w-4 h-4 bg-accent-navy rounded-full"></div>
+              <div className="w-4 h-4 bg-accent-navy rounded-lg border-2 border-accent-navy"></div>
               <span className="text-text-secondary">Today</span>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="w-3 h-3 bg-accent-green rounded-full"></div>
-              <span className="text-text-secondary">Workout Day</span>
+              <div className="w-4 h-4 bg-dark-elevated rounded-lg border-2 border-red-500"></div>
+              <span className="text-text-secondary">Multiple Rest Days</span>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="w-3 h-3 bg-accent-red rounded-full"></div>
-              <span className="text-text-secondary">Single Rest Day</span>
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <span className="text-text-secondary">Strength/Gym</span>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="p-1 bg-text-disabled/20 rounded-full">
-                <Minus className="text-text-disabled" size={12} />
-              </div>
-              <span className="text-text-secondary">2+ Rest Days</span>
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-text-secondary">Cardio</span>
             </div>
-            <div className="flex items-center space-x-3 col-span-2 justify-center">
-              <span className="text-lg">🐌</span>
-              <span className="text-text-secondary">3+ Rest Days</span>
+            <div className="flex items-center space-x-3">
+              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+              <span className="text-text-secondary">Core</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+              <span className="text-text-secondary">Mixed</span>
             </div>
           </div>
         </div>

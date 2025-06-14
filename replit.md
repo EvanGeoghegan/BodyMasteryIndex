@@ -122,6 +122,9 @@ Changelog:
 - June 14, 2025. Implemented workout editing from dashboard - Edit Workout button in Last Activity section
 - June 14, 2025. Moved notes from individual exercises to general workout notes section
 - June 14, 2025. Removed auto-populated placeholder values from Core exercise inputs for cleaner interface
+- June 14, 2025. Updated calendar design with rectangles for each day and colored workout type indicators - blue for strength/gym, green for cardio, yellow for core, purple for mixed
+- June 14, 2025. Removed snail emoji and replaced with red border indicator for multiple consecutive rest days
+- June 14, 2025. Added comprehensive workout type legend showing colored dots for different exercise types
 ```
 
 ## User Preferences
