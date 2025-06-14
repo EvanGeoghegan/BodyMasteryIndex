@@ -71,6 +71,26 @@ export default function PersonalBests() {
     };
   };
 
+  // Calculate recommended progression weights
+  const getProgressionRecommendations = (pb: PersonalBest) => {
+    const currentWeight = pb.weight;
+    const currentReps = pb.reps;
+    
+    // Progressive overload recommendations
+    const recommendations = {
+      sameReps: Math.round((currentWeight + 2.5) * 10) / 10, // Add 2.5kg
+      moreReps: currentWeight, // Same weight, more reps
+      deload: Math.round((currentWeight * 0.9) * 10) / 10, // 90% for higher volume
+    };
+
+    return {
+      nextWeight: recommendations.sameReps,
+      nextReps: currentReps + 1,
+      deloadWeight: recommendations.deload,
+      microloadWeight: Math.round((currentWeight + 1.25) * 10) / 10 // Smaller increment
+    };
+  };
+
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
       <header className="bg-dark-secondary p-4 shadow-lg">
@@ -140,6 +160,40 @@ export default function PersonalBests() {
                     );
                   })()}
                 </div>
+                {/* Progression Recommendations */}
+                <div className="mt-4 border-t border-dark-border pt-3">
+                  <div className="flex items-center gap-2 mb-3">
+                    <TrendingUp className="text-accent-green" size={16} />
+                    <span className="text-text-secondary text-sm font-medium">Next Session Recommendations</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    {(() => {
+                      const progression = getProgressionRecommendations(pb);
+                      return (
+                        <>
+                          <div className="bg-dark-elevated rounded-lg p-3 border border-accent-green/30">
+                            <div className="text-center">
+                              <div className="text-lg font-bold text-accent-green">{progression.nextWeight}kg</div>
+                              <div className="text-xs text-text-secondary">Same reps (+2.5kg)</div>
+                            </div>
+                          </div>
+                          <div className="bg-dark-elevated rounded-lg p-3 border border-blue-500/30">
+                            <div className="text-center">
+                              <div className="text-lg font-bold text-blue-400">{pb.weight}kg</div>
+                              <div className="text-xs text-text-secondary">+1 rep ({progression.nextReps})</div>
+                            </div>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                  <div className="mt-2 text-center">
+                    <span className="text-xs text-text-disabled">
+                      Alternative: {getProgressionRecommendations(pb).microloadWeight}kg (+1.25kg)
+                    </span>
+                  </div>
+                </div>
+
                 {index === 0 && (
                   <div className="mt-3 flex justify-center">
                     <span className="bg-accent-navy text-white px-3 py-1 rounded-full text-xs font-medium">

@@ -125,6 +125,8 @@ Changelog:
 - June 14, 2025. Updated calendar design with rectangles for each day and colored workout type indicators - blue for strength/gym, green for cardio, yellow for core, purple for mixed
 - June 14, 2025. Removed snail emoji and replaced with red border indicator for multiple consecutive rest days
 - June 14, 2025. Added comprehensive workout type legend showing colored dots for different exercise types
+- June 14, 2025. Added Settings page with goals, preferences, and data management including export functionality
+- June 14, 2025. Implemented recommended weight progression calculations in Personal Bests showing next session recommendations
 ```
 
 ## User Preferences

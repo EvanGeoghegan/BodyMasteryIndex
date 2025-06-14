@@ -11,6 +11,7 @@ import CalendarPage from "@/pages/CalendarPage";
 import PersonalBests from "@/pages/PersonalBests";
 import ProgressDashboard from "@/pages/ProgressDashboard";
 import Supplements from "@/pages/Supplements";
+import Settings from "@/pages/Settings";
 import { storage } from "@/lib/storage";
 import { Template, Exercise, ExerciseSet, Workout as WorkoutType } from "@shared/schema";
 
@@ -62,6 +63,8 @@ function App() {
         return <ProgressDashboard />;
       case "supplements":
         return <Supplements />;
+      case "settings":
+        return <Settings />;
       default:
         return <Dashboard onNavigateToWorkout={handleNavigateToWorkout} refreshTrigger={dashboardRefreshTrigger} />;
     }
