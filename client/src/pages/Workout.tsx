@@ -14,9 +14,10 @@ import { useToast } from "@/hooks/use-toast";
 interface WorkoutProps {
   onWorkoutSaved: () => void;
   initialTemplate?: Template;
+  initialWorkout?: Workout | null;
 }
 
-export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: WorkoutProps) {
+export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWorkout }: WorkoutProps) {
   const [workoutName, setWorkoutName] = useState("");
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -31,13 +32,21 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate }: Workout
     setTemplates(storage.getTemplates());
     loadTodaysWorkouts();
     
+    // Initialize from workout if provided
+    if (initialWorkout) {
+      setEditingWorkout(initialWorkout);
+      setWorkoutName(initialWorkout.name);
+      setWorkoutType(initialWorkout.type);
+      setExercises(initialWorkout.exercises);
+      setWorkoutDate(initialWorkout.date.split('T')[0]);
+    }
     // Initialize from template if provided
-    if (initialTemplate) {
+    else if (initialTemplate) {
       loadFromTemplate(initialTemplate);
     } else if (exercises.length === 0) {
       addExercise();
     }
-  }, [initialTemplate]);
+  }, [initialTemplate, initialWorkout]);
 
   const loadTodaysWorkouts = () => {
     const today = new Date().toISOString().split('T')[0];

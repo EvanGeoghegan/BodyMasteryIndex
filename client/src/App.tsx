@@ -30,21 +30,28 @@ function App() {
   };
 
   const handleNavigateToWorkout = () => {
+    setWorkoutToEdit(null); // Clear any existing workout being edited
+    setActiveTab("workout");
+  };
+
+  const handleEditWorkout = (workout: WorkoutType) => {
+    setWorkoutToEdit(workout);
     setActiveTab("workout");
   };
 
   const handleUseTemplate = (template: Template) => {
     // Convert template to workout format and navigate to workout page
     // This would populate the workout form with template data
+    setWorkoutToEdit(null); // Clear any existing workout being edited
     setActiveTab("workout");
   };
 
   const renderActiveTab = () => {
     switch (activeTab) {
       case "dashboard":
-        return <Dashboard onNavigateToWorkout={handleNavigateToWorkout} refreshTrigger={dashboardRefreshTrigger} />;
+        return <Dashboard onNavigateToWorkout={handleNavigateToWorkout} onEditWorkout={handleEditWorkout} refreshTrigger={dashboardRefreshTrigger} />;
       case "workout":
-        return <Workout onWorkoutSaved={handleWorkoutSaved} />;
+        return <WorkoutPage onWorkoutSaved={handleWorkoutSaved} initialWorkout={workoutToEdit} />;
       case "templates":
         return <Templates onUseTemplate={handleUseTemplate} />;
       case "calendar":
