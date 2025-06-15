@@ -26,66 +26,20 @@
   --ring: hsl(20, 14.3%, 4.1%);
   --radius: 0.5rem;
 
-  /* Light theme colors */
-  --light-primary: hsl(0, 0%, 100%);
-  --light-secondary: hsl(210, 30%, 98%);
-  --light-elevated: hsl(210, 25%, 95%);
-  --light-border: hsl(210, 15%, 85%);
-  --accent-blue: hsl(210, 85%, 55%);
-  --accent-light-blue: hsl(200, 80%, 60%);
-  --accent-green: hsl(130, 60%, 50%);
-  --accent-warning: hsl(25, 85%, 60%);
-  --text-primary-light: hsl(210, 15%, 15%);
-  --text-secondary-light: hsl(210, 10%, 45%);
-  --text-disabled-light: hsl(210, 10%, 65%);
-  
-  /* Dark theme colors */
+  /* Custom dark red theme colors */
   --dark-primary: hsl(0, 15%, 6%);
   --dark-secondary: hsl(0, 15%, 10%);
   --dark-elevated: hsl(0, 10%, 14%);
   --dark-border: hsl(0, 10%, 20%);
   --accent-red: hsl(0, 85%, 55%);
   --accent-light-red: hsl(10, 80%, 60%);
-  --text-primary-dark: hsl(0, 5%, 95%);
-  --text-secondary-dark: hsl(0, 5%, 75%);
-  --text-disabled-dark: hsl(0, 5%, 50%);
+  --accent-green: hsl(130, 60%, 50%);
+  --accent-warning: hsl(25, 85%, 60%);
+  --text-primary: hsl(0, 5%, 95%);
+  --text-secondary: hsl(0, 5%, 75%);
+  --text-disabled: hsl(0, 5%, 50%);
+  --dropdown-text: hsl(0, 5%, 90%);
 }
-
-/* Theme utility classes */
-.light-theme {
-  --theme-primary: var(--light-primary);
-  --theme-secondary: var(--light-secondary);
-  --theme-elevated: var(--light-elevated);
-  --theme-border: var(--light-border);
-  --theme-accent: var(--accent-blue);
-  --theme-accent-light: var(--accent-light-blue);
-  --theme-text-primary: var(--text-primary-light);
-  --theme-text-secondary: var(--text-secondary-light);
-  --theme-text-disabled: var(--text-disabled-light);
-}
-
-.dark-theme {
-  --theme-primary: var(--dark-primary);
-  --theme-secondary: var(--dark-secondary);
-  --theme-elevated: var(--dark-elevated);
-  --theme-border: var(--dark-border);
-  --theme-accent: var(--accent-red);
-  --theme-accent-light: var(--accent-light-red);
-  --theme-text-primary: var(--text-primary-dark);
-  --theme-text-secondary: var(--text-secondary-dark);
-  --theme-text-disabled: var(--text-disabled-dark);
-}
-
-/* Apply theme colors */
-.bg-theme-primary { background-color: var(--theme-primary); }
-.bg-theme-secondary { background-color: var(--theme-secondary); }
-.bg-theme-elevated { background-color: var(--theme-elevated); }
-.border-theme-border { border-color: var(--theme-border); }
-.text-theme-primary { color: var(--theme-text-primary); }
-.text-theme-secondary { color: var(--theme-text-secondary); }
-.text-theme-accent { color: var(--theme-accent); }
-.hover\:bg-theme-elevated:hover { background-color: var(--theme-elevated); }
-.hover\:text-theme-accent:hover { color: var(--theme-accent); }
 
 /* Improve dropdown text visibility - comprehensive approach */
 [data-radix-select-content] {

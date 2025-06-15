@@ -149,7 +149,6 @@ Changelog:
 - June 15, 2025. Implemented comprehensive first-time user tutorial system with 9 guided steps explaining all app features
 - June 15, 2025. Removed timer references from tutorial as feature not currently implemented
 - June 15, 2025. Added configurable notification system for workout and nutrition reminders with customizable timing in settings
-- June 15, 2025. Implemented dual theme system with light theme (light blue accents) and dark theme (red accents) switchable in settings
 ```
 
 ## User Preferences

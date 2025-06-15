@@ -3,7 +3,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ThemeProvider } from "@/contexts/ThemeContext";
 import Navigation from "@/components/Navigation";
 import Tutorial from "@/components/Tutorial";
 import NotificationSystem from "@/components/NotificationSystem";
@@ -90,22 +89,20 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <TooltipProvider>
-          <div className="min-h-screen bg-theme-primary text-theme-primary">
-            <div className="max-w-md mx-auto bg-theme-primary min-h-screen relative">
-              {renderActiveTab()}
-              <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-              <Tutorial isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
-              <NotificationSystem 
-                onNavigateToWorkout={handleNavigateToWorkout}
-                onNavigateToNutrition={handleNavigateToNutrition}
-              />
-            </div>
+      <TooltipProvider>
+        <div className="min-h-screen bg-dark-primary text-text-primary">
+          <div className="max-w-md mx-auto bg-dark-primary min-h-screen relative">
+            {renderActiveTab()}
+            <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+            <Tutorial isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
+            <NotificationSystem 
+              onNavigateToWorkout={handleNavigateToWorkout}
+              onNavigateToNutrition={handleNavigateToNutrition}
+            />
           </div>
-          <Toaster />
-        </TooltipProvider>
-      </ThemeProvider>
+        </div>
+        <Toaster />
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }

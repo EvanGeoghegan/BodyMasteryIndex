@@ -3,11 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Download, User, Target, Database, HelpCircle, Bell, Palette } from "lucide-react";
+import { Trash2, Download, User, Target, Database, HelpCircle, Bell } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
-import { useTheme } from "@/contexts/ThemeContext";
 
 interface SettingsProps {
   onShowTutorial?: () => void;
@@ -27,7 +26,6 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
   const [nutritionReminder, setNutritionReminder] = useState(true);
   const [nutritionReminderTime, setNutritionReminderTime] = useState("20:00");
   const { toast } = useToast();
-  const { theme, toggleTheme } = useTheme();
 
   // Load settings on component mount
   useEffect(() => {
@@ -291,40 +289,11 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
           </div>
         </div>
 
-        {/* Appearance */}
-        <div className="bg-theme-secondary rounded-lg p-6 border border-theme-border">
-          <div className="flex items-center gap-2 mb-4">
-            <Palette className="text-theme-accent" size={20} />
-            <h2 className="text-lg font-semibold text-theme-primary font-['Montserrat']">
-              Appearance
-            </h2>
-          </div>
-          
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-theme-primary font-medium">Theme</Label>
-                <p className="text-xs text-theme-secondary mt-1">
-                  {theme === 'dark' ? 'Dark theme with red accents' : 'Light theme with blue accents'}
-                </p>
-              </div>
-              <Button
-                onClick={toggleTheme}
-                variant="outline"
-                size="sm"
-                className="bg-theme-elevated border-theme-border text-theme-primary hover:bg-theme-accent/20 hover:text-theme-accent"
-              >
-                {theme === 'dark' ? 'Switch to Light' : 'Switch to Dark'}
-              </Button>
-            </div>
-          </div>
-        </div>
-
         {/* Notifications */}
-        <div className="bg-theme-secondary rounded-lg p-6 border border-theme-border">
+        <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
           <div className="flex items-center gap-2 mb-4">
-            <Bell className="text-theme-accent" size={20} />
-            <h2 className="text-lg font-semibold text-theme-primary font-['Montserrat']">
+            <Bell className="text-accent-red" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
               Notifications
             </h2>
           </div>

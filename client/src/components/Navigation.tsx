@@ -50,16 +50,16 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
   };
 
   return (
-    <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-theme-secondary border-t border-theme-border">
+    <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-dark-secondary border-t border-dark-border">
       <div className="relative">
         {/* Left scroll indicator */}
         {canScrollLeft && (
           <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center">
             <button
               onClick={() => scroll('left')}
-              className="bg-theme-secondary/90 backdrop-blur-sm p-1 rounded-r-md shadow-lg border-r border-theme-border"
+              className="bg-dark-secondary/90 backdrop-blur-sm p-1 rounded-r-md shadow-lg border-r border-dark-border"
             >
-              <ChevronLeft size={16} className="text-theme-accent" />
+              <ChevronLeft size={16} className="text-accent-red" />
             </button>
           </div>
         )}
@@ -69,9 +69,9 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
           <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center">
             <button
               onClick={() => scroll('right')}
-              className="bg-theme-secondary/90 backdrop-blur-sm p-1 rounded-l-md shadow-lg border-l border-theme-border"
+              className="bg-dark-secondary/90 backdrop-blur-sm p-1 rounded-l-md shadow-lg border-l border-dark-border"
             >
-              <ChevronRight size={16} className="text-theme-accent" />
+              <ChevronRight size={16} className="text-accent-red" />
             </button>
           </div>
         )}
@@ -88,8 +88,8 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
                   onClick={() => onTabChange(tab.id)}
                   className={`flex flex-col items-center py-2 px-3 transition-colors rounded-lg whitespace-nowrap min-w-[72px] ${
                     isActive 
-                      ? 'text-theme-accent bg-theme-accent/10' 
-                      : 'text-theme-secondary hover:text-theme-accent hover:bg-theme-elevated'
+                      ? 'text-accent-red bg-accent-red/10' 
+                      : 'text-text-secondary hover:text-accent-light-red hover:bg-dark-elevated'
                   }`}
                 >
                   <Icon className="mb-1" size={18} />
