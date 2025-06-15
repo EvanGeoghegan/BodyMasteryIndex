@@ -18,14 +18,42 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
   const [lastWorkout, setLastWorkout] = useState<Workout | undefined>();
   const [workoutDays, setWorkoutDays] = useState<string[]>([]);
   const [showCongrats, setShowCongrats] = useState(false);
+  const [proteinGoal, setProteinGoal] = useState(120);
+  const [waterGoal, setWaterGoal] = useState(3.0);
+  const [currentProtein, setCurrentProtein] = useState(0);
+  const [currentWater, setCurrentWater] = useState(0);
   const dailyQuote = getDailyQuote();
 
   const refreshData = () => {
     setLastWorkout(storage.getLastWorkout());
     setWorkoutDays(storage.getWorkoutDays());
     
-    // Check if there's a workout completed today and we haven't shown congrats yet
+    // Load nutrition data
+    const savedSettings = localStorage.getItem('trainlog_settings');
+    if (savedSettings) {
+      try {
+        const settings = JSON.parse(savedSettings);
+        setProteinGoal(settings.proteinGoal || 120);
+        setWaterGoal(settings.waterGoal || 3.0);
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      }
+    }
+
+    // Load today's nutrition data
     const today = new Date().toISOString().split('T')[0];
+    const nutritionData = localStorage.getItem(`nutrition_${today}`);
+    if (nutritionData) {
+      try {
+        const data = JSON.parse(nutritionData);
+        setCurrentProtein(data.protein || 0);
+        setCurrentWater(data.water || 0);
+      } catch (error) {
+        console.error('Error loading nutrition data:', error);
+      }
+    }
+    
+    // Check if there's a workout completed today and we haven't shown congrats yet
     const todayWorkouts = storage.getWorkouts().filter(workout => 
       workout.date.split('T')[0] === today
     );
@@ -124,6 +152,85 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
           </div>
         </div>
       )}
+
+      {/* Nutrition Tracking Circle Charts */}
+      <div className="px-4 pb-4">
+        <div className="grid grid-cols-2 gap-4">
+          {/* Protein Circle Chart */}
+          <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-text-primary">Protein</h3>
+              <Dumbbell className="text-accent-red" size={16} />
+            </div>
+            <div className="relative w-20 h-20 mx-auto mb-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[
+                      { value: Math.min(currentProtein, proteinGoal), fill: '#dc2626' },
+                      { value: Math.max(0, proteinGoal - currentProtein), fill: '#374151' }
+                    ]}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={25}
+                    outerRadius={40}
+                    startAngle={90}
+                    endAngle={-270}
+                    dataKey="value"
+                  >
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs font-bold text-text-primary">
+                  {Math.round((currentProtein / proteinGoal) * 100)}%
+                </span>
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-sm font-bold text-accent-red">{currentProtein}g</div>
+              <div className="text-xs text-text-secondary">of {proteinGoal}g</div>
+            </div>
+          </div>
+
+          {/* Water Circle Chart */}
+          <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-text-primary">Water</h3>
+              <Droplets className="text-blue-400" size={16} />
+            </div>
+            <div className="relative w-20 h-20 mx-auto mb-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[
+                      { value: Math.min(currentWater, waterGoal), fill: '#3b82f6' },
+                      { value: Math.max(0, waterGoal - currentWater), fill: '#374151' }
+                    ]}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={25}
+                    outerRadius={40}
+                    startAngle={90}
+                    endAngle={-270}
+                    dataKey="value"
+                  >
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs font-bold text-text-primary">
+                  {Math.round((currentWater / waterGoal) * 100)}%
+                </span>
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-sm font-bold text-blue-400">{currentWater}L</div>
+              <div className="text-xs text-text-secondary">of {waterGoal}L</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Daily Quote Section */}
       <div className="p-4">

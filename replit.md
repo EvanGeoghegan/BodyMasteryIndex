@@ -131,6 +131,10 @@ Changelog:
 - June 14, 2025. Enhanced protein and water tracking with proper state management, custom amount logging, and progress bars
 - June 14, 2025. Simplified progression recommendations to focus on weight increases only, removing additional rep options
 - June 14, 2025. Removed app preferences section from settings to streamline user experience
+- June 14, 2025. Removed refresh button from calendar to simplify navigation interface
+- June 14, 2025. Added undo functionality to protein and water tracking with visual feedback
+- June 14, 2025. Changed "Multiple Rest Days" to "Rest Days" in calendar legend for cleaner labeling
+- June 14, 2025. Added circle charts for protein and water intake to dashboard with percentage completion display
 ```
 
 ## User Preferences
