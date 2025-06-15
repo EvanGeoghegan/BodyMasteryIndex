@@ -341,8 +341,14 @@ export default function ProgressDashboard() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(0, 15%, 10%)', color: 'white' }}>
-                <SelectItem value="volume" style={{ color: 'white' }}>Volume Progress</SelectItem>
-                <SelectItem value="weight" style={{ color: 'white' }}>Weight Progress</SelectItem>
+                <SelectItem value="volume" style={{ color: 'white' }}>Strength Volume</SelectItem>
+                <SelectItem value="weight" style={{ color: 'white' }}>Max Weight Progress</SelectItem>
+                <SelectItem value="cardio-distance" style={{ color: 'white' }}>Cardio Distance</SelectItem>
+                <SelectItem value="cardio-duration" style={{ color: 'white' }}>Cardio Duration</SelectItem>
+                <SelectItem value="protein" style={{ color: 'white' }}>Protein Intake</SelectItem>
+                <SelectItem value="water" style={{ color: 'white' }}>Water Intake</SelectItem>
+                <SelectItem value="assessments" style={{ color: 'white' }}>Weekly Assessments</SelectItem>
+                <SelectItem value="body-weight" style={{ color: 'white' }}>Body Weight</SelectItem>
                 <SelectItem value="frequency" style={{ color: 'white' }}>Workout Frequency</SelectItem>
                 <SelectItem value="distribution" style={{ color: 'white' }}>Muscle Groups</SelectItem>
               </SelectContent>
@@ -459,6 +465,219 @@ export default function ProgressDashboard() {
                     stroke="#10b981" 
                     strokeWidth={3}
                     dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {chartType === "cardio-distance" && (
+          <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border shadow-lg">
+            <h3 className="text-lg font-semibold text-text-primary font-heading mb-4">Cardio Distance Progress</h3>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={progressData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis 
+                    dataKey="date" 
+                    tickFormatter={formatDate}
+                    stroke="#9ca3af"
+                  />
+                  <YAxis stroke="#9ca3af" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1f2937', 
+                      border: '1px solid #374151',
+                      borderRadius: '8px'
+                    }}
+                    labelStyle={{ color: '#f3f4f6' }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="cardioDistance" 
+                    stroke="#10b981" 
+                    fill="#10b981"
+                    fillOpacity={0.3}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {chartType === "cardio-duration" && (
+          <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border shadow-lg">
+            <h3 className="text-lg font-semibold text-text-primary font-heading mb-4">Cardio Duration Progress</h3>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={progressData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis 
+                    dataKey="date" 
+                    tickFormatter={formatDate}
+                    stroke="#9ca3af"
+                  />
+                  <YAxis stroke="#9ca3af" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1f2937', 
+                      border: '1px solid #374151',
+                      borderRadius: '8px'
+                    }}
+                    labelStyle={{ color: '#f3f4f6' }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="cardioDuration" 
+                    stroke="#3b82f6" 
+                    fill="#3b82f6"
+                    fillOpacity={0.3}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {chartType === "protein" && (
+          <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border shadow-lg">
+            <h3 className="text-lg font-semibold text-text-primary font-heading mb-4">Protein Intake Progress</h3>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={progressData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis 
+                    dataKey="date" 
+                    tickFormatter={formatDate}
+                    stroke="#9ca3af"
+                  />
+                  <YAxis stroke="#9ca3af" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1f2937', 
+                      border: '1px solid #374151',
+                      borderRadius: '8px'
+                    }}
+                    labelStyle={{ color: '#f3f4f6' }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="protein" 
+                    stroke="#f59e0b" 
+                    strokeWidth={3}
+                    dot={{ fill: '#f59e0b', strokeWidth: 2, r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {chartType === "water" && (
+          <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border shadow-lg">
+            <h3 className="text-lg font-semibold text-text-primary font-heading mb-4">Water Intake Progress</h3>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={progressData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis 
+                    dataKey="date" 
+                    tickFormatter={formatDate}
+                    stroke="#9ca3af"
+                  />
+                  <YAxis stroke="#9ca3af" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1f2937', 
+                      border: '1px solid #374151',
+                      borderRadius: '8px'
+                    }}
+                    labelStyle={{ color: '#f3f4f6' }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="water" 
+                    stroke="#06b6d4" 
+                    strokeWidth={3}
+                    dot={{ fill: '#06b6d4', strokeWidth: 2, r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {chartType === "assessments" && (
+          <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border shadow-lg">
+            <h3 className="text-lg font-semibold text-text-primary font-heading mb-4">Weekly Assessment Progress</h3>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={assessmentData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis 
+                    dataKey="date" 
+                    tickFormatter={formatDate}
+                    stroke="#9ca3af"
+                  />
+                  <YAxis stroke="#9ca3af" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1f2937', 
+                      border: '1px solid #374151',
+                      borderRadius: '8px'
+                    }}
+                    labelStyle={{ color: '#f3f4f6' }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="exercise1Reps" 
+                    stroke="#dc2626" 
+                    strokeWidth={3}
+                    dot={{ fill: '#dc2626', strokeWidth: 2, r: 4 }}
+                    name="Exercise 1"
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="exercise2Reps" 
+                    stroke="#10b981" 
+                    strokeWidth={3}
+                    dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+                    name="Exercise 2"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {chartType === "body-weight" && (
+          <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border shadow-lg">
+            <h3 className="text-lg font-semibold text-text-primary font-heading mb-4">Body Weight Progress</h3>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={weightData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis 
+                    dataKey="date" 
+                    tickFormatter={formatDate}
+                    stroke="#9ca3af"
+                  />
+                  <YAxis stroke="#9ca3af" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1f2937', 
+                      border: '1px solid #374151',
+                      borderRadius: '8px'
+                    }}
+                    labelStyle={{ color: '#f3f4f6' }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="weight" 
+                    stroke="#8b5cf6" 
+                    strokeWidth={3}
+                    dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4 }}
                   />
                 </LineChart>
               </ResponsiveContainer>

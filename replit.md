@@ -140,6 +140,10 @@ Changelog:
 - June 14, 2025. Added profile section to settings with current weight and target weight tracking
 - June 14, 2025. Added configurable assessment exercises to settings (default: Push-ups and Pull-ups)
 - June 14, 2025. Implemented daily assessment section on dashboard with exercise tracking and result storage
+- June 15, 2025. Changed daily assessments to weekly assessments with completion tracking
+- June 15, 2025. Unified cardio and core exercise forms to match strength training set-based interface with completion buttons and rest timers
+- June 15, 2025. Enhanced progress dashboard with comprehensive tracking for strength volume, cardio distance/duration, protein/water intake, weekly assessments, and body weight
+- June 15, 2025. Added complete visual analytics for all fitness and nutrition metrics with color-coded charts
 ```
 
 ## User Preferences
