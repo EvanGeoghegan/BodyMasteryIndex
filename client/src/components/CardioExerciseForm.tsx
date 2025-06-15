@@ -35,9 +35,7 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
       id: Date.now().toString(),
       completed: false,
       duration: undefined,
-      distance: undefined,
-      steps: undefined,
-      intervals: undefined
+      distance: undefined
     };
     onUpdate({ ...exercise, sets: [...exercise.sets, newSet] });
   };
@@ -103,8 +101,6 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
         <span className="text-text-secondary w-8">Set</span>
         <span className="text-text-secondary w-20">Duration</span>
         <span className="text-text-secondary w-20">Distance</span>
-        <span className="text-text-secondary w-16">Steps</span>
-        <span className="text-text-secondary w-16">Intervals</span>
         <span className="text-text-secondary w-8"></span>
       </div>
 
@@ -127,20 +123,6 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
               className="w-20 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
               placeholder="km"
               step="0.1"
-            />
-            <Input
-              type="number"
-              value={set.steps || ''}
-              onChange={(e) => updateSet(setIndex, { steps: parseInt(e.target.value) || undefined })}
-              className="w-16 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
-              placeholder="0"
-            />
-            <Input
-              type="number"
-              value={set.intervals || ''}
-              onChange={(e) => updateSet(setIndex, { intervals: parseInt(e.target.value) || undefined })}
-              className="w-16 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
-              placeholder="0"
             />
             
             <Button
