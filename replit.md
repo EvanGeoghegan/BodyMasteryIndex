@@ -144,6 +144,9 @@ Changelog:
 - June 15, 2025. Unified cardio and core exercise forms to match strength training set-based interface with completion buttons and rest timers
 - June 15, 2025. Enhanced progress dashboard with comprehensive tracking for strength volume, cardio distance/duration, protein/water intake, weekly assessments, and body weight
 - June 15, 2025. Added complete visual analytics for all fitness and nutrition metrics with color-coded charts
+- June 15, 2025. Removed intervals and steps from cardio exercise options for cleaner interface
+- June 15, 2025. Added scroll indicators to bottom navigation with clickable arrow buttons for better UX
+- June 15, 2025. Implemented comprehensive first-time user tutorial system with 9 guided steps explaining all app features
 ```
 
 ## User Preferences

@@ -3,11 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Download, User, Target, Database } from "lucide-react";
+import { Trash2, Download, User, Target, Database, HelpCircle } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 
-export default function Settings() {
+interface SettingsProps {
+  onShowTutorial?: () => void;
+}
+
+export default function Settings({ onShowTutorial }: SettingsProps) {
   const [proteinGoal, setProteinGoal] = useState("120");
   const [waterGoal, setWaterGoal] = useState("3.0");
   const [weightUnit, setWeightUnit] = useState("kg");
@@ -282,6 +286,15 @@ export default function Settings() {
           </div>
           
           <div className="space-y-3">
+            <Button
+              onClick={onShowTutorial}
+              variant="outline"
+              className="w-full bg-dark-elevated border-dark-border text-text-primary hover:bg-accent-red/20 hover:text-accent-red"
+            >
+              <HelpCircle className="mr-2" size={16} />
+              Show Tutorial
+            </Button>
+            
             <Button
               onClick={handleExportData}
               variant="outline"

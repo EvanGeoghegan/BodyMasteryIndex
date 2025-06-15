@@ -59,6 +59,10 @@ function App() {
     setActiveTab("supplements");
   };
 
+  const handleShowTutorial = () => {
+    setShowTutorial(true);
+  };
+
   const renderActiveTab = () => {
     switch (activeTab) {
       case "dashboard":
@@ -76,7 +80,7 @@ function App() {
       case "supplements":
         return <Supplements />;
       case "settings":
-        return <Settings />;
+        return <Settings onShowTutorial={handleShowTutorial} />;
       default:
         return <Dashboard onNavigateToWorkout={handleNavigateToWorkout} refreshTrigger={dashboardRefreshTrigger} />;
     }
@@ -89,6 +93,7 @@ function App() {
           <div className="max-w-md mx-auto bg-dark-primary min-h-screen relative">
             {renderActiveTab()}
             <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+            <Tutorial isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
           </div>
         </div>
         <Toaster />
