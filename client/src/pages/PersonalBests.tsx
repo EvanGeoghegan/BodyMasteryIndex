@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
-import { Trophy, TrendingUp } from "lucide-react";
+import { Trophy, TrendingUp, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { storage } from "@/lib/storage";
 import { PersonalBest } from "@shared/schema";
 
 export default function PersonalBests() {
   const [personalBests, setPersonalBests] = useState<PersonalBest[]>([]);
+  const [filteredBests, setFilteredBests] = useState<PersonalBest[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     loadPersonalBests();
@@ -24,7 +27,26 @@ export default function PersonalBests() {
       return acc;
     }, {} as Record<string, PersonalBest>);
 
-    setPersonalBests(Object.values(bestsByExercise).sort((a, b) => b.weight - a.weight));
+    const sortedBests = Object.values(bestsByExercise).sort((a, b) => b.weight - a.weight);
+    setPersonalBests(sortedBests);
+    setFilteredBests(sortedBests);
+  };
+
+  const filterPersonalBests = (query: string) => {
+    if (!query.trim()) {
+      setFilteredBests(personalBests);
+      return;
+    }
+
+    const filtered = personalBests.filter(pb =>
+      pb.exerciseName.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredBests(filtered);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    filterPersonalBests(value);
   };
 
   const formatDate = (dateString: string): string => {
@@ -94,14 +116,33 @@ export default function PersonalBests() {
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
       <header className="bg-dark-secondary p-4 shadow-lg">
-        <h2 className="text-xl font-bold text-text-primary font-heading flex items-center">
+        <h2 className="text-xl font-bold text-text-primary font-heading flex items-center mb-4">
           <Trophy className="mr-2 text-accent-red" size={24} />
           Personal Bests
         </h2>
+        
+        {/* Search Bar */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary" size={18} />
+          <Input
+            type="text"
+            placeholder="Search exercises..."
+            value={searchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="pl-10 bg-dark-elevated border-dark-border text-text-primary placeholder:text-text-secondary"
+          />
+        </div>
       </header>
 
       <div className="p-4 space-y-4">
-        {personalBests.length === 0 ? (
+        {/* Results Counter */}
+        {searchQuery && (
+          <div className="text-sm text-text-secondary">
+            {filteredBests.length} exercise{filteredBests.length !== 1 ? 's' : ''} found
+          </div>
+        )}
+
+        {filteredBests.length === 0 ? (
           <div className="text-center py-8">
             <Trophy className="mx-auto text-text-disabled mb-4" size={48} />
             <p className="text-text-secondary mb-2">No personal bests recorded yet</p>
