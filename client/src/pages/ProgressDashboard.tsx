@@ -45,6 +45,7 @@ export default function ProgressDashboard() {
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("30");
   const [selectedExercise, setSelectedExercise] = useState<string>("all");
   const [chartType, setChartType] = useState<string>("volume");
+  const [lastRefresh, setLastRefresh] = useState<number>(Date.now());
 
   useEffect(() => {
     loadData();

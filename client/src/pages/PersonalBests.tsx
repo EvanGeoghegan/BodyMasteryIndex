@@ -164,33 +164,16 @@ export default function PersonalBests() {
                 <div className="mt-4 border-t border-dark-border pt-3">
                   <div className="flex items-center gap-2 mb-3">
                     <TrendingUp className="text-accent-green" size={16} />
-                    <span className="text-text-secondary text-sm font-medium">Next Session Recommendations</span>
+                    <span className="text-text-secondary text-sm font-medium">Next Session Weight</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    {(() => {
-                      const progression = getProgressionRecommendations(pb);
-                      return (
-                        <>
-                          <div className="bg-dark-elevated rounded-lg p-3 border border-accent-green/30">
-                            <div className="text-center">
-                              <div className="text-lg font-bold text-accent-green">{progression.nextWeight}kg</div>
-                              <div className="text-xs text-text-secondary">Same reps (+2.5kg)</div>
-                            </div>
-                          </div>
-                          <div className="bg-dark-elevated rounded-lg p-3 border border-blue-500/30">
-                            <div className="text-center">
-                              <div className="text-lg font-bold text-blue-400">{pb.weight}kg</div>
-                              <div className="text-xs text-text-secondary">+1 rep ({progression.nextReps})</div>
-                            </div>
-                          </div>
-                        </>
-                      );
-                    })()}
-                  </div>
-                  <div className="mt-2 text-center">
-                    <span className="text-xs text-text-disabled">
-                      Alternative: {getProgressionRecommendations(pb).microloadWeight}kg (+1.25kg)
-                    </span>
+                  <div className="bg-dark-elevated rounded-lg p-4 border border-accent-green/30">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-accent-green">{getProgressionRecommendations(pb).nextWeight}kg</div>
+                      <div className="text-sm text-text-secondary">Progressive overload (+2.5kg)</div>
+                      <div className="text-xs text-text-disabled mt-1">
+                        Alternative: {getProgressionRecommendations(pb).microloadWeight}kg (+1.25kg)
+                      </div>
+                    </div>
                   </div>
                 </div>
 

@@ -127,6 +127,10 @@ Changelog:
 - June 14, 2025. Added comprehensive workout type legend showing colored dots for different exercise types
 - June 14, 2025. Added Settings page with goals, preferences, and data management including export functionality
 - June 14, 2025. Implemented recommended weight progression calculations in Personal Bests showing next session recommendations
+- June 14, 2025. Fixed settings persistence to properly save and load user preferences across app sessions
+- June 14, 2025. Enhanced protein and water tracking with proper state management, custom amount logging, and progress bars
+- June 14, 2025. Simplified progression recommendations to focus on weight increases only, removing additional rep options
+- June 14, 2025. Removed app preferences section from settings to streamline user experience
 ```
 
 ## User Preferences
