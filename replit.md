@@ -1,8 +1,8 @@
-# TrainLog - Offline Fitness Training Application
+# Body Mastery Index - Offline Fitness Training Application
 
 ## Overview
 
-TrainLog is a comprehensive offline fitness training application built with React, TypeScript, and Express. The app allows users to track workouts, create templates, monitor personal records, and maintain an activity calendar. It's designed to work offline-first with local storage as the primary data persistence mechanism, with plans for PostgreSQL database integration.
+Body Mastery Index is a comprehensive offline fitness training application built with React, TypeScript, and Express. The app allows users to track workouts, create templates, monitor personal records, maintain an activity calendar, log nutrition, and perform daily assessments. It's designed to work offline-first with local storage as the primary data persistence mechanism, with plans for PostgreSQL database integration.
 
 ## System Architecture
 
@@ -135,6 +135,11 @@ Changelog:
 - June 14, 2025. Added undo functionality to protein and water tracking with visual feedback
 - June 14, 2025. Changed "Multiple Rest Days" to "Rest Days" in calendar legend for cleaner labeling
 - June 14, 2025. Added circle charts for protein and water intake to dashboard with percentage completion display
+- June 14, 2025. Rebranded application from "TrainLog" to "Body Mastery Index"
+- June 14, 2025. Renamed "Supplements" tab to "Nutrition Log" for clearer functionality description
+- June 14, 2025. Added profile section to settings with current weight and target weight tracking
+- June 14, 2025. Added configurable assessment exercises to settings (default: Push-ups and Pull-ups)
+- June 14, 2025. Implemented daily assessment section on dashboard with exercise tracking and result storage
 ```
 
 ## User Preferences

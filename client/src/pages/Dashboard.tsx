@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Dumbbell, Quote, History, Sparkles, Droplets } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Dumbbell, Quote, History, Sparkles, Droplets, Target } from "lucide-react";
 import ActivityCalendar from "@/components/ActivityCalendar";
 import { storage } from "@/lib/storage";
 import { getDailyQuote } from "@/lib/quotes";
 import { Workout } from "@shared/schema";
 import confetti from 'canvas-confetti';
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { useToast } from "@/hooks/use-toast";
 
 interface DashboardProps {
   onNavigateToWorkout: () => void;
@@ -27,6 +29,38 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
   const [exercise1Reps, setExercise1Reps] = useState("");
   const [exercise2Reps, setExercise2Reps] = useState("");
   const dailyQuote = getDailyQuote();
+  const { toast } = useToast();
+
+  // Save assessment results
+  const saveAssessmentResults = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const results = {
+      date: today,
+      exercise1: assessmentExercise1,
+      exercise1Reps: parseInt(exercise1Reps) || 0,
+      exercise2: assessmentExercise2,
+      exercise2Reps: parseInt(exercise2Reps) || 0
+    };
+    
+    const existingResults = JSON.parse(localStorage.getItem('assessment_results') || '[]');
+    const todayIndex = existingResults.findIndex((r: any) => r.date === today);
+    
+    if (todayIndex >= 0) {
+      existingResults[todayIndex] = results;
+    } else {
+      existingResults.push(results);
+    }
+    
+    localStorage.setItem('assessment_results', JSON.stringify(existingResults));
+    
+    toast({
+      title: "Assessment saved",
+      description: `${assessmentExercise1}: ${exercise1Reps}, ${assessmentExercise2}: ${exercise2Reps}`
+    });
+    
+    setExercise1Reps("");
+    setExercise2Reps("");
+  };
 
   const refreshData = () => {
     setLastWorkout(storage.getLastWorkout());
@@ -39,6 +73,8 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
         const settings = JSON.parse(savedSettings);
         setProteinGoal(settings.proteinGoal || 120);
         setWaterGoal(settings.waterGoal || 3.0);
+        setAssessmentExercise1(settings.assessmentExercise1 || "Push-ups");
+        setAssessmentExercise2(settings.assessmentExercise2 || "Pull-ups");
       } catch (error) {
         console.error('Error loading settings:', error);
       }
@@ -232,6 +268,52 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
               <div className="text-sm font-bold text-blue-400">{currentWater}L</div>
               <div className="text-xs text-text-secondary">of {waterGoal}L</div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Assessment Day Section */}
+      <div className="px-4 pb-4">
+        <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
+          <div className="flex items-center gap-2 mb-4">
+            <Target className="text-accent-red" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
+              Daily Assessment
+            </h2>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-text-secondary">{assessmentExercise1}</label>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  value={exercise1Reps}
+                  onChange={(e) => setExercise1Reps(e.target.value)}
+                  className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-text-secondary">{assessmentExercise2}</label>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  value={exercise2Reps}
+                  onChange={(e) => setExercise2Reps(e.target.value)}
+                  className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
+                />
+              </div>
+            </div>
+            
+            <Button
+              onClick={saveAssessmentResults}
+              disabled={!exercise1Reps || !exercise2Reps}
+              className="w-full bg-accent-red hover:bg-accent-light-red text-white disabled:opacity-50"
+            >
+              Save Assessment
+            </Button>
           </div>
         </div>
       </div>
