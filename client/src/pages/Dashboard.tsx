@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Dumbbell, Quote, History, Sparkles } from "lucide-react";
+import { Dumbbell, Quote, History, Sparkles, Droplets } from "lucide-react";
 import ActivityCalendar from "@/components/ActivityCalendar";
 import { storage } from "@/lib/storage";
 import { getDailyQuote } from "@/lib/quotes";
 import { Workout } from "@shared/schema";
 import confetti from 'canvas-confetti';
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 interface DashboardProps {
   onNavigateToWorkout: () => void;

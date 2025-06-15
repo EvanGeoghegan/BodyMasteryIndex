@@ -69,6 +69,8 @@ export default function Supplements() {
   const [currentWater, setCurrentWater] = useState(0);
   const [customProteinAmount, setCustomProteinAmount] = useState("");
   const [customWaterAmount, setCustomWaterAmount] = useState("");
+  const [lastProteinAction, setLastProteinAction] = useState<number>(0);
+  const [lastWaterAction, setLastWaterAction] = useState<number>(0);
   const { toast } = useToast();
 
   // Load settings and daily nutrition data
@@ -109,6 +111,7 @@ export default function Supplements() {
   const addProtein = (amount: number) => {
     const newProtein = Math.round((currentProtein + amount) * 10) / 10;
     setCurrentProtein(newProtein);
+    setLastProteinAction(amount);
     saveNutritionData(newProtein, currentWater);
     toast({
       title: "Protein logged",
@@ -120,11 +123,40 @@ export default function Supplements() {
   const addWater = (amount: number) => {
     const newWater = Math.round((currentWater + amount) * 10) / 10;
     setCurrentWater(newWater);
+    setLastWaterAction(amount);
     saveNutritionData(currentProtein, newWater);
     toast({
       title: "Water logged",
       description: `Added ${amount}L water. Total: ${newWater}L`
     });
+  };
+
+  // Undo last protein action
+  const undoProtein = () => {
+    if (lastProteinAction > 0) {
+      const newProtein = Math.max(0, Math.round((currentProtein - lastProteinAction) * 10) / 10);
+      setCurrentProtein(newProtein);
+      saveNutritionData(newProtein, currentWater);
+      setLastProteinAction(0);
+      toast({
+        title: "Protein undone",
+        description: `Removed ${lastProteinAction}g protein. Total: ${newProtein}g`
+      });
+    }
+  };
+
+  // Undo last water action
+  const undoWater = () => {
+    if (lastWaterAction > 0) {
+      const newWater = Math.max(0, Math.round((currentWater - lastWaterAction) * 10) / 10);
+      setCurrentWater(newWater);
+      saveNutritionData(currentProtein, newWater);
+      setLastWaterAction(0);
+      toast({
+        title: "Water undone",
+        description: `Removed ${lastWaterAction}L water. Total: ${newWater}L`
+      });
+    }
   };
 
   // Handle custom protein logging
@@ -337,6 +369,16 @@ export default function Supplements() {
                   Add
                 </Button>
               </div>
+              {lastProteinAction > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={undoProtein}
+                  className="w-full bg-dark-elevated border-dark-border text-text-secondary hover:bg-red-500/20 hover:text-red-400"
+                >
+                  Undo (-{lastProteinAction}g)
+                </Button>
+              )}
             </div>
           </div>
 
@@ -406,6 +448,16 @@ export default function Supplements() {
                   Add
                 </Button>
               </div>
+              {lastWaterAction > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={undoWater}
+                  className="w-full bg-dark-elevated border-dark-border text-text-secondary hover:bg-red-500/20 hover:text-red-400"
+                >
+                  Undo (-{lastWaterAction}L)
+                </Button>
+              )}
             </div>
           </div>
         </div>

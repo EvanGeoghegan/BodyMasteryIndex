@@ -195,22 +195,9 @@ export default function CalendarPage() {
             >
               <ChevronLeft size={24} />
             </button>
-            <div className="flex items-center gap-3">
-              <h3 className="text-text-primary font-bold text-xl">
-                {monthNames[currentMonth]} {currentYear}
-              </h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setWorkoutDays(storage.getWorkoutDays());
-                  setRefreshKey(prev => prev + 1);
-                }}
-                className="text-text-secondary hover:text-text-primary"
-              >
-                Refresh
-              </Button>
-            </div>
+            <h3 className="text-text-primary font-bold text-xl">
+              {monthNames[currentMonth]} {currentYear}
+            </h3>
             <button 
               onClick={() => navigateMonth(1)}
               className="text-text-secondary hover:text-text-primary transition-colors p-2 rounded-lg hover:bg-dark-elevated"
@@ -293,7 +280,7 @@ export default function CalendarPage() {
             </div>
             <div className="flex items-center space-x-3">
               <div className="w-4 h-4 bg-dark-elevated rounded-lg border-2 border-red-500"></div>
-              <span className="text-text-secondary">Multiple Rest Days</span>
+              <span className="text-text-secondary">Rest Days</span>
             </div>
             <div className="flex items-center space-x-3">
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
