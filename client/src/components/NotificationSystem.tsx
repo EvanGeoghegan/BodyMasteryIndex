@@ -73,11 +73,11 @@ export default function NotificationSystem({ onNavigateToWorkout, onNavigateToNu
       if (newNotifications.length > 0) {
         setNotifications(prev => [...prev, ...newNotifications]);
         // Show notification permission request if not already granted
-        if (Notification.permission === 'default') {
+        if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
           Notification.requestPermission();
         }
         // Send browser notification if permission granted
-        if (Notification.permission === 'granted') {
+        if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
           newNotifications.forEach(notification => {
             new Notification(notification.title, {
               body: notification.message,

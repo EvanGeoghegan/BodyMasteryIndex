@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "@/components/Navigation";
 import Tutorial from "@/components/Tutorial";
+import NotificationSystem from "@/components/NotificationSystem";
 import Dashboard from "@/pages/Dashboard";
 import WorkoutPage from "@/pages/Workout";
 import Templates from "@/pages/Templates";
@@ -94,6 +95,10 @@ function App() {
             {renderActiveTab()}
             <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
             <Tutorial isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
+            <NotificationSystem 
+              onNavigateToWorkout={handleNavigateToWorkout}
+              onNavigateToNutrition={handleNavigateToNutrition}
+            />
           </div>
         </div>
         <Toaster />
