@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dumbbell, Quote, History, Sparkles, Droplets, Target } from "lucide-react";
+import { Quote, History, Sparkles, Droplets, Target } from "lucide-react";
+import logoPath from "@assets/Scale Logo draft _1750013965195.jpeg";
 import ActivityCalendar from "@/components/ActivityCalendar";
 import { storage } from "@/lib/storage";
 import { getDailyQuote } from "@/lib/quotes";
@@ -180,8 +181,8 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
             <h1 className="text-2xl font-bold text-text-primary font-heading">Body Mastery Index</h1>
             <p className="text-text-secondary text-sm">{getCurrentDate()}</p>
           </div>
-          <div className="w-12 h-12 bg-dark-elevated rounded-full flex items-center justify-center">
-            <Dumbbell className="text-accent-red" size={24} />
+          <div className="w-12 h-12 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden">
+            <img src={logoPath} alt="Body Mastery Index" className="w-8 h-8 object-contain" />
           </div>
         </div>
       </header>
@@ -224,7 +225,7 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
           >
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-text-primary">Protein</h3>
-              <Dumbbell className="text-accent-red" size={16} />
+              <img src={logoPath} alt="Protein" className="w-4 h-4 object-contain" />
             </div>
             <div className="relative w-20 h-20 mx-auto mb-2">
               <ResponsiveContainer width="100%" height="100%">
@@ -371,7 +372,7 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
           onClick={onNavigateToWorkout}
           className="w-full bg-accent-red hover:bg-accent-light-red text-white font-medium py-3 px-4 shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105"
         >
-          <Dumbbell className="mr-2" size={18} />
+          <img src={logoPath} alt="Workout" className="w-4 h-4 object-contain mr-2" />
           <span>Log Workout</span>
         </Button>
       </div>
