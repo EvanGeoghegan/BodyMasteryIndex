@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Pill, Calendar, Clock, Trash2, Edit, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,7 +63,87 @@ export default function Supplements() {
   const [todayLogs, setTodayLogs] = useState<SupplementLog[]>(storage.getSupplementLogs(selectedDate));
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingSupplement, setEditingSupplement] = useState<Supplement | null>(null);
+  const [proteinGoal, setProteinGoal] = useState(120);
+  const [waterGoal, setWaterGoal] = useState(3.0);
+  const [currentProtein, setCurrentProtein] = useState(0);
+  const [currentWater, setCurrentWater] = useState(0);
+  const [customProteinAmount, setCustomProteinAmount] = useState("");
+  const [customWaterAmount, setCustomWaterAmount] = useState("");
   const { toast } = useToast();
+
+  // Load settings and daily nutrition data
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('trainlog_settings');
+    if (savedSettings) {
+      try {
+        const settings = JSON.parse(savedSettings);
+        setProteinGoal(settings.proteinGoal || 120);
+        setWaterGoal(settings.waterGoal || 3.0);
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      }
+    }
+
+    // Load today's nutrition data
+    const today = new Date().toISOString().split('T')[0];
+    const nutritionData = localStorage.getItem(`nutrition_${today}`);
+    if (nutritionData) {
+      try {
+        const data = JSON.parse(nutritionData);
+        setCurrentProtein(data.protein || 0);
+        setCurrentWater(data.water || 0);
+      } catch (error) {
+        console.error('Error loading nutrition data:', error);
+      }
+    }
+  }, []);
+
+  // Save nutrition data when it changes
+  const saveNutritionData = (protein: number, water: number) => {
+    const today = new Date().toISOString().split('T')[0];
+    const nutritionData = { protein, water, date: today };
+    localStorage.setItem(`nutrition_${today}`, JSON.stringify(nutritionData));
+  };
+
+  // Add protein with custom amount
+  const addProtein = (amount: number) => {
+    const newProtein = Math.round((currentProtein + amount) * 10) / 10;
+    setCurrentProtein(newProtein);
+    saveNutritionData(newProtein, currentWater);
+    toast({
+      title: "Protein logged",
+      description: `Added ${amount}g protein. Total: ${newProtein}g`
+    });
+  };
+
+  // Add water with custom amount  
+  const addWater = (amount: number) => {
+    const newWater = Math.round((currentWater + amount) * 10) / 10;
+    setCurrentWater(newWater);
+    saveNutritionData(currentProtein, newWater);
+    toast({
+      title: "Water logged",
+      description: `Added ${amount}L water. Total: ${newWater}L`
+    });
+  };
+
+  // Handle custom protein logging
+  const handleCustomProtein = () => {
+    const amount = parseFloat(customProteinAmount);
+    if (amount && amount > 0) {
+      addProtein(amount);
+      setCustomProteinAmount("");
+    }
+  };
+
+  // Handle custom water logging
+  const handleCustomWater = () => {
+    const amount = parseFloat(customWaterAmount);
+    if (amount && amount > 0) {
+      addWater(amount);
+      setCustomWaterAmount("");
+    }
+  };
 
   const form = useForm<InsertSupplement>({
     resolver: zodResolver(insertSupplementSchema),

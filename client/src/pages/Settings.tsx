@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Trash2, Download, Upload, User, Target, Bell, Database } from "lucide-react";
+import { Trash2, Download, User, Target, Database } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 
@@ -13,19 +12,31 @@ export default function Settings() {
   const [waterGoal, setWaterGoal] = useState("3.0");
   const [weightUnit, setWeightUnit] = useState("kg");
   const [restTimerDefault, setRestTimerDefault] = useState("150");
-  const [notifications, setNotifications] = useState(true);
-  const [autoBackup, setAutoBackup] = useState(false);
   const { toast } = useToast();
 
+  // Load settings on component mount
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('trainlog_settings');
+    if (savedSettings) {
+      try {
+        const settings = JSON.parse(savedSettings);
+        setProteinGoal(settings.proteinGoal?.toString() || "120");
+        setWaterGoal(settings.waterGoal?.toString() || "3.0");
+        setWeightUnit(settings.weightUnit || "kg");
+        setRestTimerDefault(settings.restTimerDefault?.toString() || "150");
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      }
+    }
+  }, []);
+
   const handleSaveSettings = () => {
-    // Save settings to localStorage
-    localStorage.setItem('settings', JSON.stringify({
+    // Save settings to localStorage with consistent key
+    localStorage.setItem('trainlog_settings', JSON.stringify({
       proteinGoal: parseFloat(proteinGoal),
       waterGoal: parseFloat(waterGoal),
       weightUnit,
-      restTimerDefault: parseInt(restTimerDefault),
-      notifications,
-      autoBackup
+      restTimerDefault: parseInt(restTimerDefault)
     }));
 
     toast({
@@ -172,40 +183,6 @@ export default function Settings() {
                   <span className="text-text-secondary self-center text-sm">sec</span>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* App Preferences */}
-        <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
-          <div className="flex items-center gap-2 mb-4">
-            <Bell className="text-accent-red" size={20} />
-            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
-              App Preferences
-            </h2>
-          </div>
-          
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-text-primary">Rest Timer Notifications</Label>
-                <p className="text-sm text-text-secondary">Get notified when rest time is complete</p>
-              </div>
-              <Switch
-                checked={notifications}
-                onCheckedChange={setNotifications}
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-text-primary">Auto Backup</Label>
-                <p className="text-sm text-text-secondary">Automatically backup data weekly</p>
-              </div>
-              <Switch
-                checked={autoBackup}
-                onCheckedChange={setAutoBackup}
-              />
             </div>
           </div>
         </div>
