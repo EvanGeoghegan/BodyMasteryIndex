@@ -47,6 +47,10 @@ function App() {
     setActiveTab("workout");
   };
 
+  const handleNavigateToNutrition = () => {
+    setActiveTab("supplements");
+  };
+
   const renderActiveTab = () => {
     switch (activeTab) {
       case "dashboard":

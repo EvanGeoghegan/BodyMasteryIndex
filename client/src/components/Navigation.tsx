@@ -1,4 +1,4 @@
-import { Home, Dumbbell, Copy, Trophy, Calendar, BarChart3, Pill, Settings } from "lucide-react";
+import { Home, Dumbbell, Copy, Trophy, Calendar, BarChart3, Apple, Settings } from "lucide-react";
 
 interface NavigationProps {
   activeTab: string;
@@ -7,13 +7,13 @@ interface NavigationProps {
 
 export default function Navigation({ activeTab, onTabChange }: NavigationProps) {
   const tabs = [
-    { id: 'dashboard', label: 'Home', icon: Home },
+    { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'workout', label: 'Workout', icon: Dumbbell },
-    { id: 'progress', label: 'Progress', icon: BarChart3 },
+    { id: 'supplements', label: 'Nutrition', icon: Apple },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
-    { id: 'supplements', label: 'Nutrition Log', icon: Pill },
-    { id: 'templates', label: 'Templates', icon: Copy },
     { id: 'records', label: 'Records', icon: Trophy },
+    { id: 'progress', label: 'Progress', icon: BarChart3 },
+    { id: 'templates', label: 'Templates', icon: Copy },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 

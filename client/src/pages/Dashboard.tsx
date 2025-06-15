@@ -14,9 +14,10 @@ interface DashboardProps {
   onNavigateToWorkout: () => void;
   onEditWorkout?: (workout: Workout) => void;
   refreshTrigger?: number; // Add a prop to trigger refresh
+  onNavigateToNutrition?: () => void;
 }
 
-export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshTrigger }: DashboardProps) {
+export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshTrigger, onNavigateToNutrition }: DashboardProps) {
   const [lastWorkout, setLastWorkout] = useState<Workout | undefined>();
   const [workoutDays, setWorkoutDays] = useState<string[]>([]);
   const [showCongrats, setShowCongrats] = useState(false);
@@ -217,7 +218,10 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
       <div className="px-4 pb-4">
         <div className="grid grid-cols-2 gap-4">
           {/* Protein Circle Chart */}
-          <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border">
+          <div 
+            className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors"
+            onClick={() => onNavigateToNutrition?.()}
+          >
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-text-primary">Protein</h3>
               <Dumbbell className="text-accent-red" size={16} />
@@ -254,7 +258,10 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
           </div>
 
           {/* Water Circle Chart */}
-          <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border">
+          <div 
+            className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors"
+            onClick={() => onNavigateToNutrition?.()}
+          >
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-text-primary">Water</h3>
               <Droplets className="text-blue-400" size={16} />
