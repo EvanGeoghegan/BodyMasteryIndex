@@ -145,13 +145,15 @@ export default function PersonalBests() {
         {filteredBests.length === 0 ? (
           <div className="text-center py-8">
             <Trophy className="mx-auto text-text-disabled mb-4" size={48} />
-            <p className="text-text-secondary mb-2">No personal bests recorded yet</p>
+            <p className="text-text-secondary mb-2">
+              {searchQuery ? 'No exercises found matching your search' : 'No personal bests recorded yet'}
+            </p>
             <p className="text-text-disabled text-sm">
-              Complete some workouts to start tracking your progress!
+              {searchQuery ? 'Try a different search term' : 'Complete some workouts to start tracking your progress!'}
             </p>
           </div>
         ) : (
-          personalBests.map((pb, index) => (
+          filteredBests.map((pb, index) => (
             <div key={pb.id} className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
