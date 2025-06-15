@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "@/components/Navigation";
+import Tutorial from "@/components/Tutorial";
 import Dashboard from "@/pages/Dashboard";
 import WorkoutPage from "@/pages/Workout";
 import Templates from "@/pages/Templates";
@@ -19,10 +20,17 @@ function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [dashboardRefreshTrigger, setDashboardRefreshTrigger] = useState(0);
   const [workoutToEdit, setWorkoutToEdit] = useState<WorkoutType | null>(null);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   useEffect(() => {
     // Initialize default templates on first load
     storage.initializeDefaultTemplates();
+    
+    // Check if user is first-time visitor
+    const tutorialCompleted = localStorage.getItem('bmi_tutorial_completed');
+    if (!tutorialCompleted) {
+      setShowTutorial(true);
+    }
   }, []);
 
   const handleWorkoutSaved = () => {
