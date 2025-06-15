@@ -22,6 +22,10 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
   const [waterGoal, setWaterGoal] = useState(3.0);
   const [currentProtein, setCurrentProtein] = useState(0);
   const [currentWater, setCurrentWater] = useState(0);
+  const [assessmentExercise1, setAssessmentExercise1] = useState("Push-ups");
+  const [assessmentExercise2, setAssessmentExercise2] = useState("Pull-ups");
+  const [exercise1Reps, setExercise1Reps] = useState("");
+  const [exercise2Reps, setExercise2Reps] = useState("");
   const dailyQuote = getDailyQuote();
 
   const refreshData = () => {

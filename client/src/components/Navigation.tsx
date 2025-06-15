@@ -11,7 +11,7 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
     { id: 'workout', label: 'Workout', icon: Dumbbell },
     { id: 'progress', label: 'Progress', icon: BarChart3 },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
-    { id: 'supplements', label: 'Supplements', icon: Pill },
+    { id: 'supplements', label: 'Nutrition Log', icon: Pill },
     { id: 'templates', label: 'Templates', icon: Copy },
     { id: 'records', label: 'Records', icon: Trophy },
     { id: 'settings', label: 'Settings', icon: Settings },

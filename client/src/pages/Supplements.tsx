@@ -293,7 +293,7 @@ export default function Supplements() {
       <header className="bg-dark-secondary border-b border-dark-border">
         <div className="p-4">
           <h1 className="text-2xl font-bold text-text-primary font-['Montserrat']">
-            Supplements & Nutrition
+            Nutrition Log
           </h1>
           <p className="text-text-secondary mt-1">
             Track your daily supplements, protein, and hydration
