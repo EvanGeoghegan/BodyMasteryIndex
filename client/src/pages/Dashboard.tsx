@@ -176,7 +176,7 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
       <header className="bg-dark-secondary p-4 shadow-lg">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-text-primary font-heading">TrainLog</h1>
+            <h1 className="text-2xl font-bold text-text-primary font-heading">Body Mastery Index</h1>
             <p className="text-text-secondary text-sm">{getCurrentDate()}</p>
           </div>
           <div className="w-12 h-12 bg-dark-elevated rounded-full flex items-center justify-center">

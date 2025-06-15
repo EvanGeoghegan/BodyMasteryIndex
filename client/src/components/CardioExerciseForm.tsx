@@ -98,111 +98,74 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
         </Select>
       </div>
 
+      {/* Sets Header */}
+      <div className="flex items-center space-x-2 text-sm mb-2">
+        <span className="text-text-secondary w-8">Set</span>
+        <span className="text-text-secondary w-20">Duration</span>
+        <span className="text-text-secondary w-20">Distance</span>
+        <span className="text-text-secondary w-16">Steps</span>
+        <span className="text-text-secondary w-16">Intervals</span>
+        <span className="text-text-secondary w-8"></span>
+      </div>
+
       {/* Sets */}
-      <div className="space-y-3 mb-4">
+      <div className="space-y-2">
         {exercise.sets.map((set, setIndex) => (
-          <div key={set.id} className="bg-dark-primary rounded-lg p-4 border border-dark-border">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-text-secondary font-medium text-sm">Set {setIndex + 1}</span>
-              {exercise.sets.length > 1 && (
-                <Button
-                  onClick={() => removeSet(setIndex)}
-                  variant="ghost"
-                  size="sm"
-                  className="text-text-secondary hover:text-accent-red p-1"
-                >
-                  <Trash2 size={14} />
-                </Button>
-              )}
-            </div>
+          <div key={set.id} className="flex items-center space-x-2">
+            <span className="text-text-primary w-8 text-sm">{setIndex + 1}</span>
+            <Input
+              type="number"
+              value={set.duration || ''}
+              onChange={(e) => updateSet(setIndex, { duration: parseInt(e.target.value) || undefined })}
+              className="w-20 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
+              placeholder="min"
+            />
+            <Input
+              type="number"
+              value={set.distance || ''}
+              onChange={(e) => updateSet(setIndex, { distance: parseFloat(e.target.value) || undefined })}
+              className="w-20 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
+              placeholder="km"
+              step="0.1"
+            />
+            <Input
+              type="number"
+              value={set.steps || ''}
+              onChange={(e) => updateSet(setIndex, { steps: parseInt(e.target.value) || undefined })}
+              className="w-16 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
+              placeholder="0"
+            />
+            <Input
+              type="number"
+              value={set.intervals || ''}
+              onChange={(e) => updateSet(setIndex, { intervals: parseInt(e.target.value) || undefined })}
+              className="w-16 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
+              placeholder="0"
+            />
             
-            <div className="grid grid-cols-2 gap-3 mb-3">
-              <div>
-                <label className="text-text-secondary text-xs font-medium mb-1 block">
-                  Duration
-                </label>
-                <div className="flex items-center space-x-1">
-                  <Input
-                    type="number"
-                    value={set.duration || ""}
-                    onChange={(e) => updateSet(setIndex, { duration: parseInt(e.target.value) || undefined })}
-                    className="bg-dark-elevated border-dark-border text-text-primary font-medium text-sm h-8"
-                    placeholder="0"
-                  />
-                  <span className="text-accent-red font-medium text-xs">min</span>
-                </div>
-              </div>
-              
-              <div>
-                <label className="text-text-secondary text-xs font-medium mb-1 block">
-                  Distance
-                </label>
-                <div className="flex items-center space-x-1">
-                  <Input
-                    type="number"
-                    value={set.distance || ""}
-                    onChange={(e) => updateSet(setIndex, { distance: parseFloat(e.target.value) || undefined })}
-                    className="bg-dark-elevated border-dark-border text-text-primary font-medium text-sm h-8"
-                    placeholder="0"
-                    step="0.1"
-                  />
-                  <span className="text-accent-red font-medium text-xs">km</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 mb-3">
-              <div>
-                <label className="text-text-secondary text-xs font-medium mb-1 block">
-                  Steps
-                </label>
-                <Input
-                  type="number"
-                  value={set.steps || ""}
-                  onChange={(e) => updateSet(setIndex, { steps: parseInt(e.target.value) || undefined })}
-                  className="bg-dark-elevated border-dark-border text-text-primary font-medium text-sm h-8"
-                  placeholder="0"
-                />
-              </div>
-              
-              <div>
-                <label className="text-text-secondary text-xs font-medium mb-1 block">
-                  Intervals
-                </label>
-                <Input
-                  type="number"
-                  value={set.intervals || ""}
-                  onChange={(e) => updateSet(setIndex, { intervals: parseInt(e.target.value) || undefined })}
-                  className="bg-dark-elevated border-dark-border text-text-primary font-medium text-sm h-8"
-                  placeholder="0"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button
-                onClick={() => toggleCompleted(setIndex)}
-                className={`flex-1 font-medium text-sm h-8 ${
-                  set.completed 
-                    ? "bg-accent-green text-white" 
-                    : "bg-accent-navy text-white hover:bg-accent-light-navy"
-                }`}
-              >
-                {set.completed ? <Check size={14} className="mr-1" /> : <Circle size={14} className="mr-1" />}
-                {set.completed ? "Done" : "Complete"}
-              </Button>
-              
-              {set.completed && (
-                <Button
-                  onClick={() => setShowRestTimer(true)}
-                  variant="outline"
-                  size="sm"
-                  className="border-dark-border text-text-secondary hover:text-text-primary h-8 px-3"
-                >
-                  <Timer size={14} />
-                </Button>
+            <Button
+              onClick={() => toggleCompleted(setIndex)}
+              variant="ghost"
+              size="sm"
+              className="p-1 h-8 w-8"
+            >
+              {set.completed ? (
+                <Check className="text-accent-green" size={16} />
+              ) : (
+                <Circle className="text-text-secondary" size={16} />
               )}
-            </div>
+            </Button>
+
+            {exercise.sets.length > 1 && (
+              <Button
+                onClick={() => removeSet(setIndex)}
+                variant="ghost"
+                size="sm"
+                className="text-text-secondary hover:text-accent-red p-1 h-8 w-8"
+              >
+                <Trash2 size={14} />
+              </Button>
+            )}
           </div>
         ))}
       </div>
@@ -210,18 +173,12 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
       {/* Add Set Button */}
       <Button
         onClick={addSet}
-        variant="outline"
-        className="w-full mb-3 border-dark-border text-text-secondary hover:text-text-primary h-9"
+        variant="ghost"
+        className="mt-3 text-accent-green hover:text-green-400 text-sm font-medium p-0 h-auto"
       >
-        <Plus size={16} className="mr-2" />
+        <Plus className="mr-1" size={16} />
         Add Set
       </Button>
-
-      {/* Rest Timer */}
-      <RestTimer
-        isOpen={showRestTimer}
-        onClose={() => setShowRestTimer(false)}
-      />
     </div>
   );
 }
