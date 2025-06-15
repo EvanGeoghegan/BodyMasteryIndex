@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Exercise, ExerciseSet } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Check, Circle } from "lucide-react";
+import { Trash2, Check, Circle, Plus, Timer, Clock } from "lucide-react";
+import RestTimer from "./RestTimer";
 
 interface CardioExerciseFormProps {
   exercise: Exercise;
@@ -11,6 +13,8 @@ interface CardioExerciseFormProps {
 }
 
 export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: CardioExerciseFormProps) {
+  const [showRestTimer, setShowRestTimer] = useState(false);
+
   const updateExerciseName = (name: string) => {
     onUpdate({ ...exercise, name });
   };
@@ -26,12 +30,33 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
     onUpdate({ ...exercise, cardioType });
   };
 
-  const toggleCompleted = () => {
-    const set = exercise.sets[0];
-    updateSet(0, { completed: !set.completed });
+  const addSet = () => {
+    const newSet: ExerciseSet = {
+      id: Date.now().toString(),
+      completed: false,
+      duration: undefined,
+      distance: undefined,
+      steps: undefined,
+      intervals: undefined
+    };
+    onUpdate({ ...exercise, sets: [...exercise.sets, newSet] });
   };
 
-  const set = exercise.sets[0] || { id: "1", completed: false };
+  const removeSet = (setIndex: number) => {
+    if (exercise.sets.length > 1) {
+      const updatedSets = exercise.sets.filter((_, index) => index !== setIndex);
+      onUpdate({ ...exercise, sets: updatedSets });
+    }
+  };
+
+  const toggleCompleted = (setIndex: number) => {
+    const set = exercise.sets[setIndex];
+    updateSet(setIndex, { completed: !set.completed });
+    
+    if (!set.completed) {
+      setShowRestTimer(true);
+    }
+  };
 
   return (
     <div className="bg-dark-elevated rounded-xl p-5 border border-dark-border shadow-lg">
@@ -73,83 +98,130 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
         </Select>
       </div>
 
-      {/* Cardio Stats */}
-      <div className="grid grid-cols-2 gap-3 mb-3">
-        <div>
-          <label className="text-text-secondary text-sm font-medium mb-1 block">
-            Duration
-          </label>
-          <div className="flex items-center space-x-1">
-            <Input
-              type="number"
-              value={set.duration || ""}
-              onChange={(e) => updateSet(0, { duration: parseInt(e.target.value) || undefined })}
-              className="bg-dark-primary border-dark-border text-text-primary font-medium"
-              placeholder="0"
-            />
-            <span className="text-accent-red font-medium text-sm">min</span>
+      {/* Sets */}
+      <div className="space-y-3 mb-4">
+        {exercise.sets.map((set, setIndex) => (
+          <div key={set.id} className="bg-dark-primary rounded-lg p-4 border border-dark-border">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-text-secondary font-medium text-sm">Set {setIndex + 1}</span>
+              {exercise.sets.length > 1 && (
+                <Button
+                  onClick={() => removeSet(setIndex)}
+                  variant="ghost"
+                  size="sm"
+                  className="text-text-secondary hover:text-accent-red p-1"
+                >
+                  <Trash2 size={14} />
+                </Button>
+              )}
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div>
+                <label className="text-text-secondary text-xs font-medium mb-1 block">
+                  Duration
+                </label>
+                <div className="flex items-center space-x-1">
+                  <Input
+                    type="number"
+                    value={set.duration || ""}
+                    onChange={(e) => updateSet(setIndex, { duration: parseInt(e.target.value) || undefined })}
+                    className="bg-dark-elevated border-dark-border text-text-primary font-medium text-sm h-8"
+                    placeholder="0"
+                  />
+                  <span className="text-accent-red font-medium text-xs">min</span>
+                </div>
+              </div>
+              
+              <div>
+                <label className="text-text-secondary text-xs font-medium mb-1 block">
+                  Distance
+                </label>
+                <div className="flex items-center space-x-1">
+                  <Input
+                    type="number"
+                    value={set.distance || ""}
+                    onChange={(e) => updateSet(setIndex, { distance: parseFloat(e.target.value) || undefined })}
+                    className="bg-dark-elevated border-dark-border text-text-primary font-medium text-sm h-8"
+                    placeholder="0"
+                    step="0.1"
+                  />
+                  <span className="text-accent-red font-medium text-xs">km</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div>
+                <label className="text-text-secondary text-xs font-medium mb-1 block">
+                  Steps
+                </label>
+                <Input
+                  type="number"
+                  value={set.steps || ""}
+                  onChange={(e) => updateSet(setIndex, { steps: parseInt(e.target.value) || undefined })}
+                  className="bg-dark-elevated border-dark-border text-text-primary font-medium text-sm h-8"
+                  placeholder="0"
+                />
+              </div>
+              
+              <div>
+                <label className="text-text-secondary text-xs font-medium mb-1 block">
+                  Intervals
+                </label>
+                <Input
+                  type="number"
+                  value={set.intervals || ""}
+                  onChange={(e) => updateSet(setIndex, { intervals: parseInt(e.target.value) || undefined })}
+                  className="bg-dark-elevated border-dark-border text-text-primary font-medium text-sm h-8"
+                  placeholder="0"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => toggleCompleted(setIndex)}
+                className={`flex-1 font-medium text-sm h-8 ${
+                  set.completed 
+                    ? "bg-accent-green text-white" 
+                    : "bg-accent-navy text-white hover:bg-accent-light-navy"
+                }`}
+              >
+                {set.completed ? <Check size={14} className="mr-1" /> : <Circle size={14} className="mr-1" />}
+                {set.completed ? "Done" : "Complete"}
+              </Button>
+              
+              {set.completed && (
+                <Button
+                  onClick={() => setShowRestTimer(true)}
+                  variant="outline"
+                  size="sm"
+                  className="border-dark-border text-text-secondary hover:text-text-primary h-8 px-3"
+                >
+                  <Timer size={14} />
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
-        
-        <div>
-          <label className="text-text-secondary text-sm font-medium mb-1 block">
-            Distance
-          </label>
-          <div className="flex items-center space-x-1">
-            <Input
-              type="number"
-              value={set.distance || ""}
-              onChange={(e) => updateSet(0, { distance: parseFloat(e.target.value) || undefined })}
-              className="bg-dark-primary border-dark-border text-text-primary font-medium"
-              placeholder="0"
-              step="0.1"
-            />
-            <span className="text-accent-red font-medium text-sm">km</span>
-          </div>
-        </div>
+        ))}
       </div>
 
-      {/* Optional Fields */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <div>
-          <label className="text-text-secondary text-sm font-medium mb-1 block">
-            Steps (optional)
-          </label>
-          <Input
-            type="number"
-            value={set.steps || ""}
-            onChange={(e) => updateSet(0, { steps: parseInt(e.target.value) || undefined })}
-            className="bg-dark-primary border-dark-border text-text-primary font-medium"
-            placeholder="0"
-          />
-        </div>
-        
-        <div>
-          <label className="text-text-secondary text-sm font-medium mb-1 block">
-            Intervals (optional)
-          </label>
-          <Input
-            type="number"
-            value={set.intervals || ""}
-            onChange={(e) => updateSet(0, { intervals: parseInt(e.target.value) || undefined })}
-            className="bg-dark-primary border-dark-border text-text-primary font-medium"
-            placeholder="0"
-          />
-        </div>
-      </div>
-
-      {/* Completion Button */}
+      {/* Add Set Button */}
       <Button
-        onClick={toggleCompleted}
-        className={`w-full font-medium ${
-          set.completed 
-            ? "bg-accent-green text-white" 
-            : "bg-accent-navy text-white hover:bg-accent-light-navy"
-        }`}
+        onClick={addSet}
+        variant="outline"
+        className="w-full mb-3 border-dark-border text-text-secondary hover:text-text-primary h-9"
       >
-        {set.completed ? <Check size={16} className="mr-2" /> : <Circle size={16} className="mr-2" />}
-        {set.completed ? "Completed" : "Mark Complete"}
+        <Plus size={16} className="mr-2" />
+        Add Set
       </Button>
+
+      {/* Rest Timer */}
+      <RestTimer
+        isOpen={showRestTimer}
+        onClose={() => setShowRestTimer(false)}
+      />
     </div>
   );
 }

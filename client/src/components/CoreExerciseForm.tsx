@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Plus, Check, Circle } from "lucide-react";
+import { Trash2, Plus, Check, Circle, Timer } from "lucide-react";
 import { Exercise, ExerciseSet } from "@shared/schema";
 import { nanoid } from "nanoid";
+import RestTimer from "./RestTimer";
 
 interface CoreExerciseFormProps {
   exercise: Exercise;

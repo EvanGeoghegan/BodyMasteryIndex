@@ -31,11 +31,30 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
   const dailyQuote = getDailyQuote();
   const { toast } = useToast();
 
+  // Get current week identifier
+  const getCurrentWeek = () => {
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const days = Math.floor((now.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000));
+    return `${now.getFullYear()}-W${Math.ceil((days + startOfYear.getDay() + 1) / 7)}`;
+  };
+
+  // Check if assessment already done this week
+  const [weeklyAssessmentDone, setWeeklyAssessmentDone] = useState(false);
+
+  useEffect(() => {
+    const currentWeek = getCurrentWeek();
+    const existingResults = JSON.parse(localStorage.getItem('assessment_results') || '[]');
+    const weekDone = existingResults.some((r: any) => r.week === currentWeek);
+    setWeeklyAssessmentDone(weekDone);
+  }, []);
+
   // Save assessment results
   const saveAssessmentResults = () => {
-    const today = new Date().toISOString().split('T')[0];
+    const currentWeek = getCurrentWeek();
     const results = {
-      date: today,
+      week: currentWeek,
+      date: new Date().toISOString().split('T')[0],
       exercise1: assessmentExercise1,
       exercise1Reps: parseInt(exercise1Reps) || 0,
       exercise2: assessmentExercise2,
@@ -43,18 +62,19 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
     };
     
     const existingResults = JSON.parse(localStorage.getItem('assessment_results') || '[]');
-    const todayIndex = existingResults.findIndex((r: any) => r.date === today);
+    const weekIndex = existingResults.findIndex((r: any) => r.week === currentWeek);
     
-    if (todayIndex >= 0) {
-      existingResults[todayIndex] = results;
+    if (weekIndex >= 0) {
+      existingResults[weekIndex] = results;
     } else {
       existingResults.push(results);
     }
     
     localStorage.setItem('assessment_results', JSON.stringify(existingResults));
+    setWeeklyAssessmentDone(true);
     
     toast({
-      title: "Assessment saved",
+      title: "Weekly assessment saved",
       description: `${assessmentExercise1}: ${exercise1Reps}, ${assessmentExercise2}: ${exercise2Reps}`
     });
     
@@ -278,43 +298,51 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
           <div className="flex items-center gap-2 mb-4">
             <Target className="text-accent-red" size={20} />
             <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
-              Daily Assessment
+              Weekly Assessment
             </h2>
           </div>
           
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium text-text-secondary">{assessmentExercise1}</label>
-                <Input
-                  type="number"
-                  placeholder="0"
-                  value={exercise1Reps}
-                  onChange={(e) => setExercise1Reps(e.target.value)}
-                  className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
-                />
+          {weeklyAssessmentDone ? (
+            <div className="text-center py-4">
+              <div className="text-accent-red mb-2">✓</div>
+              <p className="text-text-secondary text-sm">Weekly assessment completed!</p>
+              <p className="text-text-secondary text-xs mt-1">Come back next week for your next assessment.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-text-secondary">{assessmentExercise1}</label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={exercise1Reps}
+                    onChange={(e) => setExercise1Reps(e.target.value)}
+                    className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
+                  />
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-text-secondary">{assessmentExercise2}</label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={exercise2Reps}
+                    onChange={(e) => setExercise2Reps(e.target.value)}
+                    className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
+                  />
+                </div>
               </div>
               
-              <div>
-                <label className="text-sm font-medium text-text-secondary">{assessmentExercise2}</label>
-                <Input
-                  type="number"
-                  placeholder="0"
-                  value={exercise2Reps}
-                  onChange={(e) => setExercise2Reps(e.target.value)}
-                  className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
-                />
-              </div>
+              <Button
+                onClick={saveAssessmentResults}
+                disabled={!exercise1Reps || !exercise2Reps}
+                className="w-full bg-accent-red hover:bg-accent-light-red text-white disabled:opacity-50"
+              >
+                Save Weekly Assessment
+              </Button>
             </div>
-            
-            <Button
-              onClick={saveAssessmentResults}
-              disabled={!exercise1Reps || !exercise2Reps}
-              className="w-full bg-accent-red hover:bg-accent-light-red text-white disabled:opacity-50"
-            >
-              Save Assessment
-            </Button>
-          </div>
+          )}
         </div>
       </div>
 
