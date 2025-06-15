@@ -27,6 +27,10 @@ interface ProgressData {
   exerciseCount: number;
   maxWeight: number;
   workoutDuration: number;
+  cardioDistance: number;
+  cardioDuration: number;
+  protein: number;
+  water: number;
 }
 
 interface ExerciseProgress {
@@ -39,9 +43,25 @@ interface ExerciseProgress {
   }>;
 }
 
+interface AssessmentData {
+  date: string;
+  week: string;
+  exercise1: string;
+  exercise1Reps: number;
+  exercise2: string;
+  exercise2Reps: number;
+}
+
+interface WeightData {
+  date: string;
+  weight: number;
+}
+
 export default function ProgressDashboard() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [personalBests, setPersonalBests] = useState<PersonalBest[]>([]);
+  const [assessmentData, setAssessmentData] = useState<AssessmentData[]>([]);
+  const [weightData, setWeightData] = useState<WeightData[]>([]);
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("30");
   const [selectedExercise, setSelectedExercise] = useState<string>("all");
   const [chartType, setChartType] = useState<string>("volume");
@@ -68,6 +88,16 @@ export default function ProgressDashboard() {
     try {
       const loadedWorkouts = storage.getWorkouts();
       const loadedPersonalBests = storage.getPersonalBests();
+      
+      // Load assessment data
+      const assessmentResults = JSON.parse(localStorage.getItem('assessment_results') || '[]');
+      setAssessmentData(assessmentResults);
+      
+      // Load weight tracking data
+      const savedSettings = localStorage.getItem('trainlog_settings');
+      const weightHistory = JSON.parse(localStorage.getItem('weight_history') || '[]');
+      setWeightData(weightHistory);
+      
       setWorkouts(loadedWorkouts);
       setPersonalBests(loadedPersonalBests);
     } catch (error) {
@@ -109,12 +139,38 @@ export default function ProgressDashboard() {
       const exerciseCount = workout.exercises.length;
       const estimatedDuration = workout.exercises.length * 15; // Rough estimate
       
+      // Calculate cardio data
+      const cardioDistance = workout.exercises.reduce((sum, exercise) => {
+        if (exercise.type === 'cardio') {
+          return sum + exercise.sets.reduce((setSum, set) => {
+            return setSum + (set.distance || 0);
+          }, 0);
+        }
+        return sum;
+      }, 0);
+      
+      const cardioDuration = workout.exercises.reduce((sum, exercise) => {
+        if (exercise.type === 'cardio') {
+          return sum + exercise.sets.reduce((setSum, set) => {
+            return setSum + (set.duration || 0);
+          }, 0);
+        }
+        return sum;
+      }, 0);
+      
+      // Get nutrition data for this date
+      const nutritionData = JSON.parse(localStorage.getItem(`nutrition_${date}`) || '{}');
+      
       dataMap.set(date, {
         date,
         totalVolume,
         exerciseCount,
         maxWeight,
-        workoutDuration: estimatedDuration
+        workoutDuration: estimatedDuration,
+        cardioDistance,
+        cardioDuration,
+        protein: nutritionData.protein || 0,
+        water: nutritionData.water || 0
       });
     });
     
