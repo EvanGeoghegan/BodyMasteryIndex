@@ -5,7 +5,7 @@ import { Quote, History, Sparkles, Droplets, Target } from "lucide-react";
 import logoPath from "@assets/Scale Logo draft _1750013965195.jpeg";
 import ActivityCalendar from "@/components/ActivityCalendar";
 import { storage } from "@/lib/storage";
-import { getDailyQuote } from "@/lib/quotes";
+import { getMotivationalQuote } from "@/lib/quotes";
 import { Workout } from "@shared/schema";
 import confetti from 'canvas-confetti';
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
@@ -30,8 +30,21 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
   const [assessmentExercise2, setAssessmentExercise2] = useState("Pull-ups");
   const [exercise1Reps, setExercise1Reps] = useState("");
   const [exercise2Reps, setExercise2Reps] = useState("");
-  const dailyQuote = getDailyQuote();
   const { toast } = useToast();
+
+  // Calculate days since last workout for motivational quotes
+  const getDaysSinceLastWorkout = (): number => {
+    if (!lastWorkout) return 999; // No workouts logged
+    
+    const lastWorkoutDate = new Date(lastWorkout.date);
+    const today = new Date();
+    const diffTime = Math.abs(today.getTime() - lastWorkoutDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  const daysSinceLastWorkout = getDaysSinceLastWorkout();
+  const motivationalQuote = getMotivationalQuote(daysSinceLastWorkout);
 
   // Get current week identifier
   const getCurrentWeek = () => {
@@ -358,9 +371,16 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
       <div className="p-4">
         <div className="bg-gradient-to-br from-dark-secondary to-dark-elevated rounded-xl p-6 border border-dark-border shadow-lg">
           <p className="text-text-primary text-base italic leading-relaxed font-medium">
-            "{dailyQuote.text}"
+            "{motivationalQuote.text}"
           </p>
-          <p className="text-accent-light-red text-sm mt-4 font-medium">— {dailyQuote.author}</p>
+          <p className="text-accent-light-red text-sm mt-4 font-medium">— {motivationalQuote.author}</p>
+          {daysSinceLastWorkout >= 3 && (
+            <div className="mt-3 px-3 py-2 bg-accent-red/10 border border-accent-red/20 rounded-lg">
+              <p className="text-accent-red text-xs font-medium">
+                {daysSinceLastWorkout === 999 ? "No workouts logged yet" : `${daysSinceLastWorkout} days since last workout`}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
