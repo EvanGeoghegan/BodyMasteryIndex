@@ -166,29 +166,44 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
         localStorage.removeItem('congratsDismissedDate');
       }
       
-      // Update personal bests for strength exercises only
+      // Update personal bests for strength exercises only - find the best set per exercise
       exercises.forEach(exercise => {
         if (!exercise.name.trim() || exercise.type !== "strength") return;
         
-        exercise.sets.forEach(set => {
-          if (set.completed && set.weight && set.reps && set.weight > 0 && set.reps > 0) {
-            const existingBests = storage.getPersonalBests()
-              .filter(pb => pb.exerciseName.toLowerCase() === exercise.name.toLowerCase());
-            
-            const currentMax = existingBests.find(pb => pb.type === '1RM');
-            const estimated1RM = set.weight * (1 + set.reps / 30); // Epley formula approximation
-            
-            if (!currentMax || estimated1RM > currentMax.weight) {
-              storage.createPersonalBest({
-                exerciseName: exercise.name,
-                weight: set.weight,
-                reps: set.reps,
-                date: new Date().toISOString(),
-                type: set.reps === 1 ? '1RM' : 'volume',
-              });
-            }
-          }
+        const completedSets = exercise.sets.filter(set => 
+          set.completed && set.weight && set.reps && set.weight > 0 && set.reps > 0
+        );
+        
+        if (completedSets.length === 0) return;
+        
+        // Find the best set for this exercise (highest estimated 1RM)
+        const bestSet = completedSets.reduce((best, current) => {
+          const bestEstimated1RM = (best.weight || 0) * (1 + (best.reps || 0) / 30);
+          const currentEstimated1RM = (current.weight || 0) * (1 + (current.reps || 0) / 30);
+          return currentEstimated1RM > bestEstimated1RM ? current : best;
         });
+        
+        const existingBests = storage.getPersonalBests()
+          .filter(pb => pb.exerciseName.trim().toLowerCase() === exercise.name.trim().toLowerCase());
+        
+        const bestEstimated1RM = (bestSet.weight || 0) * (1 + (bestSet.reps || 0) / 30);
+        
+        // Check if this is a new personal best
+        const shouldCreatePB = existingBests.length === 0 || 
+          existingBests.every(pb => {
+            const existingEstimated1RM = pb.weight * (1 + pb.reps / 30);
+            return bestEstimated1RM > existingEstimated1RM;
+          });
+        
+        if (shouldCreatePB && bestSet.weight !== undefined && bestSet.reps !== undefined) {
+          storage.createPersonalBest({
+            exerciseName: exercise.name.trim(),
+            weight: bestSet.weight,
+            reps: bestSet.reps,
+            date: new Date().toISOString(),
+            type: bestSet.reps === 1 ? '1RM' : 'volume',
+          });
+        }
       });
 
       toast({

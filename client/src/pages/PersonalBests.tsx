@@ -18,16 +18,26 @@ export default function PersonalBests() {
     
     // Group by exercise name and get the best for each
     const bestsByExercise = allBests.reduce((acc, pb) => {
-      const exerciseName = pb.exerciseName.toLowerCase();
+      // Normalize exercise name (trim whitespace, lowercase, remove extra spaces)
+      const exerciseName = pb.exerciseName.trim().toLowerCase().replace(/\s+/g, ' ');
       
-      if (!acc[exerciseName] || pb.weight > acc[exerciseName].weight) {
+      if (!acc[exerciseName] || 
+          pb.weight > acc[exerciseName].weight || 
+          (pb.weight === acc[exerciseName].weight && pb.reps > acc[exerciseName].reps)) {
         acc[exerciseName] = pb;
       }
       
       return acc;
     }, {} as Record<string, PersonalBest>);
 
-    const sortedBests = Object.values(bestsByExercise).sort((a, b) => b.weight - a.weight);
+    const sortedBests = Object.values(bestsByExercise).sort((a, b) => {
+      // Sort by weight first, then by reps if weight is equal
+      if (b.weight !== a.weight) {
+        return b.weight - a.weight;
+      }
+      return b.reps - a.reps;
+    });
+    
     setPersonalBests(sortedBests);
     setFilteredBests(sortedBests);
   };

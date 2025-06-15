@@ -150,6 +150,7 @@ Changelog:
 - June 15, 2025. Removed timer references from tutorial as feature not currently implemented
 - June 15, 2025. Added configurable notification system for workout and nutrition reminders with customizable timing in settings
 - June 15, 2025. Added search functionality to Personal Records page with exercise name filtering and results counter
+- June 15, 2025. Fixed personal best creation logic to prevent duplicates by only creating records for the best set per exercise per workout
 ```
 
 ## User Preferences
