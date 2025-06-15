@@ -56,10 +56,10 @@ export default function Tutorial({ isOpen, onClose }: TutorialProps) {
         "Add strength exercises with sets, reps, and weights",
         "Track cardio with duration and distance",
         "Log core exercises with time or reps",
-        "Built-in rest timer between sets",
-        "Complete sets with satisfaction checkmarks"
+        "Complete sets with satisfaction checkmarks",
+        "Save workouts to track progress over time"
       ],
-      tips: ["Use templates for quick workout setup", "Rest timer helps maintain proper recovery"]
+      tips: ["Use templates for quick workout setup", "Mark sets complete as you finish them"]
     },
     {
       id: 3,

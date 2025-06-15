@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Download, User, Target, Database, HelpCircle } from "lucide-react";
+import { Trash2, Download, User, Target, Database, HelpCircle, Bell } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
 
 interface SettingsProps {
   onShowTutorial?: () => void;
@@ -20,11 +21,15 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
   const [targetWeight, setTargetWeight] = useState("");
   const [assessmentExercise1, setAssessmentExercise1] = useState("Push-ups");
   const [assessmentExercise2, setAssessmentExercise2] = useState("Pull-ups");
+  const [workoutReminder, setWorkoutReminder] = useState(true);
+  const [workoutReminderTime, setWorkoutReminderTime] = useState("18:00");
+  const [nutritionReminder, setNutritionReminder] = useState(true);
+  const [nutritionReminderTime, setNutritionReminderTime] = useState("20:00");
   const { toast } = useToast();
 
   // Load settings on component mount
   useEffect(() => {
-    const savedSettings = localStorage.getItem('trainlog_settings');
+    const savedSettings = localStorage.getItem('bmi_settings');
     if (savedSettings) {
       try {
         const settings = JSON.parse(savedSettings);
@@ -36,6 +41,10 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
         setTargetWeight(settings.targetWeight?.toString() || "");
         setAssessmentExercise1(settings.assessmentExercise1 || "Push-ups");
         setAssessmentExercise2(settings.assessmentExercise2 || "Pull-ups");
+        setWorkoutReminder(settings.workoutReminder !== false);
+        setWorkoutReminderTime(settings.workoutReminderTime || "18:00");
+        setNutritionReminder(settings.nutritionReminder !== false);
+        setNutritionReminderTime(settings.nutritionReminderTime || "20:00");
       } catch (error) {
         console.error('Error loading settings:', error);
       }
@@ -44,7 +53,7 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
 
   const handleSaveSettings = () => {
     // Save settings to localStorage with consistent key
-    localStorage.setItem('trainlog_settings', JSON.stringify({
+    localStorage.setItem('bmi_settings', JSON.stringify({
       proteinGoal: parseFloat(proteinGoal),
       waterGoal: parseFloat(waterGoal),
       weightUnit,
@@ -52,7 +61,11 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
       currentWeight: currentWeight ? parseFloat(currentWeight) : null,
       targetWeight: targetWeight ? parseFloat(targetWeight) : null,
       assessmentExercise1,
-      assessmentExercise2
+      assessmentExercise2,
+      workoutReminder,
+      workoutReminderTime,
+      nutritionReminder,
+      nutritionReminderTime
     }));
 
     toast({
@@ -272,6 +285,72 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
                   <span className="text-text-secondary self-center text-sm">sec</span>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Notifications */}
+        <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
+          <div className="flex items-center gap-2 mb-4">
+            <Bell className="text-accent-red" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
+              Notifications
+            </h2>
+          </div>
+          
+          <div className="space-y-4">
+            {/* Workout Reminders */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-text-primary font-medium">Workout Reminders</Label>
+                  <p className="text-xs text-text-secondary mt-1">Get reminded to log your workouts</p>
+                </div>
+                <Switch
+                  checked={workoutReminder}
+                  onCheckedChange={setWorkoutReminder}
+                />
+              </div>
+              
+              {workoutReminder && (
+                <div>
+                  <Label htmlFor="workout-time" className="text-text-secondary">Reminder Time</Label>
+                  <Input
+                    id="workout-time"
+                    type="time"
+                    value={workoutReminderTime}
+                    onChange={(e) => setWorkoutReminderTime(e.target.value)}
+                    className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Nutrition Reminders */}
+            <div className="space-y-3 border-t border-dark-border pt-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-text-primary font-medium">Nutrition Reminders</Label>
+                  <p className="text-xs text-text-secondary mt-1">Get reminded to log protein and water</p>
+                </div>
+                <Switch
+                  checked={nutritionReminder}
+                  onCheckedChange={setNutritionReminder}
+                />
+              </div>
+              
+              {nutritionReminder && (
+                <div>
+                  <Label htmlFor="nutrition-time" className="text-text-secondary">Reminder Time</Label>
+                  <Input
+                    id="nutrition-time"
+                    type="time"
+                    value={nutritionReminderTime}
+                    onChange={(e) => setNutritionReminderTime(e.target.value)}
+                    className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
