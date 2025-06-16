@@ -1,0 +1,46 @@
+{
+  "name": "Body Mastery Index",
+  "short_name": "BMI Fitness",
+  "description": "Complete offline fitness tracking application for workouts, nutrition, and progress monitoring",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#dc2626",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "./attached_assets/Scale Logo draft _Nero_AI_Background_Remover_1750025859630.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "fitness", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Start Workout",
+      "short_name": "Workout",
+      "description": "Begin a new workout session",
+      "url": "/?tab=workout",
+      "icons": [
+        {
+          "src": "./attached_assets/Scale Logo draft _Nero_AI_Background_Remover_1750025859630.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "View Progress",
+      "short_name": "Progress",
+      "description": "Check your fitness progress",
+      "url": "/?tab=progress",
+      "icons": [
+        {
+          "src": "./attached_assets/Scale Logo draft _Nero_AI_Background_Remover_1750025859630.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
