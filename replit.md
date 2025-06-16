@@ -155,6 +155,7 @@ Changelog:
 - June 15, 2025. Implemented harsh motivational quotes that activate after 3+ days without workout logging with inactivity counter display
 - June 15, 2025. Fixed deployment configuration mismatch by creating build script that moves files from dist/public to dist for static deployment compatibility
 - June 15, 2025. Resolved React app loading issues through systematic debugging and confirmed full application functionality before deployment
+- June 15, 2025. Created standalone static version of app for reliable deployment without server dependencies
 ```
 
 ## User Preferences
