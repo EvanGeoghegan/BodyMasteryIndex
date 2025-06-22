@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">BodyMasteryIndex</string>
+    <string name="title_activity_main">BodyMasteryIndex</string>
+    <string name="package_name">com.evangeoghegan.bodymasteryindex</string>
+    <string name="custom_url_scheme">com.evangeoghegan.bodymasteryindex</string>
+</resources>
