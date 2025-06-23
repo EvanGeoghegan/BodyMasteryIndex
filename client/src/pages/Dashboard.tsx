@@ -102,7 +102,7 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
     setWorkoutDays(storage.getWorkoutDays());
     
     // Load nutrition data
-    const savedSettings = localStorage.getItem('trainlog_settings');
+    const savedSettings = localStorage.getItem('bmi_settings');
     if (savedSettings) {
       try {
         const settings = JSON.parse(savedSettings);
