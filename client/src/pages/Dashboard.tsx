@@ -194,8 +194,8 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
             <h1 className="text-2xl font-bold text-text-primary font-heading">Body Mastery Index</h1>
             <p className="text-text-secondary text-sm">{getCurrentDate()}</p>
           </div>
-          <div className="w-12 h-12 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden">
-            <img src={logoPath} alt="Body Mastery Index" className="w-8 h-8 object-contain" />
+          <div className="w-16 h-16 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden">
+            <img src={logoPath} alt="Body Mastery Index" className="w-12 h-12 object-contain" />
           </div>
         </div>
       </header>
@@ -390,9 +390,9 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
       <div className="px-4 pb-4">
         <Button 
           onClick={onNavigateToWorkout}
-          className="w-full bg-accent-red hover:bg-accent-light-red text-white font-medium py-3 px-4 shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105"
+          className="w-full bg-accent-red hover:bg-accent-light-red text-white font-medium py-4 px-4 shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105"
         >
-          <img src={logoPath} alt="Workout" className="w-4 h-4 object-contain mr-2" />
+          <img src={logoPath} alt="Workout" className="w-6 h-6 object-contain mr-3" />
           <span>Log Workout</span>
         </Button>
       </div>
