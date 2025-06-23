@@ -90,7 +90,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="min-h-screen bg-dark-primary text-text-primary">
+        <div className="min-h-screen bg-dark-primary text-text-primary pt-8 pb-12">
           <div className="max-w-md mx-auto bg-dark-primary min-h-screen relative">
             {renderActiveTab()}
             <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
