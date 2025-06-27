@@ -1,0 +1,87 @@
+import { useState } from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import masterExerciseList from "@/lib/exercises.json"; // Import our exercise database
+
+// Define the structure of an exercise from our JSON file
+interface ExerciseOption {
+  id: string;
+  name: string;
+  muscleGroup: string;
+}
+
+interface ExerciseComboboxProps {
+  value: string;
+  onSelect: (value: string) => void;
+}
+
+export default function ExerciseCombobox({ value, onSelect }: ExerciseComboboxProps) {
+  const [open, setOpen] = useState(false);
+
+  // Group exercises by muscle group for a cleaner look in the dropdown
+  const groupedExercises = masterExerciseList.reduce((acc, exercise) => {
+    (acc[exercise.muscleGroup] = acc[exercise.muscleGroup] || []).push(exercise);
+    return acc;
+  }, {} as Record<string, ExerciseOption[]>);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="ghost"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between bg-transparent text-text-primary font-medium text-lg border-none outline-none p-0 h-auto hover:bg-transparent"
+        >
+          {value ? value : "Select exercise..."}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[--radix-popover-content-available-height] p-0 bg-dark-secondary border-dark-border">
+        <Command>
+          <CommandInput placeholder="Search exercise..." className="text-text-primary" />
+          <CommandList>
+            <CommandEmpty>No exercise found.</CommandEmpty>
+            {Object.entries(groupedExercises).map(([group, exercises]) => (
+              <CommandGroup key={group} heading={<span className="text-text-secondary">{group}</span>}>
+                {exercises.map((exercise) => (
+                  <CommandItem
+                    key={exercise.id}
+                    value={exercise.name}
+                    onSelect={(currentValue) => {
+                      onSelect(currentValue === value ? "" : exercise.name);
+                      setOpen(false);
+                    }}
+                    className="text-text-primary hover:!bg-accent-red/20 aria-selected:!bg-accent-red"
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        value === exercise.name ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {exercise.name}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            ))}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}

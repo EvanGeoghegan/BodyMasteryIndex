@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash2, Plus, Check, Circle } from "lucide-react";
+import ExerciseCombobox from "./ExerciseCombobox"; // Import our new component
 
 interface ExerciseFormProps {
   exercise: Exercise;
@@ -55,22 +56,17 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseF
     updateSet(setIndex, { completed: !set.completed });
   };
 
-  const formatRestTime = (seconds?: number): string => {
-    if (!seconds) return "0s";
-    return `${seconds}s`;
-  };
-
-
-
   return (
     <div className="bg-dark-elevated rounded-xl p-5 border border-dark-border shadow-lg">
       <div className="flex items-center justify-between mb-3">
-        <Input
-          value={exercise.name}
-          onChange={(e) => updateExerciseName(e.target.value)}
-          className="bg-transparent text-text-primary font-medium text-lg border-none outline-none p-0 h-auto flex-1 mr-4"
-          placeholder="Exercise name"
-        />
+        {/* --- THIS IS THE UPGRADED PART --- */}
+        <div className="flex-1 mr-4">
+          <ExerciseCombobox
+            value={exercise.name}
+            onSelect={updateExerciseName}
+          />
+        </div>
+        {/* --- END OF UPGRADED PART --- */}
         <Button
           onClick={onDelete}
           variant="ghost"
@@ -93,8 +89,6 @@ export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseF
             <SelectItem value="core" style={{ color: 'white' }}>Core</SelectItem>
           </SelectContent>
         </Select>
-
-
       </div>
       
       {/* Sets Header */}
