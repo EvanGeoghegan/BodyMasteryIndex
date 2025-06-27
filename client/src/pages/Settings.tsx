@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react"; // Add useRef
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Download, User, Target, Database, HelpCircle, Bell } from "lucide-react";
+import { Trash2, Download, Upload, User, Target, Database, HelpCircle, Bell } from "lucide-react"; // Add Upload
 import { storage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
@@ -26,6 +26,9 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
   const [nutritionReminder, setNutritionReminder] = useState(true);
   const [nutritionReminderTime, setNutritionReminderTime] = useState("20:00");
   const { toast } = useToast();
+
+  // Create a reference to a hidden file input element
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load settings on component mount
   useEffect(() => {
@@ -108,6 +111,71 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
     }
   };
 
+  const handleImportClick = () => {
+    // Programmatically click the hidden file input
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Safety confirmation
+    if (!window.confirm("Are you sure you want to import this file? This will overwrite ALL existing data.")) {
+      // Clear the file input so the same file can be selected again if needed
+      if(fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target?.result;
+        if (typeof text !== 'string') throw new Error("File could not be read");
+        
+        const data = JSON.parse(text);
+
+        // Basic validation to see if it looks like our backup file
+        if (!data.workouts || !data.templates) {
+            throw new Error("Invalid backup file format.");
+        }
+
+        // --- FIX START ---
+        // Overwrite existing data by writing directly to localStorage
+        // using the same keys your storage utility uses internally.
+        localStorage.setItem('bmi_workouts', JSON.stringify(data.workouts || []));
+        localStorage.setItem('bmi_templates', JSON.stringify(data.templates || []));
+        localStorage.setItem('bmi_personal_bests', JSON.stringify(data.personalBests || []));
+        localStorage.setItem('bmi_supplements', JSON.stringify(data.supplements || []));
+        localStorage.setItem('bmi_supplement_logs', JSON.stringify(data.supplementLogs || []));
+        // --- FIX END ---
+
+        toast({
+          title: "Import Successful",
+          description: "Your data has been restored. The app will now reload.",
+        });
+
+        // Reload the app to reflect the new state everywhere
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+
+      } catch (error) {
+        console.error("Import error:", error);
+        toast({
+          title: "Import Failed",
+          description: (error as Error).message || "The selected file is not a valid backup.",
+          variant: "destructive",
+        });
+      } finally {
+        // Clear the file input value
+        if(fileInputRef.current) fileInputRef.current.value = "";
+      }
+    };
+    reader.readAsText(file);
+  };
+
+
   const handleClearAllData = () => {
     if (window.confirm("Are you sure you want to clear all data? This action cannot be undone.")) {
       storage.resetAllData();
@@ -115,6 +183,10 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
         title: "Data cleared",
         description: "All your data has been removed."
       });
+      // Also reload to clear the UI
+      setTimeout(() => {
+          window.location.reload();
+        }, 1500);
     }
   };
 
@@ -374,6 +446,23 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
               Show Tutorial
             </Button>
             
+            {/* Hidden file input for the import functionality */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelected}
+              accept=".json"
+              className="hidden"
+            />
+            <Button
+              onClick={handleImportClick}
+              variant="outline"
+              className="w-full bg-dark-elevated border-dark-border text-text-primary hover:bg-accent-blue/20 hover:text-accent-blue"
+            >
+              <Upload className="mr-2" size={16} />
+              Import Data from Backup
+            </Button>
+
             <Button
               onClick={handleExportData}
               variant="outline"
