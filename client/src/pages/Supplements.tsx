@@ -75,7 +75,7 @@ export default function Supplements() {
 
   // Load settings and daily nutrition data
   useEffect(() => {
-    const savedSettings = localStorage.getItem('trainlog_settings');
+    const savedSettings = localStorage.getItem('bmi_settings');
     if (savedSettings) {
       try {
         const settings = JSON.parse(savedSettings);
