@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from "react"; // Add useRef
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Download, Upload, User, Target, Database, HelpCircle, Bell } from "lucide-react"; // Add Upload
+import { Trash2, Download, Upload, User, Target, Database, HelpCircle, Bell } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
@@ -27,10 +27,8 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
   const [nutritionReminderTime, setNutritionReminderTime] = useState("20:00");
   const { toast } = useToast();
 
-  // Create a reference to a hidden file input element
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Load settings on component mount
   useEffect(() => {
     const savedSettings = localStorage.getItem('bmi_settings');
     if (savedSettings) {
@@ -55,7 +53,6 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
   }, []);
 
   const handleSaveSettings = () => {
-    // Save settings to localStorage with consistent key
     localStorage.setItem('bmi_settings', JSON.stringify({
       proteinGoal: parseFloat(proteinGoal),
       waterGoal: parseFloat(waterGoal),
@@ -112,7 +109,6 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
   };
 
   const handleImportClick = () => {
-    // Programmatically click the hidden file input
     fileInputRef.current?.click();
   };
 
@@ -120,9 +116,7 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Safety confirmation
     if (!window.confirm("Are you sure you want to import this file? This will overwrite ALL existing data.")) {
-      // Clear the file input so the same file can be selected again if needed
       if(fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
@@ -135,27 +129,21 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
         
         const data = JSON.parse(text);
 
-        // Basic validation to see if it looks like our backup file
         if (!data.workouts || !data.templates) {
             throw new Error("Invalid backup file format.");
         }
 
-        // --- FIX START ---
-        // Overwrite existing data by writing directly to localStorage
-        // using the same keys your storage utility uses internally.
         localStorage.setItem('bmi_workouts', JSON.stringify(data.workouts || []));
         localStorage.setItem('bmi_templates', JSON.stringify(data.templates || []));
         localStorage.setItem('bmi_personal_bests', JSON.stringify(data.personalBests || []));
         localStorage.setItem('bmi_supplements', JSON.stringify(data.supplements || []));
         localStorage.setItem('bmi_supplement_logs', JSON.stringify(data.supplementLogs || []));
-        // --- FIX END ---
 
         toast({
           title: "Import Successful",
           description: "Your data has been restored. The app will now reload.",
         });
 
-        // Reload the app to reflect the new state everywhere
         setTimeout(() => {
           window.location.reload();
         }, 1500);
@@ -168,7 +156,6 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
           variant: "destructive",
         });
       } finally {
-        // Clear the file input value
         if(fileInputRef.current) fileInputRef.current.value = "";
       }
     };
@@ -183,7 +170,6 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
         title: "Data cleared",
         description: "All your data has been removed."
       });
-      // Also reload to clear the UI
       setTimeout(() => {
           window.location.reload();
         }, 1500);
@@ -371,7 +357,6 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
           </div>
           
           <div className="space-y-4">
-            {/* Workout Reminders */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -398,7 +383,6 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
               )}
             </div>
 
-            {/* Nutrition Reminders */}
             <div className="space-y-3 border-t border-dark-border pt-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -446,12 +430,10 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
               Show Tutorial
             </Button>
             
-            {/* Hidden file input for the import functionality */}
             <input
               type="file"
               ref={fileInputRef}
               onChange={handleFileSelected}
-              accept=".json"
               className="hidden"
             />
             <Button
