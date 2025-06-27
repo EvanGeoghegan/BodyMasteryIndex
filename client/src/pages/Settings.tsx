@@ -7,6 +7,10 @@ import { Trash2, Download, Upload, User, Target, Database, HelpCircle, Bell } fr
 import { storage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
+// --- NEW CODE START ---
+// Import the official Capacitor Filesystem plugin
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+// --- NEW CODE END ---
 
 interface SettingsProps {
   onShowTutorial?: () => void;
@@ -74,9 +78,10 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
     });
   };
 
-  const handleExportData = () => {
+  // --- MODIFIED CODE START ---
+  const handleExportData = async () => {
     try {
-      const data = {
+      const dataToExport = {
         workouts: storage.getWorkouts(),
         templates: storage.getTemplates(),
         personalBests: storage.getPersonalBests(),
@@ -85,28 +90,31 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
         exportDate: new Date().toISOString()
       };
 
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `body-mastery-index-backup-${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      const fileName = `body-mastery-index-backup-${new Date().toISOString().split('T')[0]}.json`;
+      const dataString = JSON.stringify(dataToExport, null, 2);
+
+      // Use the Capacitor Filesystem to save the file reliably
+      await Filesystem.writeFile({
+        path: fileName,
+        data: dataString,
+        directory: Directory.Documents, // FIX: Use the correct enum for user-accessible files
+        encoding: Encoding.UTF8,
+      });
 
       toast({
-        title: "Data exported",
-        description: "Your data has been downloaded as a backup file."
+        title: "Data Exported",
+        description: `Backup saved to your Documents folder as ${fileName}`, // FIX: Update description
       });
     } catch (error) {
+      console.error("Export failed:", error);
       toast({
-        title: "Export failed",
-        description: "There was an error exporting your data.",
-        variant: "destructive"
+        title: "Export Failed",
+        description: "Could not save the backup file. Please ensure the app has storage permissions.",
+        variant: "destructive",
       });
     }
   };
+  // --- MODIFIED CODE END ---
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
