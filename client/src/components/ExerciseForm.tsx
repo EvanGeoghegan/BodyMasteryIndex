@@ -1,198 +1,413 @@
-import { useState } from "react";
-import { Exercise, ExerciseSet } from "@shared/schema";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Plus, Check, Circle } from "lucide-react";
-import ExerciseCombobox from "./ExerciseCombobox"; // Import our new component
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Plus, Save, Copy } from "lucide-react";
+import ExerciseCard from "@/components/ExerciseCard"; // Import our new card component
+import { storage } from "@/lib/storage";
+import { Exercise, Workout, Template } from "@shared/schema";
+import { useToast } from "@/hooks/use-toast";
 
-interface ExerciseFormProps {
-  exercise: Exercise;
-  onUpdate: (exercise: Exercise) => void;
-  onDelete: () => void;
+interface WorkoutProps {
+  onWorkoutSaved: () => void;
+  initialTemplate?: Template;
+  initialWorkout?: Workout | null;
 }
 
-export default function ExerciseForm({ exercise, onUpdate, onDelete }: ExerciseFormProps) {
-  const updateExerciseName = (name: string) => {
-    onUpdate({ ...exercise, name });
+export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWorkout }: WorkoutProps) {
+  const [workoutName, setWorkoutName] = useState("");
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [showTemplateDialog, setShowTemplateDialog] = useState(false);
+  const [workoutType, setWorkoutType] = useState<"strength" | "cardio" | "core">("strength"); // Removed "mixed"
+  const [workoutDate, setWorkoutDate] = useState(new Date().toISOString().split('T')[0]);
+  const [workoutNotes, setWorkoutNotes] = useState("");
+  const [todaysWorkouts, setTodaysWorkouts] = useState<Workout[]>([]);
+  const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    setTemplates(storage.getTemplates());
+    loadTodaysWorkouts();
+    
+    if (initialWorkout) {
+      setEditingWorkout(initialWorkout);
+      setWorkoutName(initialWorkout.name);
+      setWorkoutType(initialWorkout.type as "strength" | "cardio" | "core"); // Assert type
+      setExercises(initialWorkout.exercises);
+      setWorkoutDate(initialWorkout.date.split('T')[0]);
+      setWorkoutNotes(initialWorkout.notes || "");
+    }
+    else if (initialTemplate) {
+      loadFromTemplate(initialTemplate);
+    } else if (exercises.length === 0) {
+      addExercise();
+    }
+  }, [initialTemplate, initialWorkout]);
+
+  const loadTodaysWorkouts = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const allWorkouts = storage.getWorkouts();
+    setTodaysWorkouts(allWorkouts.filter(workout => workout.date.split('T')[0] === today));
   };
 
-  const updateExerciseType = (type: "strength" | "cardio" | "core") => {
-    onUpdate({ ...exercise, type });
+  const editWorkout = (workout: Workout) => {
+    setEditingWorkout(workout);
+    setWorkoutName(workout.name);
+    setWorkoutType(workout.type as "strength" | "cardio" | "core"); // Assert type
+    setExercises(workout.exercises);
+    setWorkoutDate(workout.date.split('T')[0]);
+    setWorkoutNotes(workout.notes || "");
   };
 
-  const updateSet = (setIndex: number, updates: Partial<ExerciseSet>) => {
-    const updatedSets = exercise.sets.map((set, index) => 
-      index === setIndex ? { ...set, ...updates } : set
-    );
-    onUpdate({ ...exercise, sets: updatedSets });
+  const clearWorkout = () => {
+    setEditingWorkout(null);
+    setWorkoutName("");
+    setExercises([]);
+    setWorkoutType("strength");
+    setWorkoutDate(new Date().toISOString().split('T')[0]);
+    setWorkoutNotes("");
+    addExercise();
   };
 
-  const addSet = () => {
-    const lastSet = exercise.sets[exercise.sets.length - 1];
-    const newSet: ExerciseSet = {
+  const loadFromTemplate = (template: Template) => {
+    setWorkoutName(template.name);
+    setWorkoutType(template.type as "strength" | "cardio" | "core" || "strength");
+    
+    const templateExercises: Exercise[] = template.exercises.map(templateEx => ({
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      completed: false,
-    };
+      name: templateEx.name,
+      type: templateEx.type || "strength",
+      sets: Array.from({ length: templateEx.sets }, (_, index) => ({
+        id: `${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}`,
+        weight: templateEx.suggestedWeight,
+        reps: templateEx.suggestedReps,
+        duration: templateEx.suggestedDuration,
+        distance: templateEx.suggestedDistance,
+        completed: false,
+      }))
+    }));
+    
+    setExercises(templateExercises);
+  };
 
-    if (exercise.type === "cardio") {
-      newSet.duration = lastSet?.duration || 0;
-      newSet.distance = lastSet?.distance || 0;
-    } else {
-      newSet.weight = lastSet?.weight || 0;
-      newSet.reps = lastSet?.reps || 0;
+  const addExercise = () => {
+    const newExercise: Exercise = {
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      name: "",
+      type: "strength",
+      sets: [], // Start with an empty set array, user adds them inside the card
+    };
+    setExercises([...exercises, newExercise]);
+  };
+
+  const updateExercise = (exerciseId: string, updatedExercise: Partial<Exercise>) => {
+    setExercises(exercises.map(ex => 
+      ex.id === exerciseId ? { ...ex, ...updatedExercise } : ex
+    ));
+  };
+
+  const deleteExercise = (exerciseId: string) => {
+    setExercises(exercises.filter(ex => ex.id !== exerciseId));
+  };
+
+  const saveWorkout = () => {
+    if (!workoutName.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a workout name",
+        variant: "destructive",
+      });
+      return;
     }
 
-    onUpdate({ ...exercise, sets: [...exercise.sets, newSet] });
-  };
+    if (exercises.length === 0 || exercises.every(ex => !ex.name.trim())) {
+      toast({
+        title: "Error",
+        description: "Please add at least one exercise",
+        variant: "destructive",
+      });
+      return;
+    }
 
-  const removeSet = (setIndex: number) => {
-    const updatedSets = exercise.sets.filter((_, index) => index !== setIndex);
-    onUpdate({ ...exercise, sets: updatedSets });
-  };
+    const workout: Omit<Workout, 'id'> = {
+      name: workoutName,
+      date: new Date(workoutDate + 'T' + new Date().toTimeString().split(' ')[0]).toISOString(),
+      exercises: exercises.filter(ex => ex.name.trim()), // Only save exercises with names
+      type: workoutType,
+      notes: workoutNotes,
+    };
 
-  const toggleSetCompleted = (setIndex: number) => {
-    const set = exercise.sets[setIndex];
-    updateSet(setIndex, { completed: !set.completed });
+    try {
+      if (editingWorkout) {
+        storage.updateWorkout(editingWorkout.id, workout);
+      } else {
+        storage.createWorkout(workout);
+      }
+      
+      const workoutDateOnly = workout.date.split('T')[0];
+      const today = new Date().toISOString().split('T')[0];
+      if (workoutDateOnly === today) {
+        localStorage.removeItem('congratsDismissedDate');
+      }
+      
+      exercises.forEach(exercise => {
+        if (!exercise.name.trim() || exercise.type !== "strength") return;
+        
+        const completedSets = exercise.sets.filter(set => 
+          set.completed && set.weight && set.reps && set.weight > 0 && set.reps > 0
+        );
+        
+        if (completedSets.length === 0) return;
+        
+        const bestSet = completedSets.reduce((best, current) => {
+          const bestEstimated1RM = (best.weight || 0) * (1 + (best.reps || 0) / 30);
+          const currentEstimated1RM = (current.weight || 0) * (1 + (current.reps || 0) / 30);
+          return currentEstimated1RM > bestEstimated1RM ? current : best;
+        });
+        
+        const existingBests = storage.getPersonalBests()
+          .filter(pb => pb.exerciseName.trim().toLowerCase() === exercise.name.trim().toLowerCase());
+        
+        const bestEstimated1RM = (bestSet.weight || 0) * (1 + (bestSet.reps || 0) / 30);
+        
+        const shouldCreatePB = existingBests.length === 0 || 
+          existingBests.every(pb => {
+            const existingEstimated1RM = pb.weight * (1 + pb.reps / 30);
+            return bestEstimated1RM > existingEstimated1RM;
+          });
+        
+        if (shouldCreatePB && bestSet.weight !== undefined && bestSet.reps !== undefined) {
+          storage.createPersonalBest({
+            exerciseName: exercise.name.trim(),
+            weight: bestSet.weight,
+            reps: bestSet.reps,
+            date: new Date().toISOString(),
+            type: bestSet.reps === 1 ? '1RM' : 'volume',
+          });
+        }
+      });
+
+      toast({
+        title: "Success",
+        description: editingWorkout ? "Workout updated successfully!" : "Workout saved successfully!",
+      });
+
+      loadTodaysWorkouts();
+      clearWorkout();
+      onWorkoutSaved();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save workout",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
-    <div className="bg-dark-elevated rounded-xl p-5 border border-dark-border shadow-lg">
-      <div className="flex items-center justify-between mb-3">
-        {/* --- THIS IS THE UPGRADED PART --- */}
-        <div className="flex-1 mr-4">
-          <ExerciseCombobox
-            value={exercise.name}
-            onSelect={updateExerciseName}
+    <div className="min-h-screen bg-dark-primary pb-20">
+      <header className="bg-dark-secondary p-4 shadow-lg">
+        <h2 className="text-xl font-bold text-text-primary font-heading">Log Workout</h2>
+      </header>
+
+      <div className="p-4 space-y-4">
+        {/* Today's Workouts */}
+        {todaysWorkouts.length > 0 && (
+          <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
+            <h3 className="text-lg font-semibold text-text-primary font-heading mb-3">Today's Workouts</h3>
+            <div className="space-y-2">
+              {todaysWorkouts.map((workout) => (
+                <div key={workout.id} className="flex items-center justify-between p-3 bg-dark-elevated rounded-lg border border-dark-border">
+                  <div>
+                    <h4 className="font-medium text-text-primary">{workout.name}</h4>
+                    <p className="text-sm text-text-secondary">
+                      {workout.exercises.length} exercise{workout.exercises.length !== 1 ? 's' : ''} • {workout.type}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => editWorkout(workout)}
+                      className="bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-red"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        storage.deleteWorkout(workout.id);
+                        loadTodaysWorkouts();
+                        toast({
+                          title: "Success",
+                          description: "Workout deleted successfully!",
+                        });
+                      }}
+                      className="bg-dark-elevated border-dark-border text-red-500 hover:text-red-700"
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {editingWorkout && (
+              <div className="mt-3 pt-3 border-t border-dark-border">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-accent-red">Editing: {editingWorkout.name}</p>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearWorkout}
+                    className="text-text-secondary hover:text-text-primary"
+                  >
+                    Cancel Edit
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Workout Name and Template Selection */}
+        <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-text-secondary text-sm font-medium">
+              Workout Name
+            </label>
+            <Button
+              onClick={() => setShowTemplateDialog(true)}
+              variant="outline"
+              size="sm"
+              className="bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-navy"
+            >
+              <Copy className="mr-1" size={14} />
+              From Template
+            </Button>
+          </div>
+          <Input
+            value={workoutName}
+            onChange={(e) => setWorkoutName(e.target.value)}
+            className="w-full bg-dark-elevated text-text-primary border-dark-border mb-3"
+            placeholder="e.g., Push Day, Leg Day"
+          />
+          
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <div>
+              <label className="text-text-secondary text-sm font-medium mb-1 block">
+                Workout Date
+              </label>
+              <Input
+                type="date"
+                value={workoutDate}
+                onChange={(e) => setWorkoutDate(e.target.value)}
+                className="w-full bg-dark-elevated text-text-primary border-dark-border"
+              />
+            </div>
+            <div>
+              <label className="text-text-secondary text-sm font-medium mb-1 block">
+                Workout Type
+              </label>
+              <Select value={workoutType} onValueChange={(value: "strength" | "cardio" | "core") => setWorkoutType(value)}>
+                <SelectTrigger className="w-full bg-dark-elevated text-text-primary border-dark-border">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(0, 15%, 10%)', color: 'white' }}>
+                  <SelectItem value="strength" style={{ color: 'white' }}>Strength</SelectItem>
+                  <SelectItem value="cardio" style={{ color: 'white' }}>Cardio</SelectItem>
+                  <SelectItem value="core" style={{ color: 'white' }}>Core</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+
+        {/* --- NEW, CLEANER EXERCISE LIST --- */}
+        <div className="space-y-3">
+            {exercises.map((exercise) => (
+                <ExerciseCard 
+                    key={exercise.id}
+                    exercise={exercise}
+                    onUpdate={(updatedData) => updateExercise(exercise.id, updatedData)}
+                    onDelete={() => deleteExercise(exercise.id)}
+                />
+            ))}
+        </div>
+        
+        {/* Add Exercise Button */}
+        <Button
+            onClick={addExercise}
+            variant="outline"
+            className="w-full bg-dark-secondary hover:bg-dark-elevated border-dark-border text-text-secondary font-medium"
+        >
+            <Plus className="mr-2" size={16} />
+            Add Another Exercise
+        </Button>
+
+        {/* Workout Notes */}
+        <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
+           <label className="block text-text-secondary text-sm font-medium mb-2">
+            Workout Notes
+          </label>
+          <textarea
+            value={workoutNotes}
+            onChange={(e) => setWorkoutNotes(e.target.value)}
+            placeholder="Add notes about your workout..."
+            className="w-full bg-dark-elevated text-text-primary border border-dark-border rounded-lg p-3 text-sm resize-none"
+            rows={3}
           />
         </div>
-        {/* --- END OF UPGRADED PART --- */}
+
+        {/* Save Workout */}
         <Button
-          onClick={onDelete}
-          variant="ghost"
-          size="sm"
-          className="text-text-secondary hover:text-accent-red p-1"
+          onClick={saveWorkout}
+          className="w-full bg-accent-navy hover:bg-accent-light-navy text-white font-semibold py-3 px-6"
         >
-          <Trash2 size={16} />
+          <Save className="mr-2" size={20} />
+          {editingWorkout ? "Update Workout" : "Save Workout"}
         </Button>
       </div>
 
-      {/* Exercise Type and Cardio Type */}
-      <div className="flex items-center space-x-2 mb-3">
-        <Select value={exercise.type || "strength"} onValueChange={updateExerciseType}>
-          <SelectTrigger className="w-32 bg-dark-primary text-text-primary border-dark-border text-sm h-8">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(0, 15%, 10%)', color: 'white' }}>
-            <SelectItem value="strength" style={{ color: 'white' }}>Strength</SelectItem>
-            <SelectItem value="cardio" style={{ color: 'white' }}>Cardio</SelectItem>
-            <SelectItem value="core" style={{ color: 'white' }}>Core</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      
-      {/* Sets Header */}
-      <div className="flex items-center space-x-2 text-sm mb-2">
-        <span className="text-text-secondary w-8">Set</span>
-        {exercise.type === "cardio" ? (
-          <>
-            <span className="text-text-secondary w-20">Duration</span>
-            <span className="text-text-secondary w-20">Distance</span>
-          </>
-        ) : (
-          <>
-            <span className="text-text-secondary w-20">Weight</span>
-            <span className="text-text-secondary w-16">Reps</span>
-          </>
-        )}
-        <span className="text-text-secondary w-16">Rest (s)</span>
-        <span className="text-text-secondary w-8"></span>
-      </div>
-      
-      {/* Sets */}
-      <div className="space-y-2">
-        {exercise.sets.map((set, index) => (
-          <div key={set.id} className="flex items-center space-x-2">
-            <span className="text-text-primary w-8 text-sm">{index + 1}</span>
-            
-            {exercise.type === "cardio" ? (
-              <>
-                <Input
-                  type="number"
-                  value={set.duration || ''}
-                  onChange={(e) => updateSet(index, { duration: parseFloat(e.target.value) || 0 })}
-                  className="w-20 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
-                  placeholder="min"
-                />
-                <Input
-                  type="number"
-                  value={set.distance || ''}
-                  onChange={(e) => updateSet(index, { distance: parseFloat(e.target.value) || 0 })}
-                  className="w-20 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
-                  placeholder="km"
-                />
-              </>
-            ) : (
-              <>
-                <Input
-                  type="number"
-                  value={set.weight || ''}
-                  onChange={(e) => updateSet(index, { weight: parseFloat(e.target.value) || 0 })}
-                  className="w-20 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
-                  placeholder="kg"
-                />
-                <Input
-                  type="number"
-                  value={set.reps || ''}
-                  onChange={(e) => updateSet(index, { reps: parseInt(e.target.value) || 0 })}
-                  className="w-16 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
-                  placeholder="reps"
-                />
-              </>
-            )}
-            
-            <Input
-              type="number"
-              value={set.restTime || ''}
-              onChange={(e) => updateSet(index, { restTime: parseInt(e.target.value) || 0 })}
-              className="w-16 bg-dark-primary text-text-primary border-dark-border text-sm h-8"
-              placeholder="sec"
-            />
-            
-            <Button
-              onClick={() => toggleSetCompleted(index)}
-              variant="ghost"
-              size="sm"
-              className={`w-8 p-1 ${
-                set.completed 
-                  ? 'text-accent-green hover:text-green-400' 
-                  : 'text-text-secondary hover:text-accent-green'
-              }`}
-            >
-              {set.completed ? <Check size={16} /> : <Circle size={16} />}
-            </Button>
-            {exercise.sets.length > 1 && (
-              <Button
-                onClick={() => removeSet(index)}
-                variant="ghost"
-                size="sm"
-                className="text-text-secondary hover:text-accent-red p-1"
+      {/* Template Selection Dialog */}
+      <Dialog open={showTemplateDialog} onOpenChange={setShowTemplateDialog}>
+        <DialogContent className="bg-dark-secondary border border-dark-border max-w-lg mx-4 max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-text-primary">Choose Template</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            {templates.map((template) => (
+              <div
+                key={template.id}
+                onClick={() => {
+                  loadFromTemplate(template);
+                  setShowTemplateDialog(false);
+                }}
+                className="bg-dark-elevated rounded-lg p-3 border border-dark-border hover:border-accent-green transition-colors cursor-pointer"
               >
-                <Trash2 size={12} />
-              </Button>
-            )}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-text-primary font-medium">{template.name}</h4>
+                    <p className="text-text-secondary text-sm">{template.description}</p>
+                    <div className="flex items-center space-x-3 mt-1">
+                      <span className="text-text-disabled text-xs">
+                        {template.exercises.length} exercises
+                      </span>
+                      {template.category && (
+                        <span className="text-text-disabled text-xs bg-dark-primary px-2 py-1 rounded">
+                          {template.category}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      
-      <Button
-        onClick={addSet}
-        variant="ghost"
-        className="mt-3 text-accent-green hover:text-green-400 text-sm font-medium p-0 h-auto"
-      >
-        <Plus className="mr-1" size={16} />
-        Add Set
-      </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
