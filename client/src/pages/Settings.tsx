@@ -7,11 +7,9 @@ import { Trash2, Download, Upload, User, Target, Database, HelpCircle, Bell } fr
 import { storage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
-// --- NEW CODE ---
 // Import the necessary Capacitor plugins
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
-// --- END NEW CODE ---
 
 
 interface SettingsProps {
@@ -80,7 +78,6 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
     });
   };
 
-  // --- MODIFIED CODE START: Using the Share Plugin ---
   const handleExportData = async () => {
     try {
       const dataToExport = {
@@ -95,19 +92,17 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
       const fileName = `body-mastery-index-backup-${new Date().toISOString().split('T')[0]}.json`;
       const dataString = JSON.stringify(dataToExport, null, 2);
 
-      // 1. Save the file to a temporary cache directory first
       const result = await Filesystem.writeFile({
         path: fileName,
         data: dataString,
-        directory: Directory.Cache, // Use Cache for temporary files to be shared
+        directory: Directory.Cache,
         encoding: Encoding.UTF8,
       });
 
-      // 2. Use the Share plugin to open the native share sheet with the file's URI
       await Share.share({
         title: 'Body Mastery Index Backup',
         text: `Here is your app data backup from ${new Date().toLocaleDateString()}.`,
-        url: result.uri, // The URI of the file we just saved
+        url: result.uri,
         dialogTitle: 'Share or Save Your Backup',
       });
 
@@ -120,7 +115,6 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
       });
     }
   };
-  // --- MODIFIED CODE END ---
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
@@ -158,9 +152,12 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
           description: "Your data has been restored. The app will now reload.",
         });
 
+        // --- FIX START ---
+        // Give the browser a moment to save the data before reloading.
         setTimeout(() => {
           window.location.reload();
-        }, 1500);
+        }, 100); // 100 milliseconds is enough time
+        // --- FIX END ---
 
       } catch (error) {
         console.error("Import error:", error);
@@ -186,7 +183,7 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
       });
       setTimeout(() => {
           window.location.reload();
-        }, 1500);
+        }, 100);
     }
   };
 
