@@ -42,40 +42,35 @@
     --success-accent-hsl: 135 65% 55%;
   }
 
-  /* --- GLOBAL STYLES --- */
+  /* --- GLOBAL & UTILITY STYLES --- */
   body {
-    background-color: var(--background);
-    color: var(--text-primary);
+    @apply bg-background text-text-primary;
   }
 
-  /* Hide scrollbar for ALL elements */
-  *::-webkit-scrollbar {
-      display: none;
-  }
-  * {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-  }
+  /* Map old class names to the new theme variables to fix broken pages */
+  .bg-dark-primary { background-color: var(--background); }
+  .bg-dark-secondary { background-color: var(--card); }
+  .bg-dark-elevated { background-color: var(--card-elevated); }
+  .border-dark-border { border-color: var(--border); }
 
-  /* --- COMPONENT STYLES & FIXES --- */
+  .text-text-primary { color: var(--text-primary); }
+  .text-text-secondary { color: var(--text-secondary); }
+  .text-text-disabled { color: var(--text-disabled); }
+  
+  .text-accent-red { color: var(--primary-accent); }
+  .bg-accent-red { background-color: var(--primary-accent); }
+
+  .text-blue-400 { color: var(--primary-accent); }
+  .dark .text-blue-400 { color: var(--secondary-accent); }
+
+  /* Hide scrollbar */
+  *::-webkit-scrollbar { display: none; }
+  * { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* --- COMPONENT-SPECIFIC POLISH --- */
   nav {
     background-color: var(--card);
     border-top-color: var(--border);
-  }
-
-  .bg-dark-secondary {
-      border-radius: 0.75rem; /* rounded-xl */
-      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-lg */
-  }
-
-  .log-workout-button, .edit-workout-button {
-      background-color: var(--primary-accent);
-      color: var(--primary-accent-foreground);
-      border: 1px solid rgba(0,0,0,0.1);
-      box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.1);
-  }
-  .dark .log-workout-button, .dark .edit-workout-button {
-      box-shadow: 0 2px 4px -1px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.05);
   }
 
   .calendar-day-today {
@@ -85,32 +80,19 @@
   }
 
   [role="switch"] {
-      border: 1px solid var(--border) !important;
-      background-color: var(--card-elevated) !important;
+      border: 1px solid var(--border);
+      background-color: var(--card-elevated);
   }
   [role="switch"][data-state='checked'] {
-      background-color: var(--primary-accent) !important;
+      background-color: var(--primary-accent);
   }
-}
-
-/* --- CORRECTED UTILITY LAYER --- */
-@layer utilities {
-  .bg-dark-primary { background-color: var(--background); }
-  .bg-dark-secondary { background-color: var(--card); }
-  .bg-dark-elevated { background-color: var(--card-elevated); }
-  .border-dark-border { border-color: var(--border); }
-
-  .text-text-primary { color: var(--text-primary); }
-  .text-text-secondary { color: var(--text-secondary); }
-  .text-text-disabled { color: var(--text-disabled); }
-
-  .text-accent-red { color: var(--primary-accent); }
-  .bg-accent-red { background-color: var(--primary-accent); }
-  .hover\:bg-accent-red\/20:hover { background-color: hsla(var(--primary-accent-hsl), 0.2); }
-
-  .text-accent-green { color: var(--success-accent); }
-  .bg-accent-green { background-color: var(--success-accent); }
-
-  .text-blue-400 { color: var(--primary-accent); }
-  .dark .text-blue-400 { color: var(--secondary-accent); }
+  
+  /* FIX: Remove white background on autofill in dark mode */
+  .dark input:-webkit-autofill,
+  .dark input:-webkit-autofill:hover, 
+  .dark input:-webkit-autofill:focus, 
+  .dark input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--card-elevated) inset !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+  }
 }
