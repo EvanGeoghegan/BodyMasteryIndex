@@ -153,10 +153,10 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
         });
 
         // --- FIX START ---
-        // Give the browser a moment to save the data before reloading.
+        // Give the browser more time to save the data before reloading.
         setTimeout(() => {
           window.location.reload();
-        }, 100); // 100 milliseconds is enough time
+        }, 500); // Increased timeout to 500ms for more reliability
         // --- FIX END ---
 
       } catch (error) {
@@ -181,9 +181,12 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
         title: "Data cleared",
         description: "All your data has been removed."
       });
+      // --- FIX START ---
+      // Give the browser more time to save the data before reloading.
       setTimeout(() => {
           window.location.reload();
-        }, 100);
+        }, 500); // Increased timeout to 500ms
+      // --- FIX END ---
     }
   };
 
