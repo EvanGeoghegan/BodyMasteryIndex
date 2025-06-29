@@ -5,24 +5,21 @@
 @tailwind utilities;
 
 @layer base {
-  /* This is the new, themeable structure.
-    :root defines the default (Light Theme).
-    .dark defines the overrides for the Dark Theme.
-  */
+  /* --- THEME DEFINITIONS (Unchanged) --- */
   :root {
     /* Light Theme: Arctic & Navy */
     --background: hsl(210 20% 98%);
     --card: hsl(0 0% 100%);
     --card-elevated: hsl(210 20% 96%);
     --border: hsl(210 20% 88%);
-
     --text-primary: hsl(210 15% 15%);
     --text-secondary: hsl(210 10% 35%);
     --text-disabled: hsl(210 10% 55%);
-    
     --primary-accent: hsl(220 70% 50%); /* Navy Blue */
+    --primary-accent-hsl: 220 70% 50%;
     --secondary-accent: hsl(210 10% 45%); /* Slate Grey */
-    --success-accent: hsl(140 50% 50%); /* Green */
+    --success-accent: hsl(140 50% 50%);
+    --success-accent-hsl: 140 50% 50%;
   }
 
   .dark {
@@ -31,18 +28,17 @@
     --card: hsl(222 47% 11%);
     --card-elevated: hsl(222 47% 15%);
     --border: hsl(222 47% 21%);
-
     --text-primary: hsl(220 15% 95%);
     --text-secondary: hsl(220 10% 80%);
     --text-disabled: hsl(220 10% 60%);
-
     --primary-accent: hsl(0 75% 45%); /* Maroon Red */
-    --secondary-accent: hsl(220 15% 65%); /* Lighter Slate */
-    --success-accent: hsl(135 65% 55%); /* Green */
+    --primary-accent-hsl: 0 75% 45%;
+    --secondary-accent: hsl(220 15% 65%);
+    --success-accent: hsl(135 65% 55%);
+    --success-accent-hsl: 135 65% 55%;
   }
-}
 
-@layer base {
+  /* --- GLOBAL STYLES & LAYOUT (Unchanged) --- */
   * {
     @apply border-border;
   }
@@ -50,10 +46,42 @@
     @apply bg-background text-text-primary;
     font-family: 'Inter', sans-serif;
   }
+  
+  /* Hide scrollbar for ALL elements */
+  *::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 
-  /* These custom utility classes now point to the new themeable variables.
-    This means you don't have to change any of the `className` attributes in your app.
-  */
+  /* --- NEW & CORRECTED STYLES --- */
+
+  /* 1. Fix Navigation Bar Background */
+  nav {
+    background-color: var(--card);
+    border-top-color: var(--border);
+  }
+
+  /* 2. Soften Card/Box Design */
+  .bg-card, .bg-dark-secondary {
+    @apply rounded-xl shadow-lg;
+    background-color: var(--card);
+  }
+  .bg-card-elevated, .bg-dark-elevated {
+    background-color: var(--card-elevated);
+  }
+  
+  /* 3. Give Graphs Depth */
+  .recharts-responsive-container {
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  }
+}
+
+/* --- MAPPING OLD UTILITIES TO NEW THEME VARIABLES --- */
+/* This section ensures all your existing components get the correct theme colors without needing to change their classNames. */
+@layer utilities {
   .bg-dark-primary { background-color: var(--background); }
   .bg-dark-secondary { background-color: var(--card); }
   .bg-dark-elevated { background-color: var(--card-elevated); }
@@ -63,22 +91,16 @@
   .text-text-secondary { color: var(--text-secondary); }
   .text-text-disabled { color: var(--text-disabled); }
 
-  .bg-accent-red { background-color: var(--primary-accent); }
-  .text-accent-red { color: var(--primary-accent); }
+  /* Accent Color Fixes */
+  .bg-accent-red, .bg-primary-accent { background-color: var(--primary-accent); }
+  .text-accent-red, .text-primary-accent { color: var(--primary-accent); }
   .hover\:text-accent-red:hover { color: var(--primary-accent); }
-  .hover\:bg-accent-red\/20:hover { background-color: hsla(var(--primary-accent-hsl, 0 75% 45%), 0.2); }
+  .hover\:bg-accent-red\/20:hover, .hover\:bg-primary-accent\/20:hover { background-color: hsla(var(--primary-accent-hsl), 0.2); }
   
-  .bg-accent-green { background-color: var(--success-accent); }
-  .text-accent-green { color: var(--success-accent); }
-
-  .text-blue-400 { color: var(--secondary-accent); }
-
-  /* Hide scrollbar for ALL elements */
-  *::-webkit-scrollbar {
-    display: none;
-  }
-  * {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+  .bg-accent-green, .bg-success-accent { background-color: var(--success-accent); }
+  .text-accent-green, .text-success-accent { color: var(--success-accent); }
+  .hover\:text-accent-green:hover { color: var(--success-accent); }
+  .hover\:bg-accent-green\/20:hover, .hover\:bg-success-accent\/20:hover { background-color: hsla(var(--success-accent-hsl), 0.2); }
+  
+  .text-blue-400, .text-secondary-accent { color: var(--secondary-accent); }
 }
