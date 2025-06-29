@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 // Import the necessary Capacitor plugins
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
+import { Workout, Template, PersonalBest, Supplement, SupplementLog } from "@shared/schema";
 
 
 interface SettingsProps {
@@ -141,23 +142,28 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
             throw new Error("Invalid backup file format.");
         }
 
-        localStorage.setItem('bmi_workouts', JSON.stringify(data.workouts || []));
-        localStorage.setItem('bmi_templates', JSON.stringify(data.templates || []));
-        localStorage.setItem('bmi_personal_bests', JSON.stringify(data.personalBests || []));
-        localStorage.setItem('bmi_supplements', JSON.stringify(data.supplements || []));
-        localStorage.setItem('bmi_supplement_logs', JSON.stringify(data.supplementLogs || []));
+        // --- NEW, MORE ROBUST IMPORT LOGIC ---
+        // 1. First, clear all existing data using the storage utility's own method.
+        storage.resetAllData();
+
+        // 2. Then, add each item from the backup file using the storage utility's 'create' methods.
+        (data.workouts as Workout[] || []).forEach(item => storage.createWorkout(item));
+        (data.templates as Template[] || []).forEach(item => storage.createTemplate(item));
+        (data.personalBests as PersonalBest[] || []).forEach(item => storage.createPersonalBest(item));
+        (data.supplements as Supplement[] || []).forEach(item => storage.createSupplement(item));
+        (data.supplementLogs as SupplementLog[] || []).forEach(item => storage.createSupplementLog(item));
+        // Note: We don't import settings, as they are managed separately on this page.
 
         toast({
           title: "Import Successful",
           description: "Your data has been restored. The app will now reload.",
         });
 
-        // --- FIX START ---
-        // Give the browser more time to save the data before reloading.
+        // 3. Give the device a generous amount of time to save everything before reloading.
         setTimeout(() => {
           window.location.reload();
-        }, 500); // Increased timeout to 500ms for more reliability
-        // --- FIX END ---
+        }, 1500); // Increased timeout to 1.5 seconds for maximum reliability
+        // --- END OF NEW LOGIC ---
 
       } catch (error) {
         console.error("Import error:", error);
@@ -181,12 +187,9 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
         title: "Data cleared",
         description: "All your data has been removed."
       });
-      // --- FIX START ---
-      // Give the browser more time to save the data before reloading.
       setTimeout(() => {
           window.location.reload();
-        }, 500); // Increased timeout to 500ms
-      // --- FIX END ---
+        }, 500);
     }
   };
 
