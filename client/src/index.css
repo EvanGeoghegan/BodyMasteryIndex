@@ -18,7 +18,7 @@
     --text-disabled: hsl(210 10% 55%);
     --primary-accent: hsl(220 70% 50%); /* Navy Blue */
     --primary-accent-hsl: 220 70% 50%;
-    --primary-accent-foreground: hsl(0 0% 100%); /* White text on accent */
+    --primary-accent-foreground: hsl(0 0% 100%);
     --secondary-accent: hsl(210 10% 45%); /* Slate Grey */
     --success-accent: hsl(140 50% 50%);
     --success-accent-hsl: 140 50% 50%;
@@ -42,95 +42,75 @@
     --success-accent-hsl: 135 65% 55%;
   }
 
-  /* --- GLOBAL STYLES & LAYOUT --- */
-  * {
-    @apply border-border;
-  }
+  /* --- GLOBAL STYLES --- */
   body {
-    @apply bg-background text-text-primary;
-    font-family: 'Inter', sans-serif;
+    background-color: var(--background);
+    color: var(--text-primary);
   }
-  
+
   /* Hide scrollbar for ALL elements */
   *::-webkit-scrollbar {
-    display: none;
+      display: none;
   }
   * {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
   }
 
-  /* --- COMPONENT-SPECIFIC FIXES & POLISH --- */
-
+  /* --- COMPONENT STYLES & FIXES --- */
   nav {
     background-color: var(--card);
     border-top-color: var(--border);
   }
 
-  .bg-card, .bg-dark-secondary {
-    @apply rounded-xl shadow-lg;
-    background-color: var(--card);
-  }
-  .bg-card-elevated, .bg-dark-elevated {
-    background-color: var(--card-elevated);
-  }
-  
-  .recharts-responsive-container {
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  .bg-dark-secondary {
+      border-radius: 0.75rem; /* rounded-xl */
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-lg */
   }
 
-  .calendar-day {
-    @apply rounded-lg;
+  .log-workout-button, .edit-workout-button {
+      background-color: var(--primary-accent);
+      color: var(--primary-accent-foreground);
+      border: 1px solid rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.1);
   }
+  .dark .log-workout-button, .dark .edit-workout-button {
+      box-shadow: 0 2px 4px -1px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.05);
+  }
+
   .calendar-day-today {
-    background-color: var(--primary-accent);
-    color: var(--primary-accent-foreground);
-    border-color: var(--primary-accent);
+      background-color: var(--primary-accent) !important;
+      color: var(--primary-accent-foreground) !important;
+      border-color: var(--primary-accent) !important;
   }
 
-  /* --- NEW STYLES FOR BUTTON & SWITCH --- */
-  .button-primary {
-      @apply bg-primary-accent text-primary-accent-foreground shadow-md hover:opacity-90 transition-opacity;
-  }
-
-  .button-secondary {
-      @apply bg-card-elevated border border-border text-text-secondary hover:bg-border;
-  }
-  
-  /* Theme Toggle Switch Polish */
   [role="switch"] {
-    @apply ring-1 ring-inset ring-border;
+      border: 1px solid var(--border) !important;
+      background-color: var(--card-elevated) !important;
   }
-
-  [role="switch"][data-state='unchecked'] {
-    background-color: var(--card-elevated);
-  }
-
   [role="switch"][data-state='checked'] {
-    background-color: var(--primary-accent);
+      background-color: var(--primary-accent) !important;
   }
 }
 
-/* --- UTILITY CLASS MAPPING --- */
+/* --- CORRECTED UTILITY LAYER --- */
 @layer utilities {
   .bg-dark-primary { background-color: var(--background); }
   .bg-dark-secondary { background-color: var(--card); }
   .bg-dark-elevated { background-color: var(--card-elevated); }
   .border-dark-border { border-color: var(--border); }
-  
+
   .text-text-primary { color: var(--text-primary); }
   .text-text-secondary { color: var(--text-secondary); }
   .text-text-disabled { color: var(--text-disabled); }
 
-  .bg-accent-red, .bg-primary-accent { background-color: var(--primary-accent); }
-  .text-accent-red, .text-primary-accent { color: var(--primary-accent); }
-  .hover\:text-accent-red:hover { color: var(--primary-accent); }
-  .hover\:bg-accent-red\/20:hover, .hover\:bg-primary-accent\/20:hover { background-color: hsla(var(--primary-accent-hsl), 0.2); }
-  
-  .bg-accent-green, .bg-success-accent { background-color: var(--success-accent); }
-  .text-accent-green, .text-success-accent { color: var(--success-accent); }
-  .hover\:text-accent-green:hover { color: var(--success-accent); }
-  .hover\:bg-accent-green\/20:hover, .hover\:bg-success-accent\/20:hover { background-color: hsla(var(--success-accent-hsl), 0.2); }
-  
-  .text-blue-400, .text-secondary-accent { color: var(--secondary-accent); }
+  .text-accent-red { color: var(--primary-accent); }
+  .bg-accent-red { background-color: var(--primary-accent); }
+  .hover\:bg-accent-red\/20:hover { background-color: hsla(var(--primary-accent-hsl), 0.2); }
+
+  .text-accent-green { color: var(--success-accent); }
+  .bg-accent-green { background-color: var(--success-accent); }
+
+  .text-blue-400 { color: var(--primary-accent); }
+  .dark .text-blue-400 { color: var(--secondary-accent); }
 }
