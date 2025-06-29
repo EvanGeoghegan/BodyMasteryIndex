@@ -5,60 +5,80 @@
 @tailwind utilities;
 
 @layer base {
+  /* This is the new, themeable structure.
+    :root defines the default (Light Theme).
+    .dark defines the overrides for the Dark Theme.
+  */
   :root {
-    --background: hsl(0 0% 100%);
-    --foreground: hsl(20 14.3% 4.1%);
-    --muted: hsl(60 4.8% 95.9%);
-    --muted-foreground: hsl(25 5.3% 44.7%);
-    --popover: hsl(0 0% 100%);
-    --popover-foreground: hsl(20 14.3% 4.1%);
+    /* Light Theme: Arctic & Navy */
+    --background: hsl(210 20% 98%);
     --card: hsl(0 0% 100%);
-    --card-foreground: hsl(20 14.3% 4.1%);
-    --border: hsl(20 5.9% 90%);
-    --input: hsl(20 5.9% 90%);
-    --primary: hsl(207 90% 54%);
-    --primary-foreground: hsl(211 100% 99%);
-    --secondary: hsl(60 4.8% 95.9%);
-    --secondary-foreground: hsl(24 9.8% 10%);
-    --accent: hsl(60 4.8% 95.9%);
-    --accent-foreground: hsl(24 9.8% 10%);
-    --destructive: hsl(0 84.2% 60.2%);
-    --destructive-foreground: hsl(60 9.1% 97.8%);
-    --ring: hsl(20 14.3% 4.1%);
-    --radius: 0.5rem;
+    --card-elevated: hsl(210 20% 96%);
+    --border: hsl(210 20% 88%);
 
-    /* Custom dark red theme colors */
-    --dark-primary: hsl(0, 15%, 6%);
-    --dark-secondary: hsl(0, 15%, 10%);
-    --dark-elevated: hsl(0, 10%, 14%);
-    --dark-border: hsl(0, 10%, 20%);
-    --accent-red: hsl(0, 85%, 55%);
-    --accent-light-red: hsl(10, 80%, 60%);
-    --accent-green: hsl(130, 60%, 50%);
-    --accent-warning: hsl(25, 85%, 60%);
-    --text-primary: hsl(0, 5%, 95%);
-    --text-secondary: hsl(0, 5%, 75%);
-    --text-disabled: hsl(0, 5%, 50%);
-    --dropdown-text: hsl(0, 5%, 90%);
+    --text-primary: hsl(210 15% 15%);
+    --text-secondary: hsl(210 10% 35%);
+    --text-disabled: hsl(210 10% 55%);
+    
+    --primary-accent: hsl(220 70% 50%); /* Navy Blue */
+    --secondary-accent: hsl(210 10% 45%); /* Slate Grey */
+    --success-accent: hsl(140 50% 50%); /* Green */
   }
 
-  /* --- NEW, SIMPLIFIED LAYOUT RULES --- */
-  html, body, #root {
-    @apply h-full overflow-hidden;
-  }
+  .dark {
+    /* Dark Theme: Midnight & Slate */
+    --background: hsl(222 47% 8%);
+    --card: hsl(222 47% 11%);
+    --card-elevated: hsl(222 47% 15%);
+    --border: hsl(222 47% 21%);
 
+    --text-primary: hsl(220 15% 95%);
+    --text-secondary: hsl(220 10% 80%);
+    --text-disabled: hsl(220 10% 60%);
+
+    --primary-accent: hsl(0 75% 45%); /* Maroon Red */
+    --secondary-accent: hsl(220 15% 65%); /* Lighter Slate */
+    --success-accent: hsl(135 65% 55%); /* Green */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply bg-background text-text-primary;
     font-family: 'Inter', sans-serif;
   }
-}
 
-/* Hide scrollbar for ALL elements */
-*::-webkit-scrollbar {
-  display: none;
-}
+  /* These custom utility classes now point to the new themeable variables.
+    This means you don't have to change any of the `className` attributes in your app.
+  */
+  .bg-dark-primary { background-color: var(--background); }
+  .bg-dark-secondary { background-color: var(--card); }
+  .bg-dark-elevated { background-color: var(--card-elevated); }
+  .border-dark-border { border-color: var(--border); }
+  
+  .text-text-primary { color: var(--text-primary); }
+  .text-text-secondary { color: var(--text-secondary); }
+  .text-text-disabled { color: var(--text-disabled); }
 
-* {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  .bg-accent-red { background-color: var(--primary-accent); }
+  .text-accent-red { color: var(--primary-accent); }
+  .hover\:text-accent-red:hover { color: var(--primary-accent); }
+  .hover\:bg-accent-red\/20:hover { background-color: hsla(var(--primary-accent-hsl, 0 75% 45%), 0.2); }
+  
+  .bg-accent-green { background-color: var(--success-accent); }
+  .text-accent-green { color: var(--success-accent); }
+
+  .text-blue-400 { color: var(--secondary-accent); }
+
+  /* Hide scrollbar for ALL elements */
+  *::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

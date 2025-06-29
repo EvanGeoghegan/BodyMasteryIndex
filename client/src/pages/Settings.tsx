@@ -1,27 +1,29 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react"; // Import React
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Download, Upload, User, Target, Database, HelpCircle, Bell } from "lucide-react";
+import { Trash2, Download, Upload, User, Target, Database, HelpCircle, Bell, Moon, Sun } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
-// Import the necessary Capacitor plugins
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { Workout, Template, PersonalBest, Supplement, SupplementLog } from "@shared/schema";
 
-
+// --- PROPS INTERFACE ---
 interface SettingsProps {
-  onShowTutorial?: () => void; // This prop is no longer used but safe to keep for now
+  theme: string;
+  onToggleTheme: () => void;
 }
 
-export default function Settings({ onShowTutorial }: SettingsProps) {
+// --- UPDATED COMPONENT DEFINITION ---
+// We now explicitly define this as a React Functional Component (FC)
+// that accepts SettingsProps. This makes the types clearer.
+const Settings: React.FC<SettingsProps> = ({ theme, onToggleTheme }) => {
   const [proteinGoal, setProteinGoal] = useState("120");
   const [waterGoal, setWaterGoal] = useState("3.0");
   const [weightUnit, setWeightUnit] = useState("kg");
-  // const [restTimerDefault, setRestTimerDefault] = useState("150"); // REMOVED
   const [currentWeight, setCurrentWeight] = useState("");
   const [targetWeight, setTargetWeight] = useState("");
   const [assessmentExercise1, setAssessmentExercise1] = useState("Push-ups");
@@ -42,7 +44,6 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
         setProteinGoal(settings.proteinGoal?.toString() || "120");
         setWaterGoal(settings.waterGoal?.toString() || "3.0");
         setWeightUnit(settings.weightUnit || "kg");
-        // setRestTimerDefault(settings.restTimerDefault?.toString() || "150"); // REMOVED
         setCurrentWeight(settings.currentWeight?.toString() || "");
         setTargetWeight(settings.targetWeight?.toString() || "");
         setAssessmentExercise1(settings.assessmentExercise1 || "Push-ups");
@@ -62,7 +63,6 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
       proteinGoal: parseFloat(proteinGoal),
       waterGoal: parseFloat(waterGoal),
       weightUnit,
-      // restTimerDefault: parseInt(restTimerDefault), // REMOVED
       currentWeight: currentWeight ? parseFloat(currentWeight) : null,
       targetWeight: targetWeight ? parseFloat(targetWeight) : null,
       assessmentExercise1,
@@ -187,8 +187,8 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
   };
 
   return (
-    <div className="min-h-screen bg-dark-primary">
-      <header className="bg-dark-secondary border-b border-dark-border">
+    <div className="min-h-screen bg-background">
+      <header className="bg-card border-b border-border">
         <div className="p-4">
           <h1 className="text-2xl font-bold text-text-primary font-['Montserrat']">
             Settings
@@ -200,30 +200,109 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
       </header>
 
       <div className="p-4 space-y-6 pb-24">
-        {/* Profile Section (unchanged) */}
-        <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
-            {/* ... JSX for this section is unchanged */}
+        {/* --- NEW THEME TOGGLE SECTION --- */}
+        <div className="bg-card rounded-lg p-6 border border-border">
+          <h2 className="text-lg font-semibold text-text-primary font-['Montserrat'] mb-4">
+            Appearance
+          </h2>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="dark-mode-switch" className="flex items-center gap-2 text-text-primary">
+              {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
+              <span>Dark Mode</span>
+            </Label>
+            <Switch
+              id="dark-mode-switch"
+              checked={theme === 'dark'}
+              onCheckedChange={onToggleTheme}
+            />
+          </div>
         </div>
-        
-        {/* Goals & Targets (unchanged) */}
-        <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
-            {/* ... JSX for this section is unchanged */}
-        </div>
+        {/* --- END NEW SECTION --- */}
 
-        {/* --- MODIFIED Workout Preferences Section --- */}
-        <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
+        {/* Profile Section */}
+        <div className="bg-card rounded-lg p-6 border border-border">
           <div className="flex items-center gap-2 mb-4">
-            <User className="text-accent-red" size={20} />
+            <User className="text-primary-accent" size={20} />
             <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
-              Workout Preferences
+              Profile
             </h2>
           </div>
           
           <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="current-weight" className="text-text-secondary">Current Weight</Label>
+                <div className="flex gap-2 mt-1">
+                  <Input id="current-weight" type="number" step="0.1" placeholder="70.0" value={currentWeight} onChange={(e) => setCurrentWeight(e.target.value)} className="bg-card-elevated border-border text-text-primary" />
+                  <span className="text-text-secondary self-center text-sm">{weightUnit}</span>
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="target-weight" className="text-text-secondary">Target Weight</Label>
+                <div className="flex gap-2 mt-1">
+                  <Input id="target-weight" type="number" step="0.1" placeholder="75.0" value={targetWeight} onChange={(e) => setTargetWeight(e.target.value)} className="bg-card-elevated border-border text-text-primary" />
+                  <span className="text-text-secondary self-center text-sm">{weightUnit}</span>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium text-text-primary">Assessment Exercises</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="exercise1" className="text-text-secondary">Exercise 1</Label>
+                  <Input id="exercise1" type="text" value={assessmentExercise1} onChange={(e) => setAssessmentExercise1(e.target.value)} className="mt-1 bg-card-elevated border-border text-text-primary" />
+                </div>
+                <div>
+                  <Label htmlFor="exercise2" className="text-text-secondary">Exercise 2</Label>
+                  <Input id="exercise2" type="text" value={assessmentExercise2} onChange={(e) => setAssessmentExercise2(e.target.value)} className="mt-1 bg-card-elevated border-border text-text-primary" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Goals & Targets */}
+        <div className="bg-card rounded-lg p-6 border border-border">
+          <div className="flex items-center gap-2 mb-4">
+            <Target className="text-primary-accent" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
+              Goals & Targets
+            </h2>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="protein-goal" className="text-text-secondary">Daily Protein Goal</Label>
+                <div className="flex gap-2 mt-1">
+                  <Input id="protein-goal" type="number" value={proteinGoal} onChange={(e) => setProteinGoal(e.target.value)} className="bg-card-elevated border-border text-text-primary" />
+                  <span className="text-text-secondary self-center text-sm">g</span>
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="water-goal" className="text-text-secondary">Daily Water Goal</Label>
+                <div className="flex gap-2 mt-1">
+                  <Input id="water-goal" type="number" step="0.1" value={waterGoal} onChange={(e) => setWaterGoal(e.target.value)} className="bg-card-elevated border-border text-text-primary" />
+                  <span className="text-text-secondary self-center text-sm">L</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Workout Preferences */}
+        <div className="bg-card rounded-lg p-6 border border-border">
+          <div className="flex items-center gap-2 mb-4">
+            <User className="text-primary-accent" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
+              Workout Preferences
+            </h2>
+          </div>
+          <div className="space-y-4">
             <div>
                 <Label htmlFor="weight-unit" className="text-text-secondary">Weight Unit</Label>
                 <Select value={weightUnit} onValueChange={setWeightUnit}>
-                  <SelectTrigger className="mt-1 bg-dark-elevated border-dark-border text-text-primary">
+                  <SelectTrigger className="mt-1 bg-card-elevated border-border text-text-primary">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -232,30 +311,80 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
                   </SelectContent>
                 </Select>
             </div>
-            {/* The Default Rest Timer Input has been removed from here */}
           </div>
         </div>
-        {/* --- END MODIFICATION --- */}
 
-
-        {/* Notifications (unchanged) */}
-        <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
-            {/* ... JSX for this section is unchanged */}
+        {/* Notifications */}
+        <div className="bg-card rounded-lg p-6 border border-border">
+          <div className="flex items-center gap-2 mb-4">
+            <Bell className="text-primary-accent" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
+              Notifications
+            </h2>
+          </div>
+          <div className="space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-text-primary font-medium">Workout Reminders</Label>
+                  <p className="text-xs text-text-secondary mt-1">Get reminded to log your workouts</p>
+                </div>
+                <Switch checked={workoutReminder} onCheckedChange={setWorkoutReminder} />
+              </div>
+              {workoutReminder && (
+                <div>
+                  <Label htmlFor="workout-time" className="text-text-secondary">Reminder Time</Label>
+                  <Input id="workout-time" type="time" value={workoutReminderTime} onChange={(e) => setWorkoutReminderTime(e.target.value)} className="mt-1 bg-card-elevated border-border text-text-primary" />
+                </div>
+              )}
+            </div>
+            <div className="space-y-3 border-t border-border pt-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-text-primary font-medium">Nutrition Reminders</Label>
+                  <p className="text-xs text-text-secondary mt-1">Get reminded to log protein and water</p>
+                </div>
+                <Switch checked={nutritionReminder} onCheckedChange={setNutritionReminder} />
+              </div>
+              {nutritionReminder && (
+                <div>
+                  <Label htmlFor="nutrition-time" className="text-text-secondary">Reminder Time</Label>
+                  <Input id="nutrition-time" type="time" value={nutritionReminderTime} onChange={(e) => setNutritionReminderTime(e.target.value)} className="mt-1 bg-card-elevated border-border text-text-primary" />
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Data Management (unchanged) */}
-        <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
-            {/* ... JSX for this section is unchanged */}
+        {/* Data Management */}
+        <div className="bg-card rounded-lg p-6 border border-border">
+          <div className="flex items-center gap-2 mb-4">
+            <Database className="text-primary-accent" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
+              Data Management
+            </h2>
+          </div>
+          <div className="space-y-3">
+            <input type="file" ref={fileInputRef} onChange={handleFileSelected} className="hidden" />
+            <Button onClick={handleImportClick} variant="outline" className="w-full bg-card-elevated border-border text-text-primary hover:bg-secondary-accent/20 hover:text-secondary-accent">
+              <Upload className="mr-2" size={16} /> Import Data from Backup
+            </Button>
+            <Button onClick={handleExportData} variant="outline" className="w-full bg-card-elevated border-border text-text-primary hover:bg-success-accent/20 hover:text-success-accent">
+              <Download className="mr-2" size={16} /> Export All Data
+            </Button>
+            <Button onClick={handleClearAllData} variant="outline" className="w-full bg-card-elevated border-border text-text-primary hover:bg-primary-accent/20 hover:text-primary-accent">
+              <Trash2 className="mr-2" size={16} /> Clear All Data
+            </Button>
+          </div>
         </div>
 
-        {/* Save Settings Button (unchanged) */}
-        <Button
-          onClick={handleSaveSettings}
-          className="w-full bg-accent-red hover:bg-accent-light-red text-white"
-        >
+        {/* Save Settings */}
+        <Button onClick={handleSaveSettings} className="w-full bg-primary-accent hover:opacity-90 text-white">
           Save Settings
         </Button>
       </div>
     </div>
   );
-}
+};
+
+export default Settings;

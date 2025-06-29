@@ -4,7 +4,6 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "@/components/Navigation";
-// import Tutorial from "@/components/Tutorial"; // REMOVED
 import NotificationSystem from "@/components/NotificationSystem";
 import Dashboard from "@/pages/Dashboard";
 import WorkoutPage from "@/pages/Workout";
@@ -21,10 +20,25 @@ function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [dashboardRefreshTrigger, setDashboardRefreshTrigger] = useState(0);
   const [workoutToEdit, setWorkoutToEdit] = useState<WorkoutType | null>(null);
-  // const [showTutorial, setShowTutorial] = useState(false); // REMOVED
+  
+  // --- NEW THEME LOGIC START ---
+  const [theme, setTheme] = useState(localStorage.getItem('bmi_theme') || 'light');
 
   useEffect(() => {
-    // This only initializes default templates now
+    // Apply the theme class to the root <html> element
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+    // Save the preference
+    localStorage.setItem('bmi_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
+  // --- NEW THEME LOGIC END ---
+
+  useEffect(() => {
     storage.initializeDefaultTemplates();
   }, []);
 
@@ -51,8 +65,6 @@ function App() {
   const handleNavigateToNutrition = () => {
     setActiveTab("supplements");
   };
-  
-  // The handleShowTutorial function is no longer needed
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -71,8 +83,8 @@ function App() {
       case "supplements":
         return <Supplements />;
       case "settings":
-        // The onShowTutorial prop is no longer needed here
-        return <Settings />; 
+        // Pass the theme state and toggle function to the Settings page
+        return <Settings theme={theme} onToggleTheme={toggleTheme} />;
       default:
         return <Dashboard onNavigateToWorkout={handleNavigateToWorkout} refreshTrigger={dashboardRefreshTrigger} />;
     }
@@ -81,15 +93,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <main className="max-w-md mx-auto h-full bg-dark-primary text-text-primary overflow-y-auto">
+        <main className="max-w-md mx-auto h-full bg-background text-text-primary overflow-y-auto">
           <div className="pb-24">
             {renderActiveTab()}
           </div>
-          
           <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-          
-          {/* <Tutorial isOpen={showTutorial} onClose={() => setShowTutorial(false)} /> REMOVED */}
-          
           <NotificationSystem 
             onNavigateToWorkout={handleNavigateToWorkout}
             onNavigateToNutrition={handleNavigateToNutrition}
