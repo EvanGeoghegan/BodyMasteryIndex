@@ -15,7 +15,7 @@ import ProgressDashboard from "@/pages/ProgressDashboard";
 import Supplements from "@/pages/Supplements";
 import Settings from "@/pages/Settings";
 import { storage } from "@/lib/storage";
-import { Template, Exercise, ExerciseSet, Workout as WorkoutType } from "@shared/schema";
+import { Template, Workout as WorkoutType } from "@shared/schema";
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -24,10 +24,7 @@ function App() {
   const [showTutorial, setShowTutorial] = useState(false);
 
   useEffect(() => {
-    // Initialize default templates on first load
     storage.initializeDefaultTemplates();
-    
-    // Check if user is first-time visitor
     const tutorialCompleted = localStorage.getItem('bmi_tutorial_completed');
     if (!tutorialCompleted) {
       setShowTutorial(true);
@@ -36,11 +33,11 @@ function App() {
 
   const handleWorkoutSaved = () => {
     setActiveTab("dashboard");
-    setDashboardRefreshTrigger(prev => prev + 1); // Trigger dashboard refresh
+    setDashboardRefreshTrigger(prev => prev + 1);
   };
 
   const handleNavigateToWorkout = () => {
-    setWorkoutToEdit(null); // Clear any existing workout being edited
+    setWorkoutToEdit(null);
     setActiveTab("workout");
   };
 
@@ -50,9 +47,7 @@ function App() {
   };
 
   const handleUseTemplate = (template: Template) => {
-    // Convert template to workout format and navigate to workout page
-    // This would populate the workout form with template data
-    setWorkoutToEdit(null); // Clear any existing workout being edited
+    setWorkoutToEdit(null);
     setActiveTab("workout");
   };
 
@@ -90,17 +85,20 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="min-h-screen bg-dark-primary text-text-primary pt-8 pb-12">
-          <div className="max-w-md mx-auto bg-dark-primary min-h-screen relative overflow-y-auto scrollbar-hide">
-            {renderActiveTab()}
-            <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-            <Tutorial isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
-            <NotificationSystem 
-              onNavigateToWorkout={handleNavigateToWorkout}
-              onNavigateToNutrition={handleNavigateToNutrition}
-            />
+        {/* --- CORRECTED LAYOUT --- */}
+        {/* This is now the SINGLE main container. It handles padding, scrolling, and hiding the scrollbar. */}
+        <main className="max-w-md mx-auto h-screen bg-dark-primary text-text-primary overflow-y-auto scrollbar-hide">
+          <div className="pb-24"> {/* This inner div provides padding at the bottom so content isn't hidden by the nav bar */}
+              {renderActiveTab()}
           </div>
-        </div>
+          <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+          <Tutorial isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
+          <NotificationSystem 
+            onNavigateToWorkout={handleNavigateToWorkout}
+            onNavigateToNutrition={handleNavigateToNutrition}
+          />
+        </main>
+        {/* --- END OF CORRECTION --- */}
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
