@@ -7,10 +7,12 @@ import { Trash2, Download, Upload, User, Target, Database, HelpCircle, Bell } fr
 import { storage } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
-// --- NEW CODE START ---
-// Import the official Capacitor Filesystem plugin
+// --- NEW CODE ---
+// Import the necessary Capacitor plugins
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
-// --- NEW CODE END ---
+import { Share } from '@capacitor/share';
+// --- END NEW CODE ---
+
 
 interface SettingsProps {
   onShowTutorial?: () => void;
@@ -78,7 +80,7 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
     });
   };
 
-  // --- MODIFIED CODE START ---
+  // --- MODIFIED CODE START: Using the Share Plugin ---
   const handleExportData = async () => {
     try {
       const dataToExport = {
@@ -93,23 +95,27 @@ export default function Settings({ onShowTutorial }: SettingsProps) {
       const fileName = `body-mastery-index-backup-${new Date().toISOString().split('T')[0]}.json`;
       const dataString = JSON.stringify(dataToExport, null, 2);
 
-      // Use the Capacitor Filesystem to save the file reliably
-      await Filesystem.writeFile({
+      // 1. Save the file to a temporary cache directory first
+      const result = await Filesystem.writeFile({
         path: fileName,
         data: dataString,
-        directory: Directory.Documents, // FIX: Use the correct enum for user-accessible files
+        directory: Directory.Cache, // Use Cache for temporary files to be shared
         encoding: Encoding.UTF8,
       });
 
-      toast({
-        title: "Data Exported",
-        description: `Backup saved to your Documents folder as ${fileName}`, // FIX: Update description
+      // 2. Use the Share plugin to open the native share sheet with the file's URI
+      await Share.share({
+        title: 'Body Mastery Index Backup',
+        text: `Here is your app data backup from ${new Date().toLocaleDateString()}.`,
+        url: result.uri, // The URI of the file we just saved
+        dialogTitle: 'Share or Save Your Backup',
       });
+
     } catch (error) {
       console.error("Export failed:", error);
       toast({
         title: "Export Failed",
-        description: "Could not save the backup file. Please ensure the app has storage permissions.",
+        description: "Could not share the backup file. Please try again.",
         variant: "destructive",
       });
     }
