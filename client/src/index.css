@@ -5,18 +5,20 @@
 @tailwind utilities;
 
 @layer base {
-  /* --- THEME DEFINITIONS (Unchanged) --- */
+  /* --- THEME DEFINITIONS --- */
   :root {
     /* Light Theme: Arctic & Navy */
     --background: hsl(210 20% 98%);
     --card: hsl(0 0% 100%);
     --card-elevated: hsl(210 20% 96%);
     --border: hsl(210 20% 88%);
+    --ring: hsl(210 20% 80%);
     --text-primary: hsl(210 15% 15%);
     --text-secondary: hsl(210 10% 35%);
     --text-disabled: hsl(210 10% 55%);
     --primary-accent: hsl(220 70% 50%); /* Navy Blue */
     --primary-accent-hsl: 220 70% 50%;
+    --primary-accent-foreground: hsl(0 0% 100%); /* White text on accent */
     --secondary-accent: hsl(210 10% 45%); /* Slate Grey */
     --success-accent: hsl(140 50% 50%);
     --success-accent-hsl: 140 50% 50%;
@@ -28,17 +30,19 @@
     --card: hsl(222 47% 11%);
     --card-elevated: hsl(222 47% 15%);
     --border: hsl(222 47% 21%);
+    --ring: hsl(222 47% 31%);
     --text-primary: hsl(220 15% 95%);
     --text-secondary: hsl(220 10% 80%);
     --text-disabled: hsl(220 10% 60%);
     --primary-accent: hsl(0 75% 45%); /* Maroon Red */
     --primary-accent-hsl: 0 75% 45%;
+    --primary-accent-foreground: hsl(0 0% 100%);
     --secondary-accent: hsl(220 15% 65%);
     --success-accent: hsl(135 65% 55%);
     --success-accent-hsl: 135 65% 55%;
   }
 
-  /* --- GLOBAL STYLES & LAYOUT (Unchanged) --- */
+  /* --- GLOBAL STYLES & LAYOUT --- */
   * {
     @apply border-border;
   }
@@ -56,15 +60,13 @@
     scrollbar-width: none;
   }
 
-  /* --- NEW & CORRECTED STYLES --- */
+  /* --- COMPONENT-SPECIFIC FIXES & POLISH --- */
 
-  /* 1. Fix Navigation Bar Background */
   nav {
     background-color: var(--card);
     border-top-color: var(--border);
   }
 
-  /* 2. Soften Card/Box Design */
   .bg-card, .bg-dark-secondary {
     @apply rounded-xl shadow-lg;
     background-color: var(--card);
@@ -73,14 +75,43 @@
     background-color: var(--card-elevated);
   }
   
-  /* 3. Give Graphs Depth */
   .recharts-responsive-container {
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
   }
+
+  .calendar-day {
+    @apply rounded-lg;
+  }
+  .calendar-day-today {
+    background-color: var(--primary-accent);
+    color: var(--primary-accent-foreground);
+    border-color: var(--primary-accent);
+  }
+
+  /* --- NEW STYLES FOR BUTTON & SWITCH --- */
+  .button-primary {
+      @apply bg-primary-accent text-primary-accent-foreground shadow-md hover:opacity-90 transition-opacity;
+  }
+
+  .button-secondary {
+      @apply bg-card-elevated border border-border text-text-secondary hover:bg-border;
+  }
+  
+  /* Theme Toggle Switch Polish */
+  [role="switch"] {
+    @apply ring-1 ring-inset ring-border;
+  }
+
+  [role="switch"][data-state='unchecked'] {
+    background-color: var(--card-elevated);
+  }
+
+  [role="switch"][data-state='checked'] {
+    background-color: var(--primary-accent);
+  }
 }
 
-/* --- MAPPING OLD UTILITIES TO NEW THEME VARIABLES --- */
-/* This section ensures all your existing components get the correct theme colors without needing to change their classNames. */
+/* --- UTILITY CLASS MAPPING --- */
 @layer utilities {
   .bg-dark-primary { background-color: var(--background); }
   .bg-dark-secondary { background-color: var(--card); }
@@ -91,7 +122,6 @@
   .text-text-secondary { color: var(--text-secondary); }
   .text-text-disabled { color: var(--text-disabled); }
 
-  /* Accent Color Fixes */
   .bg-accent-red, .bg-primary-accent { background-color: var(--primary-accent); }
   .text-accent-red, .text-primary-accent { color: var(--primary-accent); }
   .hover\:text-accent-red:hover { color: var(--primary-accent); }
