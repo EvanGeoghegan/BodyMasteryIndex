@@ -240,13 +240,18 @@
   }
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-::-webkit-scrollbar {
+/*
+  A more aggressive, "catch-all" rule to hide scrollbars
+  on any element that might be scrolling.
+*/
+
+/* For Webkit-based browsers (Chrome, Safari, Edge, Android WebView) */
+*::-webkit-scrollbar {
   display: none;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
-body {
+/* For Firefox and IE */
+* {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
