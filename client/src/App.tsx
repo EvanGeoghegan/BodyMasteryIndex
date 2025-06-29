@@ -4,7 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "@/components/Navigation";
-import Tutorial from "@/components/Tutorial";
+// import Tutorial from "@/components/Tutorial"; // REMOVED
 import NotificationSystem from "@/components/NotificationSystem";
 import Dashboard from "@/pages/Dashboard";
 import WorkoutPage from "@/pages/Workout";
@@ -21,14 +21,11 @@ function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [dashboardRefreshTrigger, setDashboardRefreshTrigger] = useState(0);
   const [workoutToEdit, setWorkoutToEdit] = useState<WorkoutType | null>(null);
-  const [showTutorial, setShowTutorial] = useState(false);
+  // const [showTutorial, setShowTutorial] = useState(false); // REMOVED
 
   useEffect(() => {
+    // This only initializes default templates now
     storage.initializeDefaultTemplates();
-    const tutorialCompleted = localStorage.getItem('bmi_tutorial_completed');
-    if (!tutorialCompleted) {
-      setShowTutorial(true);
-    }
   }, []);
 
   const handleWorkoutSaved = () => {
@@ -54,10 +51,8 @@ function App() {
   const handleNavigateToNutrition = () => {
     setActiveTab("supplements");
   };
-
-  const handleShowTutorial = () => {
-    setShowTutorial(true);
-  };
+  
+  // The handleShowTutorial function is no longer needed
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -76,7 +71,8 @@ function App() {
       case "supplements":
         return <Supplements />;
       case "settings":
-        return <Settings onShowTutorial={handleShowTutorial} />;
+        // The onShowTutorial prop is no longer needed here
+        return <Settings />; 
       default:
         return <Dashboard onNavigateToWorkout={handleNavigateToWorkout} refreshTrigger={dashboardRefreshTrigger} />;
     }
@@ -85,24 +81,20 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        {/* --- SIMPLIFIED LAYOUT --- */}
-        {/* This main container now only centers the content. The body handles the scrolling. */}
         <main className="max-w-md mx-auto h-full bg-dark-primary text-text-primary overflow-y-auto">
-          {/* This inner div provides padding at the bottom so content isn't hidden by the nav bar */}
           <div className="pb-24">
             {renderActiveTab()}
           </div>
           
           <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
           
-          <Tutorial isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
+          {/* <Tutorial isOpen={showTutorial} onClose={() => setShowTutorial(false)} /> REMOVED */}
           
           <NotificationSystem 
             onNavigateToWorkout={handleNavigateToWorkout}
             onNavigateToNutrition={handleNavigateToNutrition}
           />
         </main>
-        {/* --- END OF SIMPLIFICATION --- */}
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
