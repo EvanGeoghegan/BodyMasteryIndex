@@ -4,105 +4,63 @@
 @tailwind components;
 @tailwind utilities;
 
-/* This is a simpler, more direct structure that avoids @layer conflicts.
-  It defines the themes and then applies styles directly to components.
-*/
+@layer base {
+  /* --- THEME DEFINITIONS --- */
+  :root {
+    /* Light Theme: Arctic & Navy */
+    --background: hsl(210 20% 98%);
+    --card: hsl(0 0% 100%);
+    --card-elevated: hsl(210 20% 96%);
+    --border: hsl(210 20% 88%);
+    --ring: hsl(210 20% 80%);
+    --text-primary: hsl(210 15% 15%);
+    --text-secondary: hsl(210 10% 35%);
+    --text-disabled: hsl(210 10% 55%);
+    --primary-accent: hsl(220 70% 50%); /* Navy Blue */
+    --primary-accent-foreground: hsl(0 0% 100%);
+    --secondary-accent: hsl(210 10% 45%); /* Slate Grey */
+    --success-accent: hsl(140 50% 50%);
+  }
 
-/* --- STEP 1: THEME DEFINITIONS --- */
-:root {
-  /* Light Theme: Arctic & Navy */
-  --background: hsl(210 20% 98%);
-  --card: hsl(0 0% 100%);
-  --card-elevated: hsl(210 20% 96%);
-  --border: hsl(210 20% 88%);
-  --text-primary: hsl(210 15% 15%);
-  --text-secondary: hsl(210 10% 35%);
-  --primary-accent: hsl(220 70% 50%); /* Navy Blue */
-  --primary-accent-foreground: hsl(0 0% 100%);
-}
+  .dark {
+    /* Dark Theme: Midnight & Slate */
+    --background: hsl(222 47% 8%);
+    --card: hsl(222 47% 11%);
+    --card-elevated: hsl(222 47% 15%);
+    --border: hsl(222 47% 21%);
+    --ring: hsl(222 47% 31%);
+    --text-primary: hsl(220 15% 95%);
+    --text-secondary: hsl(220 10% 80%);
+    --text-disabled: hsl(220 10% 60%);
+    --primary-accent: hsl(0 75% 45%); /* Maroon Red */
+    --primary-accent-foreground: hsl(0 0% 100%);
+    --secondary-accent: hsl(220 15% 65%);
+    --success-accent: hsl(135 65% 55%);
+  }
 
-.dark {
-  /* Dark Theme: Midnight & Slate */
-  --background: hsl(222 47% 8%);
-  --card: hsl(222 47% 11%);
-  --card-elevated: hsl(222 47% 15%);
-  --border: hsl(222 47% 21%);
-  --text-primary: hsl(220 15% 95%);
-  --text-secondary: hsl(220 10% 80%);
-  --primary-accent: hsl(0 75% 45%); /* Maroon Red */
-  --primary-accent-foreground: hsl(0 0% 100%);
-}
+  /* --- GLOBAL STYLES --- */
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-text-primary;
+  }
 
-/* --- STEP 2: APPLY THEME TO BASE ELEMENTS --- */
-body {
-  background-color: var(--background);
-  color: var(--text-primary);
-}
+  /* Hide scrollbar for ALL elements */
+  *::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 
-/* Hide scrollbar for ALL elements */
-*::-webkit-scrollbar { display: none; }
-* { -ms-overflow-style: none; scrollbar-width: none; }
-
-
-/* --- STEP 3: STYLE SPECIFIC COMPONENTS --- */
-
-/* Fix the pages that were disappearing */
-.bg-dark-primary { background-color: var(--background); }
-.bg-dark-secondary, .bg-card { background-color: var(--card); }
-.bg-dark-elevated { background-color: var(--card-elevated); }
-.border-dark-border { border-color: var(--border); }
-
-.text-text-primary { color: var(--text-primary); }
-.text-text-secondary { color: var(--text-secondary); }
-
-/* Apply accent colors correctly */
-.text-accent-red, .text-primary-accent { color: var(--primary-accent); }
-.bg-accent-red, .bg-primary-accent { background-color: var(--primary-accent); }
-.text-blue-400 { color: var(--primary-accent); }
-.dark .text-blue-400 { color: hsl(220, 15%, 65%); } /* Specific slate for dark theme */
-
-
-/* Fix Navigation Bar */
-nav {
-  background-color: var(--card);
-  border-top-color: var(--border);
-}
-
-/* Soften Cards */
-.bg-dark-secondary, .bg-card {
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-}
-.dark .bg-dark-secondary, .dark .bg-card {
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.4);
-}
-
-
-/* Calendar Polish */
-.calendar-day {
-  border-radius: 0.5rem;
-}
-.calendar-day-today {
-  background-color: var(--primary-accent) !important;
-  color: var(--primary-accent-foreground) !important;
-  border-color: var(--primary-accent) !important;
-}
-
-/* Theme Toggle Switch Polish */
-[role="switch"] {
-  border: 1px solid var(--border) !important;
-  background-color: var(--card-elevated) !important;
-}
-[role="switch"][data-state='checked'] {
-  background-color: var(--primary-accent) !important;
-  border-color: var(--primary-accent) !important;
-}
-
-/* Fix white highlight on input autofill in dark mode */
-.dark input:-webkit-autofill,
-.dark input:-webkit-autofill:hover, 
-.dark input:-webkit-autofill:focus, 
-.dark input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px var(--card-elevated) inset !important;
-  -webkit-text-fill-color: var(--text-primary) !important;
+  /* Fix for autofill background in dark mode */
+  .dark input:-webkit-autofill,
+  .dark input:-webkit-autofill:hover, 
+  .dark input:-webkit-autofill:focus, 
+  .dark input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--card-elevated) inset !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+  }
 }
