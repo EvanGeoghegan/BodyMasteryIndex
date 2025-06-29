@@ -85,20 +85,24 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        {/* --- CORRECTED LAYOUT --- */}
-        {/* This is now the SINGLE main container. It handles padding, scrolling, and hiding the scrollbar. */}
-        <main className="max-w-md mx-auto h-screen bg-dark-primary text-text-primary overflow-y-auto scrollbar-hide">
-          <div className="pb-24"> {/* This inner div provides padding at the bottom so content isn't hidden by the nav bar */}
-              {renderActiveTab()}
+        {/* --- SIMPLIFIED LAYOUT --- */}
+        {/* This main container now only centers the content. The body handles the scrolling. */}
+        <main className="max-w-md mx-auto h-full bg-dark-primary text-text-primary overflow-y-auto">
+          {/* This inner div provides padding at the bottom so content isn't hidden by the nav bar */}
+          <div className="pb-24">
+            {renderActiveTab()}
           </div>
+          
           <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+          
           <Tutorial isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
+          
           <NotificationSystem 
             onNavigateToWorkout={handleNavigateToWorkout}
             onNavigateToNutrition={handleNavigateToNutrition}
           />
         </main>
-        {/* --- END OF CORRECTION --- */}
+        {/* --- END OF SIMPLIFICATION --- */}
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>

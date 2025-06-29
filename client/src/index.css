@@ -4,253 +4,60 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(60, 4.8%, 95.9%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(60, 4.8%, 95.9%);
-  --accent-foreground: hsl(24, 9.8%, 10%);
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
-  --radius: 0.5rem;
-
-  /* Custom dark red theme colors */
-  --dark-primary: hsl(0, 15%, 6%);
-  --dark-secondary: hsl(0, 15%, 10%);
-  --dark-elevated: hsl(0, 10%, 14%);
-  --dark-border: hsl(0, 10%, 20%);
-  --accent-red: hsl(0, 85%, 55%);
-  --accent-light-red: hsl(10, 80%, 60%);
-  --accent-green: hsl(130, 60%, 50%);
-  --accent-warning: hsl(25, 85%, 60%);
-  --text-primary: hsl(0, 5%, 95%);
-  --text-secondary: hsl(0, 5%, 75%);
-  --text-disabled: hsl(0, 5%, 50%);
-  --dropdown-text: hsl(0, 5%, 90%);
-}
-
-/* Improve dropdown text visibility - comprehensive approach */
-[data-radix-select-content] {
-  background-color: hsl(220, 20%, 12%) !important;
-  border-color: hsl(220, 15%, 25%) !important;
-  color: white !important;
-}
-
-[data-radix-select-item] {
-  color: white !important;
-  background-color: transparent !important;
-}
-
-[data-radix-select-item]:focus,
-[data-radix-select-item][data-highlighted],
-[data-radix-select-item][data-state="checked"],
-[data-radix-select-item]:hover {
-  background-color: hsl(0, 85%, 55%) !important;
-  color: white !important;
-}
-
-[data-radix-select-trigger] {
-  color: white !important;
-}
-
-[data-radix-select-value] {
-  color: white !important;
-}
-
-/* Nuclear option - override everything */
-[data-radix-select-content] *,
-[data-radix-select-content] *:before,
-[data-radix-select-content] *:after {
-  color: white !important;
-}
-
-[data-radix-select-item] *,
-[data-radix-select-item] *:before,
-[data-radix-select-item] *:after {
-  color: white !important;
-}
-
-/* Override any potential CSS-in-JS styles */
-[data-radix-select-item][data-highlighted] *,
-[data-radix-select-item]:focus *,
-[data-radix-select-item]:hover * {
-  background-color: hsl(0, 85%, 55%) !important;
-  color: white !important;
-}
-
-/* Hide scrollbar for navigation */
-.scrollbar-hide {
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none;  /* Firefox */
-}
-.scrollbar-hide::-webkit-scrollbar { 
-  display: none;  /* Safari and Chrome */
-}
-
-/* Target by role attribute */
-[role="listbox"] {
-  background-color: hsl(0, 15%, 10%) !important;
-}
-
-[role="option"] {
-  color: white !important;
-  background-color: transparent !important;
-}
-
-[role="option"]:focus,
-[role="option"]:hover,
-[role="option"][data-highlighted],
-[role="option"][aria-selected="true"] {
-  background-color: hsl(0, 85%, 55%) !important;
-  color: white !important;
-}
-
-.dark {
-  --background: hsl(240, 10%, 3.9%);
-  --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(240, 3.7%, 15.9%);
-  --muted-foreground: hsl(240, 5%, 64.9%);
-  --popover: hsl(240, 10%, 3.9%);
-  --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(240, 10%, 3.9%);
-  --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(240, 3.7%, 15.9%);
-  --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(240, 3.7%, 15.9%);
-  --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(240, 3.7%, 15.9%);
-  --accent-foreground: hsl(0, 0%, 98%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(240, 4.9%, 83.9%);
-  --radius: 0.5rem;
-}
-
 @layer base {
-  * {
-    @apply border-border;
+  :root {
+    --background: hsl(0 0% 100%);
+    --foreground: hsl(20 14.3% 4.1%);
+    --muted: hsl(60 4.8% 95.9%);
+    --muted-foreground: hsl(25 5.3% 44.7%);
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(20 14.3% 4.1%);
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(20 14.3% 4.1%);
+    --border: hsl(20 5.9% 90%);
+    --input: hsl(20 5.9% 90%);
+    --primary: hsl(207 90% 54%);
+    --primary-foreground: hsl(211 100% 99%);
+    --secondary: hsl(60 4.8% 95.9%);
+    --secondary-foreground: hsl(24 9.8% 10%);
+    --accent: hsl(60 4.8% 95.9%);
+    --accent-foreground: hsl(24 9.8% 10%);
+    --destructive: hsl(0 84.2% 60.2%);
+    --destructive-foreground: hsl(60 9.1% 97.8%);
+    --ring: hsl(20 14.3% 4.1%);
+    --radius: 0.5rem;
+
+    /* Custom dark red theme colors */
+    --dark-primary: hsl(0, 15%, 6%);
+    --dark-secondary: hsl(0, 15%, 10%);
+    --dark-elevated: hsl(0, 10%, 14%);
+    --dark-border: hsl(0, 10%, 20%);
+    --accent-red: hsl(0, 85%, 55%);
+    --accent-light-red: hsl(10, 80%, 60%);
+    --accent-green: hsl(130, 60%, 50%);
+    --accent-warning: hsl(25, 85%, 60%);
+    --text-primary: hsl(0, 5%, 95%);
+    --text-secondary: hsl(0, 5%, 75%);
+    --text-disabled: hsl(0, 5%, 50%);
+    --dropdown-text: hsl(0, 5%, 90%);
+  }
+
+  /* --- NEW, SIMPLIFIED LAYOUT RULES --- */
+  html, body, #root {
+    @apply h-full overflow-hidden;
   }
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
     font-family: 'Inter', sans-serif;
   }
-
-  /* Custom utility classes for the dark theme */
-  .bg-dark-primary {
-    background-color: var(--dark-primary);
-  }
-
-  .bg-dark-secondary {
-    background-color: var(--dark-secondary);
-  }
-
-  .bg-dark-elevated {
-    background-color: var(--dark-elevated);
-  }
-
-  .border-dark-border {
-    border-color: var(--dark-border);
-  }
-
-  .text-text-primary {
-    color: var(--text-primary);
-  }
-
-  .text-text-secondary {
-    color: var(--text-secondary);
-  }
-
-  .text-text-disabled {
-    color: var(--text-disabled);
-  }
-
-  .bg-accent-navy {
-    background-color: var(--accent-navy);
-  }
-
-  .text-accent-navy {
-    color: var(--accent-navy);
-  }
-
-  .bg-accent-light-navy {
-    background-color: var(--accent-light-navy);
-  }
-
-  .text-accent-light-navy {
-    color: var(--accent-light-navy);
-  }
-
-  .bg-accent-green {
-    background-color: var(--accent-green);
-  }
-
-  .text-accent-green {
-    color: var(--accent-green);
-  }
-
-  .bg-accent-red {
-    background-color: var(--accent-red);
-  }
-
-  .text-accent-red {
-    color: var(--accent-red);
-  }
-
-  .hover\:bg-accent-navy:hover {
-    background-color: var(--accent-navy);
-  }
-
-  .hover\:text-accent-navy:hover {
-    color: var(--accent-navy);
-  }
-
-  .hover\:bg-dark-elevated:hover {
-    background-color: var(--dark-elevated);
-  }
-
-  .hover\:bg-dark-border:hover {
-    background-color: var(--dark-border);
-  }
-
-  .hover\:text-text-primary:hover {
-    color: var(--text-primary);
-  }
-
-  .hover\:text-accent-green:hover {
-    color: var(--accent-green);
-  }
-
-  .hover\:text-accent-red:hover {
-    color: var(--accent-red);
-  }
 }
 
-/*
-  A more aggressive, "catch-all" rule to hide scrollbars
-  on any element that might be scrolling.
-*/
-
-/* For Webkit-based browsers (Chrome, Safari, Edge, Android WebView) */
+/* Hide scrollbar for ALL elements */
 *::-webkit-scrollbar {
   display: none;
 }
 
-/* For Firefox and IE */
 * {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
