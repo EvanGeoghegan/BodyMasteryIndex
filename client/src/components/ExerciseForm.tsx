@@ -1,413 +1,139 @@
-import { useState, useEffect } from "react";
+import { Exercise, ExerciseSet } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Save, Copy } from "lucide-react";
-import ExerciseCard from "@/components/ExerciseCard"; // Import our new card component
-import { storage } from "@/lib/storage";
-import { Exercise, Workout, Template } from "@shared/schema";
-import { useToast } from "@/hooks/use-toast";
+import { Plus, Check, Circle, Trash2 } from "lucide-react";
+import ExerciseCombobox from "./ExerciseCombobox"; // Import our searchable dropdown
 
-interface WorkoutProps {
-  onWorkoutSaved: () => void;
-  initialTemplate?: Template;
-  initialWorkout?: Workout | null;
+interface ExerciseFormProps {
+  exercise: Exercise;
+  onUpdate: (exercise: Exercise) => void;
 }
 
-export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWorkout }: WorkoutProps) {
-  const [workoutName, setWorkoutName] = useState("");
-  const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [templates, setTemplates] = useState<Template[]>([]);
-  const [showTemplateDialog, setShowTemplateDialog] = useState(false);
-  const [workoutType, setWorkoutType] = useState<"strength" | "cardio" | "core">("strength"); // Removed "mixed"
-  const [workoutDate, setWorkoutDate] = useState(new Date().toISOString().split('T')[0]);
-  const [workoutNotes, setWorkoutNotes] = useState("");
-  const [todaysWorkouts, setTodaysWorkouts] = useState<Workout[]>([]);
-  const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    setTemplates(storage.getTemplates());
-    loadTodaysWorkouts();
-    
-    if (initialWorkout) {
-      setEditingWorkout(initialWorkout);
-      setWorkoutName(initialWorkout.name);
-      setWorkoutType(initialWorkout.type as "strength" | "cardio" | "core"); // Assert type
-      setExercises(initialWorkout.exercises);
-      setWorkoutDate(initialWorkout.date.split('T')[0]);
-      setWorkoutNotes(initialWorkout.notes || "");
-    }
-    else if (initialTemplate) {
-      loadFromTemplate(initialTemplate);
-    } else if (exercises.length === 0) {
-      addExercise();
-    }
-  }, [initialTemplate, initialWorkout]);
-
-  const loadTodaysWorkouts = () => {
-    const today = new Date().toISOString().split('T')[0];
-    const allWorkouts = storage.getWorkouts();
-    setTodaysWorkouts(allWorkouts.filter(workout => workout.date.split('T')[0] === today));
+export default function ExerciseForm({ exercise, onUpdate }: ExerciseFormProps) {
+  const updateExerciseName = (name: string) => {
+    onUpdate({ ...exercise, name });
   };
 
-  const editWorkout = (workout: Workout) => {
-    setEditingWorkout(workout);
-    setWorkoutName(workout.name);
-    setWorkoutType(workout.type as "strength" | "cardio" | "core"); // Assert type
-    setExercises(workout.exercises);
-    setWorkoutDate(workout.date.split('T')[0]);
-    setWorkoutNotes(workout.notes || "");
+  const updateExerciseType = (type: "strength" | "cardio" | "core") => {
+    onUpdate({ ...exercise, type });
   };
 
-  const clearWorkout = () => {
-    setEditingWorkout(null);
-    setWorkoutName("");
-    setExercises([]);
-    setWorkoutType("strength");
-    setWorkoutDate(new Date().toISOString().split('T')[0]);
-    setWorkoutNotes("");
-    addExercise();
+  const updateSet = (setIndex: number, updates: Partial<ExerciseSet>) => {
+    const updatedSets = exercise.sets.map((set, index) => 
+      index === setIndex ? { ...set, ...updates } : set
+    );
+    onUpdate({ ...exercise, sets: updatedSets });
   };
 
-  const loadFromTemplate = (template: Template) => {
-    setWorkoutName(template.name);
-    setWorkoutType(template.type as "strength" | "cardio" | "core" || "strength");
-    
-    const templateExercises: Exercise[] = template.exercises.map(templateEx => ({
+  const addSet = () => {
+    const lastSet = exercise.sets[exercise.sets.length - 1];
+    const newSet: ExerciseSet = {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      name: templateEx.name,
-      type: templateEx.type || "strength",
-      sets: Array.from({ length: templateEx.sets }, (_, index) => ({
-        id: `${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}`,
-        weight: templateEx.suggestedWeight,
-        reps: templateEx.suggestedReps,
-        duration: templateEx.suggestedDuration,
-        distance: templateEx.suggestedDistance,
-        completed: false,
-      }))
-    }));
-    
-    setExercises(templateExercises);
-  };
-
-  const addExercise = () => {
-    const newExercise: Exercise = {
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      name: "",
-      type: "strength",
-      sets: [], // Start with an empty set array, user adds them inside the card
+      completed: false,
+      weight: lastSet?.weight || 0,
+      reps: lastSet?.reps || 0,
     };
-    setExercises([...exercises, newExercise]);
+    onUpdate({ ...exercise, sets: [...exercise.sets, newSet] });
   };
 
-  const updateExercise = (exerciseId: string, updatedExercise: Partial<Exercise>) => {
-    setExercises(exercises.map(ex => 
-      ex.id === exerciseId ? { ...ex, ...updatedExercise } : ex
-    ));
+  const removeSet = (setIndex: number) => {
+    const updatedSets = exercise.sets.filter((_, index) => index !== setIndex);
+    onUpdate({ ...exercise, sets: updatedSets });
   };
 
-  const deleteExercise = (exerciseId: string) => {
-    setExercises(exercises.filter(ex => ex.id !== exerciseId));
+  const toggleSetCompleted = (setIndex: number) => {
+    const set = exercise.sets[setIndex];
+    updateSet(setIndex, { completed: !set.completed });
   };
 
-  const saveWorkout = () => {
-    if (!workoutName.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a workout name",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (exercises.length === 0 || exercises.every(ex => !ex.name.trim())) {
-      toast({
-        title: "Error",
-        description: "Please add at least one exercise",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const workout: Omit<Workout, 'id'> = {
-      name: workoutName,
-      date: new Date(workoutDate + 'T' + new Date().toTimeString().split(' ')[0]).toISOString(),
-      exercises: exercises.filter(ex => ex.name.trim()), // Only save exercises with names
-      type: workoutType,
-      notes: workoutNotes,
-    };
-
-    try {
-      if (editingWorkout) {
-        storage.updateWorkout(editingWorkout.id, workout);
-      } else {
-        storage.createWorkout(workout);
-      }
-      
-      const workoutDateOnly = workout.date.split('T')[0];
-      const today = new Date().toISOString().split('T')[0];
-      if (workoutDateOnly === today) {
-        localStorage.removeItem('congratsDismissedDate');
-      }
-      
-      exercises.forEach(exercise => {
-        if (!exercise.name.trim() || exercise.type !== "strength") return;
-        
-        const completedSets = exercise.sets.filter(set => 
-          set.completed && set.weight && set.reps && set.weight > 0 && set.reps > 0
-        );
-        
-        if (completedSets.length === 0) return;
-        
-        const bestSet = completedSets.reduce((best, current) => {
-          const bestEstimated1RM = (best.weight || 0) * (1 + (best.reps || 0) / 30);
-          const currentEstimated1RM = (current.weight || 0) * (1 + (current.reps || 0) / 30);
-          return currentEstimated1RM > bestEstimated1RM ? current : best;
-        });
-        
-        const existingBests = storage.getPersonalBests()
-          .filter(pb => pb.exerciseName.trim().toLowerCase() === exercise.name.trim().toLowerCase());
-        
-        const bestEstimated1RM = (bestSet.weight || 0) * (1 + (bestSet.reps || 0) / 30);
-        
-        const shouldCreatePB = existingBests.length === 0 || 
-          existingBests.every(pb => {
-            const existingEstimated1RM = pb.weight * (1 + pb.reps / 30);
-            return bestEstimated1RM > existingEstimated1RM;
-          });
-        
-        if (shouldCreatePB && bestSet.weight !== undefined && bestSet.reps !== undefined) {
-          storage.createPersonalBest({
-            exerciseName: exercise.name.trim(),
-            weight: bestSet.weight,
-            reps: bestSet.reps,
-            date: new Date().toISOString(),
-            type: bestSet.reps === 1 ? '1RM' : 'volume',
-          });
-        }
-      });
-
-      toast({
-        title: "Success",
-        description: editingWorkout ? "Workout updated successfully!" : "Workout saved successfully!",
-      });
-
-      loadTodaysWorkouts();
-      clearWorkout();
-      onWorkoutSaved();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save workout",
-        variant: "destructive",
-      });
-    }
-  };
+  // When a new exercise is added, add one default set automatically
+  if (exercise.name && exercise.sets.length === 0) {
+    addSet();
+  }
 
   return (
-    <div className="min-h-screen bg-dark-primary pb-20">
-      <header className="bg-dark-secondary p-4 shadow-lg">
-        <h2 className="text-xl font-bold text-text-primary font-heading">Log Workout</h2>
-      </header>
-
-      <div className="p-4 space-y-4">
-        {/* Today's Workouts */}
-        {todaysWorkouts.length > 0 && (
-          <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
-            <h3 className="text-lg font-semibold text-text-primary font-heading mb-3">Today's Workouts</h3>
-            <div className="space-y-2">
-              {todaysWorkouts.map((workout) => (
-                <div key={workout.id} className="flex items-center justify-between p-3 bg-dark-elevated rounded-lg border border-dark-border">
-                  <div>
-                    <h4 className="font-medium text-text-primary">{workout.name}</h4>
-                    <p className="text-sm text-text-secondary">
-                      {workout.exercises.length} exercise{workout.exercises.length !== 1 ? 's' : ''} • {workout.type}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => editWorkout(workout)}
-                      className="bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-red"
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        storage.deleteWorkout(workout.id);
-                        loadTodaysWorkouts();
-                        toast({
-                          title: "Success",
-                          description: "Workout deleted successfully!",
-                        });
-                      }}
-                      className="bg-dark-elevated border-dark-border text-red-500 hover:text-red-700"
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            {editingWorkout && (
-              <div className="mt-3 pt-3 border-t border-dark-border">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-accent-red">Editing: {editingWorkout.name}</p>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={clearWorkout}
-                    className="text-text-secondary hover:text-text-primary"
-                  >
-                    Cancel Edit
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Workout Name and Template Selection */}
-        <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
-          <div className="flex items-center justify-between mb-3">
-            <label className="block text-text-secondary text-sm font-medium">
-              Workout Name
-            </label>
-            <Button
-              onClick={() => setShowTemplateDialog(true)}
-              variant="outline"
-              size="sm"
-              className="bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-navy"
-            >
-              <Copy className="mr-1" size={14} />
-              From Template
-            </Button>
-          </div>
-          <Input
-            value={workoutName}
-            onChange={(e) => setWorkoutName(e.target.value)}
-            className="w-full bg-dark-elevated text-text-primary border-dark-border mb-3"
-            placeholder="e.g., Push Day, Leg Day"
-          />
-          
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <div>
-              <label className="text-text-secondary text-sm font-medium mb-1 block">
-                Workout Date
-              </label>
-              <Input
-                type="date"
-                value={workoutDate}
-                onChange={(e) => setWorkoutDate(e.target.value)}
-                className="w-full bg-dark-elevated text-text-primary border-dark-border"
-              />
-            </div>
-            <div>
-              <label className="text-text-secondary text-sm font-medium mb-1 block">
-                Workout Type
-              </label>
-              <Select value={workoutType} onValueChange={(value: "strength" | "cardio" | "core") => setWorkoutType(value)}>
-                <SelectTrigger className="w-full bg-dark-elevated text-text-primary border-dark-border">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(0, 15%, 10%)', color: 'white' }}>
-                  <SelectItem value="strength" style={{ color: 'white' }}>Strength</SelectItem>
-                  <SelectItem value="cardio" style={{ color: 'white' }}>Cardio</SelectItem>
-                  <SelectItem value="core" style={{ color: 'white' }}>Core</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
-
-        {/* --- NEW, CLEANER EXERCISE LIST --- */}
-        <div className="space-y-3">
-            {exercises.map((exercise) => (
-                <ExerciseCard 
-                    key={exercise.id}
-                    exercise={exercise}
-                    onUpdate={(updatedData) => updateExercise(exercise.id, updatedData)}
-                    onDelete={() => deleteExercise(exercise.id)}
-                />
-            ))}
-        </div>
-        
-        {/* Add Exercise Button */}
-        <Button
-            onClick={addExercise}
-            variant="outline"
-            className="w-full bg-dark-secondary hover:bg-dark-elevated border-dark-border text-text-secondary font-medium"
-        >
-            <Plus className="mr-2" size={16} />
-            Add Another Exercise
-        </Button>
-
-        {/* Workout Notes */}
-        <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
-           <label className="block text-text-secondary text-sm font-medium mb-2">
-            Workout Notes
-          </label>
-          <textarea
-            value={workoutNotes}
-            onChange={(e) => setWorkoutNotes(e.target.value)}
-            placeholder="Add notes about your workout..."
-            className="w-full bg-dark-elevated text-text-primary border border-dark-border rounded-lg p-3 text-sm resize-none"
-            rows={3}
-          />
-        </div>
-
-        {/* Save Workout */}
-        <Button
-          onClick={saveWorkout}
-          className="w-full bg-accent-navy hover:bg-accent-light-navy text-white font-semibold py-3 px-6"
-        >
-          <Save className="mr-2" size={20} />
-          {editingWorkout ? "Update Workout" : "Save Workout"}
-        </Button>
+    <div className="space-y-4">
+      <div className="flex-1">
+        <ExerciseCombobox
+          value={exercise.name}
+          onSelect={updateExerciseName}
+        />
       </div>
 
-      {/* Template Selection Dialog */}
-      <Dialog open={showTemplateDialog} onOpenChange={setShowTemplateDialog}>
-        <DialogContent className="bg-dark-secondary border border-dark-border max-w-lg mx-4 max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-text-primary">Choose Template</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            {templates.map((template) => (
-              <div
-                key={template.id}
-                onClick={() => {
-                  loadFromTemplate(template);
-                  setShowTemplateDialog(false);
-                }}
-                className="bg-dark-elevated rounded-lg p-3 border border-dark-border hover:border-accent-green transition-colors cursor-pointer"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-text-primary font-medium">{template.name}</h4>
-                    <p className="text-text-secondary text-sm">{template.description}</p>
-                    <div className="flex items-center space-x-3 mt-1">
-                      <span className="text-text-disabled text-xs">
-                        {template.exercises.length} exercises
-                      </span>
-                      {template.category && (
-                        <span className="text-text-disabled text-xs bg-dark-primary px-2 py-1 rounded">
-                          {template.category}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+      <div className="flex items-center space-x-2">
+        <Select value={exercise.type || "strength"} onValueChange={updateExerciseType}>
+          <SelectTrigger className="w-32 bg-dark-primary text-text-primary border-dark-border text-sm h-8">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="bg-dark-secondary border-dark-border" style={{ backgroundColor: 'hsl(0, 15%, 10%)', color: 'white' }}>
+            <SelectItem value="strength" style={{ color: 'white' }}>Strength</SelectItem>
+            <SelectItem value="cardio" style={{ color: 'white' }}>Cardio</SelectItem>
+            <SelectItem value="core" style={{ color: 'white' }}>Core</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      
+      {/* Sets Header */}
+      <div className="flex items-center space-x-2 text-sm text-center mb-2">
+        <span className="text-text-secondary w-8 text-left">Set</span>
+        <span className="text-text-secondary flex-1">Weight (kg)</span>
+        <span className="text-text-secondary flex-1">Reps</span>
+        <span className="text-text-secondary w-12">Done</span>
+        <span className="w-8"></span> {/* Spacer for delete button */}
+      </div>
+      
+      {/* Sets */}
+      <div className="space-y-2">
+        {exercise.sets.map((set, index) => (
+          <div key={set.id} className="flex items-center space-x-2">
+            <span className="text-text-primary w-8 text-center text-sm">{index + 1}</span>
+            <Input
+              type="number"
+              value={set.weight || ''}
+              onChange={(e) => updateSet(index, { weight: parseFloat(e.target.value) || 0 })}
+              className="w-full flex-1 bg-dark-primary text-center p-1 rounded-md border border-dark-border"
+              placeholder="kg"
+            />
+            <Input
+              type="number"
+              value={set.reps || ''}
+              onChange={(e) => updateSet(index, { reps: parseInt(e.target.value) || 0 })}
+              className="w-full flex-1 bg-dark-primary text-center p-1 rounded-md border border-dark-border"
+              placeholder="reps"
+            />
+            <Button
+              onClick={() => toggleSetCompleted(index)}
+              variant="ghost"
+              size="sm"
+              className={`w-12 h-8 flex items-center justify-center rounded-md ${
+                set.completed 
+                  ? 'text-accent-green bg-accent-green/10' 
+                  : 'text-text-secondary'
+              }`}
+            >
+              {set.completed ? <Check size={16} /> : <Circle size={16} />}
+            </Button>
+            <Button
+              onClick={() => removeSet(index)}
+              variant="ghost"
+              size="icon"
+              className="text-text-secondary hover:text-accent-red w-8 h-8"
+            >
+              <Trash2 size={14} />
+            </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        ))}
+      </div>
+      
+      <Button
+        onClick={addSet}
+        variant="ghost"
+        className="text-accent-green hover:text-green-400 text-sm font-medium p-0 h-auto"
+      >
+        <Plus className="mr-1" size={16} />
+        Add Set
+      </Button>
     </div>
   );
 }
