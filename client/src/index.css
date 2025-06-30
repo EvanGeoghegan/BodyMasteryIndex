@@ -55,6 +55,12 @@ body {
   background-color: var(--accent-red) !important;
 }
 
+/* Navigation Bar Fix */
+nav {
+  background-color: var(--dark-secondary);
+  border-top: 1px solid var(--dark-border);
+}
+
 /* Scrollbar & Autofill Fixes */
 *::-webkit-scrollbar { display: none; }
 * { -ms-overflow-style: none; scrollbar-width: none; }
