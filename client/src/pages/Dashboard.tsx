@@ -26,7 +26,6 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
   const [currentWater, setCurrentWater] = useState(0);
   const [assessmentExercise1, setAssessmentExercise1] = useState("Push-ups");
   const [assessmentExercise2, setAssessmentExercise2] = useState("Pull-ups");
-
   const { toast } = useToast();
 
   const refreshData = () => {
@@ -58,9 +57,8 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
 
 
   return (
-    // The main container now uses standard Tailwind bg-background
+    // --- UPDATED JSX with correct theme-aware classes ---
     <div className="bg-background pb-20">
-      {/* Header with increased padding */}
       <header className="bg-card p-6 shadow-lg">
         <div className="flex items-center justify-between">
           <div>
@@ -68,14 +66,12 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
             <p className="text-text-secondary text-sm">Today's Dashboard</p>
           </div>
           <div className="w-16 h-16 bg-card-elevated rounded-full flex items-center justify-center overflow-hidden border border-border">
-            <img src={logoPath} alt="Body Mastery Index" className="w-12 h-12 object-contain" />
+            <img src={logoPath} alt="Body Mastery Index" className="w-14 h-14 object-contain" />
           </div>
         </div>
       </header>
 
       <div className="p-4 space-y-4">
-          {/* Congratulations Section (if applicable) */}
-
           {/* Nutrition Tracking Circle Charts */}
           <div className="grid grid-cols-2 gap-4">
             {/* Protein Circle Chart */}
@@ -108,7 +104,7 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-sm font-bold text-primary-accent">{currentProtein}g</div>
+                <div className="text-sm font-bold" style={{color: 'hsl(var(--primary-accent))'}}>{currentProtein}g</div>
                 <div className="text-xs text-text-secondary">of {proteinGoal}g</div>
               </div>
             </div>
@@ -120,7 +116,7 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
             >
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium text-text-primary">Water</h3>
-                <Droplets className="text-blue-400" size={16} />
+                <Droplets className="text-blue-500" size={16} />
               </div>
               <div className="relative w-20 h-20 mx-auto mb-2">
                 <ResponsiveContainer width="100%" height="100%">
@@ -143,13 +139,13 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-sm font-bold text-blue-400">{currentWater}L</div>
+                <div className="text-sm font-bold text-blue-500">{currentWater}L</div>
                 <div className="text-xs text-text-secondary">of {waterGoal}L</div>
               </div>
             </div>
           </div>
           
-          {/* Other sections like Assessment, Quote, Last Activity remain the same but using theme-agnostic classes */}
+          {/* Other sections like Assessment, Quote, Last Activity would go here */}
       </div>
 
       {/* Quick Actions with polished button */}
@@ -158,7 +154,7 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
           onClick={onNavigateToWorkout}
           className="w-full bg-primary-accent text-primary-accent-foreground font-medium py-4 px-4 rounded-xl shadow-lg border border-transparent transition-all duration-200 hover:shadow-xl hover:scale-105"
         >
-          <img src={logoPath} alt="Workout" className="w-6 h-6 object-contain mr-3" />
+          <img src={logoPath} alt="Workout" className="w-10 h-10 object-contain mr-3" />
           <span>Log Workout</span>
         </Button>
       </div>
