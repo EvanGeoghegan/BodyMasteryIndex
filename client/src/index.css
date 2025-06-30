@@ -66,10 +66,16 @@
   .text-blue-400 { color: hsl(210, 80%, 60%); }
 }
 
-/* --- FIX for Transparent Pop-ups (as a fallback) --- */
-.radix-dialog-content, [data-radix-select-content] {
+/* --- NEW, MORE ROBUST FIX for Transparent Pop-ups --- */
+[data-radix-dialog-overlay] {
+  background-color: hsla(222, 47%, 8%, 0.8) !important; /* Semi-transparent dark background */
+  backdrop-filter: blur(2px);
+}
+
+[data-radix-dialog-content], 
+[data-radix-select-content] {
   background-color: var(--dark-secondary) !important;
-  border-color: var(--dark-border) !important;
+  border: 1px solid var(--dark-border) !important;
 }
 
 [data-radix-select-item]:hover {
