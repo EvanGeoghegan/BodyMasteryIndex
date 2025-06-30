@@ -7,18 +7,18 @@
 @layer base {
   /* --- THEME DEFINITIONS --- */
   :root {
-    /* Light Theme: Arctic & Navy */
-    --background: hsl(210 20% 98%);
+    /* NEW Light Theme: Sky & Slate */
+    --background: hsl(210 40% 98%); /* Soft light blue */
     --card: hsl(0 0% 100%);
-    --card-elevated: hsl(210 20% 96%);
+    --card-elevated: hsl(210 40% 96%);
     --border: hsl(210 20% 88%);
     --ring: hsl(210 20% 80%);
-    --text-primary: hsl(210 15% 15%);
-    --text-secondary: hsl(210 10% 35%);
-    --text-disabled: hsl(210 10% 55%);
+    --text-primary: hsl(210 15% 20%);
+    --text-secondary: hsl(210 10% 45%);
+    --text-disabled: hsl(210 10% 65%);
     --primary-accent: hsl(220 70% 50%); /* Navy Blue */
     --primary-accent-foreground: hsl(0 0% 100%);
-    --secondary-accent: hsl(210 10% 45%); /* Slate Grey */
+    --secondary-accent: hsl(210 10% 45%);
     --success-accent: hsl(140 50% 50%);
   }
 
@@ -47,13 +47,8 @@
   }
 
   /* Hide scrollbar for ALL elements */
-  *::-webkit-scrollbar {
-    display: none;
-  }
-  * {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+  *::-webkit-scrollbar { display: none; }
+  * { -ms-overflow-style: none; scrollbar-width: none; }
 
   /* Fix for autofill background in dark mode */
   .dark input:-webkit-autofill,
@@ -62,5 +57,51 @@
   .dark input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px var(--card-elevated) inset !important;
     -webkit-text-fill-color: var(--text-primary) !important;
+  }
+
+  /* --- COMPONENT STYLES & FIXES --- */
+  
+  /* Fix Navigation Bar */
+  nav {
+    background-color: var(--card);
+    border-top-color: var(--border);
+    box-shadow: 0 -4px 6px -1px rgb(0 0 0 / 0.1), 0 -2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  /* Add padding to all page headers */
+  header {
+    @apply p-6;
+  }
+
+  /* Soften Cards and add depth */
+  .bg-card {
+    background-color: var(--card);
+    border-radius: 0.75rem;
+    border-width: 1px;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.07), 0 1px 2px 0 rgba(0,0,0,0.03);
+  }
+  .dark .bg-card {
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.5);
+  }
+
+  /* Calendar Polish */
+  .calendar-day-today {
+      background-color: var(--primary-accent) !important;
+      color: var(--primary-accent-foreground) !important;
+      border-color: var(--primary-accent) !important;
+  }
+
+  /* Theme Toggle Switch Polish */
+  [role="switch"] {
+      border: 1px solid var(--border) !important;
+      background-color: var(--card-elevated) !important;
+  }
+  [role="switch"][data-state='checked'] {
+      background-color: var(--primary-accent) !important;
+      border-color: var(--primary-accent) !important;
+  }
+  /* Fix for the switch knob contrast */
+  [role="switch"] > span {
+    background-color: var(--background);
   }
 }
