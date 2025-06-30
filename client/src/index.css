@@ -4,104 +4,39 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  /* --- THEME DEFINITIONS --- */
-  :root {
-    /* NEW Light Theme: Sky & Slate */
-    --background: hsl(210 40% 98%); /* Soft light blue */
-    --card: hsl(0 0% 100%);
-    --card-elevated: hsl(210 40% 96%);
-    --border: hsl(210 20% 88%);
-    --ring: hsl(210 20% 80%);
-    --text-primary: hsl(210 15% 20%);
-    --text-secondary: hsl(210 10% 45%);
-    --text-disabled: hsl(210 10% 65%);
-    --primary-accent: hsl(220 70% 50%); /* Navy Blue */
-    --primary-accent-foreground: hsl(0 0% 100%);
-    --secondary-accent: hsl(210 10% 45%);
-    --success-accent: hsl(140 50% 50%);
-  }
+/* --- Original Dark Theme Variables --- */
+:root {
+  --dark-primary: hsl(222, 47%, 8%);
+  --dark-secondary: hsl(222, 47%, 11%);
+  --dark-elevated: hsl(222, 47%, 15%);
+  --dark-border: hsl(222, 47%, 21%);
+  --accent-red: hsl(0, 75%, 45%);
+  --accent-light-red: hsl(0, 78%, 55%);
+  --accent-green: hsl(135, 65%, 55%);
+  --accent-warning: hsl(28, 90%, 60%);
+  --text-primary: hsl(220, 15%, 95%);
+  --text-secondary: hsl(220, 10%, 80%);
+  --text-disabled: hsl(220, 10%, 60%);
+}
 
-  .dark {
-    /* Dark Theme: Midnight & Slate */
-    --background: hsl(222 47% 8%);
-    --card: hsl(222 47% 11%);
-    --card-elevated: hsl(222 47% 15%);
-    --border: hsl(222 47% 21%);
-    --ring: hsl(222 47% 31%);
-    --text-primary: hsl(220 15% 95%);
-    --text-secondary: hsl(220 10% 80%);
-    --text-disabled: hsl(220 10% 60%);
-    --primary-accent: hsl(0 75% 45%); /* Maroon Red */
-    --primary-accent-foreground: hsl(0 0% 100%);
-    --secondary-accent: hsl(220 15% 65%);
-    --success-accent: hsl(135 65% 55%);
-  }
+body {
+  font-family: 'Inter', sans-serif;
+}
 
-  /* --- GLOBAL STYLES --- */
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-text-primary;
-  }
+/* Hide scrollbar for ALL elements */
+*::-webkit-scrollbar {
+  display: none;
+}
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
-  /* Hide scrollbar for ALL elements */
-  *::-webkit-scrollbar { display: none; }
-  * { -ms-overflow-style: none; scrollbar-width: none; }
-
-  /* Fix for autofill background in dark mode */
-  .dark input:-webkit-autofill,
-  .dark input:-webkit-autofill:hover, 
-  .dark input:-webkit-autofill:focus, 
-  .dark input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px var(--card-elevated) inset !important;
-    -webkit-text-fill-color: var(--text-primary) !important;
-  }
-
-  /* --- COMPONENT STYLES & FIXES --- */
-  
-  /* Fix Navigation Bar */
-  nav {
-    background-color: var(--card);
-    border-top-color: var(--border);
-    box-shadow: 0 -4px 6px -1px rgb(0 0 0 / 0.1), 0 -2px 4px -2px rgb(0 0 0 / 0.1);
-  }
-
-  /* Add padding to all page headers */
-  header {
-    @apply p-6;
-  }
-
-  /* Soften Cards and add depth */
-  .bg-card {
-    background-color: var(--card);
-    border-radius: 0.75rem;
-    border-width: 1px;
-    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.07), 0 1px 2px 0 rgba(0,0,0,0.03);
-  }
-  .dark .bg-card {
-    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.5);
-  }
-
-  /* Calendar Polish */
-  .calendar-day-today {
-      background-color: var(--primary-accent) !important;
-      color: var(--primary-accent-foreground) !important;
-      border-color: var(--primary-accent) !important;
-  }
-
-  /* Theme Toggle Switch Polish */
-  [role="switch"] {
-      border: 1px solid var(--border) !important;
-      background-color: var(--card-elevated) !important;
-  }
-  [role="switch"][data-state='checked'] {
-      background-color: var(--primary-accent) !important;
-      border-color: var(--primary-accent) !important;
-  }
-  /* Fix for the switch knob contrast */
-  [role="switch"] > span {
-    background-color: var(--background);
-  }
+/* Fix for autofill background in dark mode */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--dark-elevated) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
 }
