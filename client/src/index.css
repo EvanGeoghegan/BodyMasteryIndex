@@ -19,45 +19,59 @@
   --text-disabled: hsl(220, 10%, 60%);
 }
 
-body {
-  font-family: 'Inter', sans-serif;
-  /* Apply the base dark background directly */
-  background-color: var(--dark-primary);
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+    /* Apply the base dark background directly */
+    @apply bg-dark-primary text-text-primary;
+  }
+
+  /* Hide scrollbar for ALL elements */
+  *::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Fix for autofill background in dark mode */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--dark-elevated) inset !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+  }
 }
 
-/* Hide scrollbar for ALL elements */
-*::-webkit-scrollbar {
-  display: none;
-}
-* {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/* --- FIX: Re-introducing the custom utility classes --- */
+/* This section was missing, causing components to have no background. */
+@layer components {
+  .bg-dark-primary { background-color: var(--dark-primary); }
+  .bg-dark-secondary { background-color: var(--dark-secondary); }
+  .bg-dark-elevated { background-color: var(--dark-elevated); }
+  .border-dark-border { border-color: var(--dark-border); }
+  
+  .text-text-primary { color: var(--text-primary); }
+  .text-text-secondary { color: var(--text-secondary); }
+  .text-text-disabled { color: var(--text-disabled); }
+
+  .text-accent-red { color: var(--accent-red); }
+  .bg-accent-red { background-color: var(--accent-red); }
+  
+  .text-accent-green { color: var(--accent-green); }
+  .bg-accent-green { background-color: var(--accent-green); }
+
+  .text-blue-400 { color: hsl(210, 80%, 60%); }
 }
 
-/* Fix for autofill background in dark mode */
-input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px var(--dark-elevated) inset !important;
-  -webkit-text-fill-color: var(--text-primary) !important;
-}
-
-/* --- FIX for Transparent Pop-ups --- */
-/* This targets the content of Shadcn UI's Dialog and Select components */
+/* --- FIX for Transparent Pop-ups (as a fallback) --- */
 .radix-dialog-content, [data-radix-select-content] {
   background-color: var(--dark-secondary) !important;
   border-color: var(--dark-border) !important;
-  color: var(--text-primary) !important;
 }
 
-/* Style the text inside the pop-ups */
-.radix-dialog-content h2, .radix-dialog-content label {
-  color: var(--text-primary) !important;
-}
-
-/* Style the items within a dropdown/select pop-up */
 [data-radix-select-item]:hover {
   background-color: var(--accent-red) !important;
-  color: var(--text-primary) !important;
 }
