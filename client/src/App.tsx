@@ -20,23 +20,6 @@ function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [dashboardRefreshTrigger, setDashboardRefreshTrigger] = useState(0);
   const [workoutToEdit, setWorkoutToEdit] = useState<WorkoutType | null>(null);
-  
-  // --- NEW THEME LOGIC START ---
-  const [theme, setTheme] = useState(localStorage.getItem('bmi_theme') || 'light');
-
-  useEffect(() => {
-    // Apply the theme class to the root <html> element
-    const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(theme);
-    // Save the preference
-    localStorage.setItem('bmi_theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
-  };
-  // --- NEW THEME LOGIC END ---
 
   useEffect(() => {
     storage.initializeDefaultTemplates();
@@ -83,8 +66,7 @@ function App() {
       case "supplements":
         return <Supplements />;
       case "settings":
-        // Pass the theme state and toggle function to the Settings page
-        return <Settings theme={theme} onToggleTheme={toggleTheme} />;
+        return <Settings />; 
       default:
         return <Dashboard onNavigateToWorkout={handleNavigateToWorkout} refreshTrigger={dashboardRefreshTrigger} />;
     }
@@ -93,11 +75,14 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <main className="max-w-md mx-auto h-full bg-background text-text-primary overflow-y-auto">
+        {/* --- MODIFIED: Added pt-6 for top padding --- */}
+        <main className="max-w-md mx-auto h-full bg-dark-primary text-text-primary overflow-y-auto pt-6">
           <div className="pb-24">
             {renderActiveTab()}
           </div>
+          
           <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+          
           <NotificationSystem 
             onNavigateToWorkout={handleNavigateToWorkout}
             onNavigateToNutrition={handleNavigateToNutrition}
