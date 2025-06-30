@@ -268,35 +268,10 @@ export default function Supplements() {
           </DialogTrigger>
           <DialogContent className="max-w-md bg-dark-secondary border-dark-border">
              <DialogHeader><DialogTitle className="text-text-primary"> {editingSupplement ? 'Edit Supplement' : 'Add New Supplement'} </DialogTitle></DialogHeader>
-             {/* --- FIX START: Restore the form fields --- */}
              <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-text-secondary">Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., Vitamin D3" {...field} className="bg-dark-elevated border-dark-border text-text-primary"/>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="brand"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-text-secondary">Brand (Optional)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., Nature Made" {...field} className="bg-dark-elevated border-dark-border text-text-primary"/>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <FormField control={form.control} name="name" render={({ field }) => ( <FormItem> <FormLabel className="text-text-secondary">Name</FormLabel> <FormControl> <Input placeholder="e.g., Vitamin D3" {...field} className="bg-dark-elevated border-dark-border text-text-primary"/> </FormControl> <FormMessage /> </FormItem> )}/>
+                <FormField control={form.control} name="brand" render={({ field }) => ( <FormItem> <FormLabel className="text-text-secondary">Brand (Optional)</FormLabel> <FormControl> <Input placeholder="e.g., Nature Made" {...field} className="bg-dark-elevated border-dark-border text-text-primary"/> </FormControl> <FormMessage /> </FormItem> )}/>
                 <div className="grid grid-cols-2 gap-4">
                   <FormField control={form.control} name="type" render={({ field }) => ( <FormItem> <FormLabel className="text-text-secondary">Type</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl> <SelectTrigger className="bg-dark-elevated border-dark-border text-text-primary"><SelectValue /></SelectTrigger> </FormControl> <SelectContent className="bg-dark-secondary border-dark-border"> {supplementTypes.map(type => ( <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem> ))} </SelectContent> </Select> <FormMessage /> </FormItem> )}/>
                   <FormField control={form.control} name="frequency" render={({ field }) => ( <FormItem> <FormLabel className="text-text-secondary">Frequency</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl> <SelectTrigger className="bg-dark-elevated border-dark-border text-text-primary"><SelectValue /></SelectTrigger> </FormControl> <SelectContent className="bg-dark-secondary border-dark-border"> {frequencies.map(freq => ( <SelectItem key={freq.value} value={freq.value}>{freq.label}</SelectItem> ))} </SelectContent> </Select> <FormMessage /> </FormItem> )}/>
@@ -313,7 +288,6 @@ export default function Supplements() {
                 </div>
               </form>
             </Form>
-            {/* --- FIX END --- */}
           </DialogContent>
         </Dialog>
         </div>
