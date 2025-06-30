@@ -4,7 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* --- Original Dark Theme Variables --- */
+/* --- Original Stable Dark Theme Variables --- */
 :root {
   --dark-primary: hsl(222, 47%, 8%);
   --dark-secondary: hsl(222, 47%, 11%);
@@ -21,6 +21,8 @@
 
 body {
   font-family: 'Inter', sans-serif;
+  /* Apply the base dark background directly */
+  background-color: var(--dark-primary);
 }
 
 /* Hide scrollbar for ALL elements */
