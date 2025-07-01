@@ -37,7 +37,7 @@ export default function CalendarPage() {
     setWorkoutDays(storage.getWorkoutDays());
   }, [refreshKey]);
 
-  const today = new Date(); // Keep this for future date checks
+  const today = new Date();
 
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
@@ -68,14 +68,14 @@ export default function CalendarPage() {
     setCurrentDate(new Date(currentYear, currentMonth + direction, 1));
   };
 
-  // --- FIX START: More robust numerical date comparison ---
+  // --- DEFINITIVE FIX: Compare date components, not the whole object ---
   const isToday = (date: Date) => {
     const todayDate = new Date();
     return date.getDate() === todayDate.getDate() &&
            date.getMonth() === todayDate.getMonth() &&
            date.getFullYear() === todayDate.getFullYear();
   };
-  // --- FIX END ---
+  // --- END FIX ---
 
   const isCurrentMonth = (date: Date) => {
     return date.getMonth() === currentMonth;
@@ -87,8 +87,15 @@ export default function CalendarPage() {
     return dateNormalized > todayNormalized;
   };
 
+  const toLocalDateString = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const getWorkoutData = (date: Date) => {
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = toLocalDateString(date);
     const allWorkouts = storage.getWorkouts();
     const workouts = allWorkouts.filter(w => w.date.startsWith(dateString));
     
@@ -102,7 +109,7 @@ export default function CalendarPage() {
   };
 
   const getSupplementLogStatus = (date: Date) => {
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = toLocalDateString(date);
     const logs = storage.getSupplementLogs(dateString);
     return logs.some(log => log.taken);
   };
@@ -110,7 +117,7 @@ export default function CalendarPage() {
   const handleDateClick = (date: Date) => {
     if (isFutureDate(date)) return;
     
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = toLocalDateString(date);
     const workouts = storage.getWorkouts().filter(w => w.date.startsWith(dateString));
     
     setSelectedDate(date);
