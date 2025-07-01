@@ -37,8 +37,11 @@ export default function CalendarPage() {
     setWorkoutDays(storage.getWorkoutDays());
   }, [refreshKey]);
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  // --- FIX START: More robust way to define 'today' ---
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  // --- FIX END ---
+
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
 
@@ -68,9 +71,13 @@ export default function CalendarPage() {
     setCurrentDate(new Date(currentYear, currentMonth + direction, 1));
   };
 
+  // --- FIX START: More robust date comparison ---
   const isToday = (date: Date) => {
-    return date.toDateString() === today.toDateString();
+    return date.getFullYear() === today.getFullYear() &&
+           date.getMonth() === today.getMonth() &&
+           date.getDate() === today.getDate();
   };
+  // --- FIX END ---
 
   const isCurrentMonth = (date: Date) => {
     return date.getMonth() === currentMonth;
@@ -94,13 +101,11 @@ export default function CalendarPage() {
     };
   };
 
-  // --- NEW FUNCTION to check for supplement logs ---
   const getSupplementLogStatus = (date: Date) => {
     const dateString = date.toISOString().split('T')[0];
     const logs = storage.getSupplementLogs(dateString);
-    return logs.some(log => log.taken); // Returns true if at least one supplement was marked as taken
+    return logs.some(log => log.taken);
   };
-  // --- END NEW FUNCTION ---
 
   const handleDateClick = (date: Date) => {
     if (isFutureDate(date)) return;
@@ -171,7 +176,7 @@ export default function CalendarPage() {
           <div className="grid grid-cols-7 gap-2">
             {days.map((date, index) => {
               const workoutData = getWorkoutData(date);
-              const supplementsTaken = getSupplementLogStatus(date); // Call our new function
+              const supplementsTaken = getSupplementLogStatus(date);
               const isFuture = isFutureDate(date);
 
               return (
@@ -186,24 +191,20 @@ export default function CalendarPage() {
                       "cursor-not-allowed": isFuture,
                       "bg-accent-red text-white font-bold border-accent-red": isToday(date),
                       "bg-dark-elevated text-text-primary border-transparent": !isToday(date),
-                      "border-red-500/50": !workoutData && !supplementsTaken && !isFuture && !isToday(date) && isCurrentMonth(date) // Rest Day
+                      "border-red-500/50": !workoutData && !supplementsTaken && !isFuture && !isToday(date) && isCurrentMonth(date)
                     }
                   )}
                 >
                   <span className="z-10 text-center text-sm">{date.getDate()}</span>
                   
-                  {/* --- NEW: Indicator rendering logic --- */}
                   <div className="absolute bottom-1.5 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-1">
-                    {/* Workout Dots */}
                     <div className="flex gap-1">
                       {workoutData?.types.includes('strength') && <div className="w-1.5 h-1.5 bg-blue-400 rounded-full" />}
                       {workoutData?.types.includes('cardio') && <div className="w-1.5 h-1.5 bg-green-400 rounded-full" />}
                       {workoutData?.types.includes('core') && <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full" />}
                     </div>
-                    {/* Supplement Dot */}
                     {supplementsTaken && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
                   </div>
-                  {/* --- END NEW --- */}
 
                 </div>
               );
