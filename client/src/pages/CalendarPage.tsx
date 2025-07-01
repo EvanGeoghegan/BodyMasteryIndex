@@ -37,8 +37,7 @@ export default function CalendarPage() {
     setWorkoutDays(storage.getWorkoutDays());
   }, [refreshKey]);
 
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const today = new Date(); // Keep this for future date checks
 
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
@@ -69,9 +68,12 @@ export default function CalendarPage() {
     setCurrentDate(new Date(currentYear, currentMonth + direction, 1));
   };
 
-  // --- FIX START: Using a simpler and more reliable date comparison ---
+  // --- FIX START: More robust numerical date comparison ---
   const isToday = (date: Date) => {
-    return date.toDateString() === today.toDateString();
+    const todayDate = new Date();
+    return date.getDate() === todayDate.getDate() &&
+           date.getMonth() === todayDate.getMonth() &&
+           date.getFullYear() === todayDate.getFullYear();
   };
   // --- FIX END ---
 
@@ -80,7 +82,9 @@ export default function CalendarPage() {
   };
 
   const isFutureDate = (date: Date) => {
-    return date > today;
+    const todayNormalized = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const dateNormalized = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    return dateNormalized > todayNormalized;
   };
 
   const getWorkoutData = (date: Date) => {
