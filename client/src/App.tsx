@@ -75,7 +75,6 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        {/* --- MODIFIED: Added pt-6 for top padding --- */}
         <main className="max-w-md mx-auto h-full bg-dark-primary text-text-primary overflow-y-auto pt-6">
           <div className="pb-24">
             {renderActiveTab()}
@@ -88,7 +87,10 @@ function App() {
             onNavigateToNutrition={handleNavigateToNutrition}
           />
         </main>
+        
+        {/* --- FIX: The problematic prop has been removed --- */}
         <Toaster />
+        
       </TooltipProvider>
     </QueryClientProvider>
   );
