@@ -485,7 +485,7 @@ export default function Supplements() {
               Add Supplement
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md bg-dark-secondary border-dark-border">
             <DialogHeader>
               <DialogTitle className="font-['Montserrat']">
                 {editingSupplement ? 'Edit Supplement' : 'Add New Supplement'}

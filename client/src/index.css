@@ -4,7 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* --- Theme & Base Styles --- */
+/* --- Original Stable Dark Theme Variables --- */
 :root {
   --dark-primary: hsl(222, 47%, 8%);
   --dark-secondary: hsl(222, 47%, 11%);
@@ -13,61 +13,80 @@
   --accent-red: hsl(0, 75%, 45%);
   --accent-light-red: hsl(0, 78%, 55%);
   --accent-green: hsl(135, 65%, 55%);
+  --accent-warning: hsl(28, 90%, 60%);
   --text-primary: hsl(220, 15%, 95%);
   --text-secondary: hsl(220, 10%, 80%);
   --text-disabled: hsl(220, 10%, 60%);
 }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: var(--dark-primary);
-  color: var(--text-primary);
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+    @apply bg-dark-primary text-text-primary;
+  }
+
+  /* --- FIX for Toast Notifications --- */
+  /* This targets the toast component and applies the correct theme colors */
+  [data-sonner-toast] {
+    background-color: var(--dark-secondary) !important;
+    border-color: var(--dark-border) !important;
+  }
+  [data-sonner-toast] [data-title] {
+    color: var(--text-primary) !important;
+  }
+  [data-sonner-toast] [data-description] {
+    color: var(--text-secondary) !important;
+  }
+  /* --- END OF TOAST FIX --- */
+
+  /* Hide scrollbar for ALL elements */
+  *::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Fix for autofill background in dark mode */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--dark-elevated) inset !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+  }
 }
 
 /* --- Utility Class Definitions --- */
-/* This section ensures your components have the right colors */
-.bg-dark-primary { background-color: var(--dark-primary); }
-.bg-dark-secondary { background-color: var(--dark-secondary); }
-.bg-dark-elevated { background-color: var(--dark-elevated); }
-.border-dark-border { border-color: var(--dark-border); }
-.text-text-primary { color: var(--text-primary); }
-.text-text-secondary { color: var(--text-secondary); }
-.text-text-disabled { color: var(--text-disabled); }
-.text-accent-red { color: var(--accent-red); }
-.bg-accent-red { background-color: var(--accent-red); }
-.text-accent-green { color: var(--accent-green); }
-.bg-accent-green { background-color: var(--accent-green); }
-.text-blue-400 { color: hsl(210, 80%, 60%); }
+@layer components {
+  .bg-dark-primary { background-color: var(--dark-primary); }
+  .bg-dark-secondary { background-color: var(--dark-secondary); }
+  .bg-dark-elevated { background-color: var(--dark-elevated); }
+  .border-dark-border { border-color: var(--dark-border); }
+  
+  .text-text-primary { color: var(--text-primary); }
+  .text-text-secondary { color: var(--text-secondary); }
+  .text-text-disabled { color: var(--text-disabled); }
 
-/* --- Component Fixes --- */
+  .text-accent-red { color: var(--accent-red); }
+  .bg-accent-red { background-color: var(--accent-red); }
+  
+  .text-accent-green { color: var(--accent-green); }
+  .bg-accent-green { background-color: var(--accent-green); }
 
-/* Pop-up / Dialog Fix */
-[data-radix-dialog-overlay] {
-  background-color: hsla(222, 47%, 8%, 0.8) !important;
-  backdrop-filter: blur(2px);
+  .text-blue-400 { color: hsl(210, 80%, 60%); }
 }
-[data-radix-dialog-content], 
-[data-radix-select-content] {
+
+/* --- Component Fixes (Pop-ups & Nav) --- */
+.radix-dialog-content, [data-radix-select-content] {
   background-color: var(--dark-secondary) !important;
   border: 1px solid var(--dark-border) !important;
 }
 [data-radix-select-item]:hover {
   background-color: var(--accent-red) !important;
 }
-
-/* Navigation Bar Fix */
 nav {
   background-color: var(--dark-secondary);
   border-top: 1px solid var(--dark-border);
-}
-
-/* Scrollbar & Autofill Fixes */
-*::-webkit-scrollbar { display: none; }
-* { -ms-overflow-style: none; scrollbar-width: none; }
-input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px var(--dark-elevated) inset !important;
-  -webkit-text-fill-color: var(--text-primary) !important;
 }
