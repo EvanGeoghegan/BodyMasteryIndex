@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Calendar, X, Dumbbell } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, X, Dumbbell, Clock } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { Workout } from "@shared/schema";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils"; // Import the cn utility
+import { cn } from "@/lib/utils";
 
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -94,6 +94,14 @@ export default function CalendarPage() {
     };
   };
 
+  // --- NEW FUNCTION to check for supplement logs ---
+  const getSupplementLogStatus = (date: Date) => {
+    const dateString = date.toISOString().split('T')[0];
+    const logs = storage.getSupplementLogs(dateString);
+    return logs.some(log => log.taken); // Returns true if at least one supplement was marked as taken
+  };
+  // --- END NEW FUNCTION ---
+
   const handleDateClick = (date: Date) => {
     if (isFutureDate(date)) return;
     
@@ -109,17 +117,34 @@ export default function CalendarPage() {
     setSelectedWorkouts([]);
   };
 
+  const formatWorkoutSummary = (workout: Workout) => {
+    const completedSets = workout.exercises.reduce((acc, ex) => 
+      acc + ex.sets.filter(set => set.completed).length, 0
+    );
+    const totalVolume = workout.exercises.reduce((vol, ex) => 
+      vol + ex.sets.reduce((setVol, set) => 
+        set.completed && set.weight && set.reps ? setVol + (set.weight * set.reps) : setVol, 0
+      ), 0
+    );
+    
+    return {
+      exercises: workout.exercises.length,
+      completedSets,
+      totalVolume: Math.round(totalVolume),
+    };
+  };
+
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <header className="bg-card p-6 shadow-lg">
+    <div className="min-h-screen bg-dark-primary pb-20">
+      <header className="bg-dark-secondary p-6 shadow-lg">
         <h2 className="text-xl font-bold text-text-primary font-heading flex items-center">
-          <Calendar className="mr-2 text-primary-accent" size={24} />
+          <Calendar className="mr-2 text-accent-red" size={24} />
           Activity Calendar
         </h2>
       </header>
 
       <div className="p-4">
-        <div className="bg-card rounded-xl p-6 border border-border">
+        <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
           {/* Calendar Header */}
           <div className="flex items-center justify-between mb-6">
             <Button onClick={() => navigateMonth(-1)} variant="ghost" size="icon">
@@ -146,60 +171,70 @@ export default function CalendarPage() {
           <div className="grid grid-cols-7 gap-2">
             {days.map((date, index) => {
               const workoutData = getWorkoutData(date);
+              const supplementsTaken = getSupplementLogStatus(date); // Call our new function
               const isFuture = isFutureDate(date);
 
               return (
                 <div
                   key={index}
                   onClick={() => handleDateClick(date)}
-                  // --- THIS IS THE UPDATED PART ---
                   className={cn(
-                    "h-16 flex flex-col items-center justify-center text-lg relative transition-all duration-200 border-2 calendar-day",
+                    "h-16 flex flex-col items-center justify-center text-lg rounded-lg cursor-pointer relative transition-all duration-200 border-2",
                     {
                       "opacity-50": !isCurrentMonth(date),
-                      "cursor-pointer hover:scale-105 hover:border-primary-accent": !isFuture,
+                      "hover:scale-105 hover:border-accent-red": !isFuture,
                       "cursor-not-allowed": isFuture,
-                      "calendar-day-today": isToday(date), // Applies the new class for today
-                      "bg-card-elevated text-text-primary border-transparent": !isToday(date),
-                      "border-red-500/50": !workoutData && !isFuture && !isToday(date) && isCurrentMonth(date)
+                      "bg-accent-red text-white font-bold border-accent-red": isToday(date),
+                      "bg-dark-elevated text-text-primary border-transparent": !isToday(date),
+                      "border-red-500/50": !workoutData && !supplementsTaken && !isFuture && !isToday(date) && isCurrentMonth(date) // Rest Day
                     }
                   )}
-                  // --- END OF UPDATE ---
                 >
                   <span className="z-10 text-center text-sm">{date.getDate()}</span>
-                  {workoutData && (
-                     <div className="absolute bottom-1.5 left-1/2 transform -translate-x-1/2 flex gap-1">
-                        {workoutData.types.includes('strength') && <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />}
-                        {workoutData.types.includes('cardio') && <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />}
-                        {workoutData.types.includes('core') && <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full" />}
-                     </div>
-                  )}
+                  
+                  {/* --- NEW: Indicator rendering logic --- */}
+                  <div className="absolute bottom-1.5 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-1">
+                    {/* Workout Dots */}
+                    <div className="flex gap-1">
+                      {workoutData?.types.includes('strength') && <div className="w-1.5 h-1.5 bg-blue-400 rounded-full" />}
+                      {workoutData?.types.includes('cardio') && <div className="w-1.5 h-1.5 bg-green-400 rounded-full" />}
+                      {workoutData?.types.includes('core') && <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full" />}
+                    </div>
+                    {/* Supplement Dot */}
+                    {supplementsTaken && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                  </div>
+                  {/* --- END NEW --- */}
+
                 </div>
               );
             })}
           </div>
           
           {/* Calendar Legend */}
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-8 pt-6 border-t border-border">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-8 pt-6 border-t border-dark-border">
             <div className="flex items-center space-x-3">
-              <div className="w-4 h-4 rounded-md border-2 border-primary-accent bg-primary-accent"></div>
+              <div className="w-4 h-4 bg-accent-red rounded-md border-2 border-accent-red"></div>
               <span className="text-text-secondary text-sm">Today</span>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="w-4 h-4 bg-card-elevated rounded-md border-2 border-red-500/50"></div>
+              <div className="w-4 h-4 bg-dark-elevated rounded-md border-2 border-red-500/50"></div>
               <span className="text-text-secondary text-sm">Rest Day</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
               <span className="text-text-secondary text-sm">Strength</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
               <span className="text-text-secondary text-sm">Cardio</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
               <span className="text-text-secondary text-sm">Core</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-white rounded-full"></div>
+              <span className="text-text-secondary text-sm">Supplements</span>
             </div>
           </div>
         </div>
@@ -208,8 +243,8 @@ export default function CalendarPage() {
       {/* Workout Details Modal */}
       {selectedDate && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-card rounded-xl max-w-md w-full max-h-[85vh] overflow-y-auto border border-border shadow-2xl">
-            <div className="p-4 border-b border-border flex items-center justify-between sticky top-0 bg-card z-10">
+          <div className="bg-dark-secondary rounded-xl max-w-md w-full max-h-[85vh] overflow-y-auto border border-dark-border shadow-2xl">
+            <div className="p-4 border-b border-dark-border flex items-center justify-between sticky top-0 bg-dark-secondary z-10">
               <h3 className="text-lg font-bold text-text-primary">
                 {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
               </h3>
@@ -221,22 +256,25 @@ export default function CalendarPage() {
             <div className="p-4">
               {selectedWorkouts.length > 0 ? (
                 <div className="space-y-4">
-                  {selectedWorkouts.map((workout, workoutIndex) => (
-                      <div key={workout.id} className="bg-card-elevated p-4 rounded-lg border border-border">
+                  {selectedWorkouts.map((workout, workoutIndex) => {
+                    const summary = formatWorkoutSummary(workout);
+                    return (
+                      <div key={workout.id} className="bg-dark-elevated p-4 rounded-lg border border-dark-border">
                          <div className="flex items-center justify-between mb-3">
                             <h4 className="font-semibold text-text-primary">{workout.name}</h4>
-                            <span className="text-xs px-2 py-1 rounded-full bg-primary-accent/10 text-primary-accent font-medium">{workout.type}</span>
+                            <span className="text-xs px-2 py-1 rounded-full bg-accent-red/10 text-accent-red font-medium">{workout.type}</span>
                          </div>
                         
                         <div className="space-y-2">
                             {workout.exercises.map((exercise, index) => (
-                                <div key={index} className="text-sm text-text-secondary border-t border-border pt-2">
+                                <div key={index} className="text-sm text-text-secondary border-t border-dark-border pt-2">
                                     <span className="font-medium text-text-primary">{exercise.name}</span> - {exercise.sets.filter(s => s.completed).length} sets
                                 </div>
                             ))}
                         </div>
                       </div>
-                    ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-8">
