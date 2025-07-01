@@ -113,10 +113,7 @@ export default function Supplements() {
     setCurrentProtein(newProtein);
     setLastProteinAction(amount);
     saveNutritionData(newProtein, currentWater);
-    toast({
-      title: "Protein logged",
-      description: `Added ${amount}g protein. Total: ${newProtein}g`
-    });
+    // toast({ title: "Protein logged", description: `Added ${amount}g protein. Total: ${newProtein}g` }); // REMOVED
   };
 
   // Add water with custom amount  
@@ -125,10 +122,7 @@ export default function Supplements() {
     setCurrentWater(newWater);
     setLastWaterAction(amount);
     saveNutritionData(currentProtein, newWater);
-    toast({
-      title: "Water logged",
-      description: `Added ${amount}L water. Total: ${newWater}L`
-    });
+    // toast({ title: "Water logged", description: `Added ${amount}L water. Total: ${newWater}L` }); // REMOVED
   };
 
   // Undo last protein action
@@ -138,10 +132,7 @@ export default function Supplements() {
       setCurrentProtein(newProtein);
       saveNutritionData(newProtein, currentWater);
       setLastProteinAction(0);
-      toast({
-        title: "Protein undone",
-        description: `Removed ${lastProteinAction}g protein. Total: ${newProtein}g`
-      });
+      // toast({ title: "Protein undone", description: `Removed ${lastProteinAction}g protein. Total: ${newProtein}g` }); // REMOVED
     }
   };
 
@@ -152,10 +143,7 @@ export default function Supplements() {
       setCurrentWater(newWater);
       saveNutritionData(currentProtein, newWater);
       setLastWaterAction(0);
-      toast({
-        title: "Water undone",
-        description: `Removed ${lastWaterAction}L water. Total: ${newWater}L`
-      });
+      // toast({ title: "Water undone", description: `Removed ${lastWaterAction}L water. Total: ${newWater}L` }); // REMOVED
     }
   };
 
@@ -200,16 +188,10 @@ export default function Supplements() {
     try {
       if (editingSupplement) {
         storage.updateSupplement(editingSupplement.id, data);
-        toast({
-          title: "Supplement updated",
-          description: `${data.name} has been updated successfully.`
-        });
+        // toast({ title: "Supplement updated", description: `${data.name} has been updated successfully.` }); // REMOVED
       } else {
         storage.createSupplement(data);
-        toast({
-          title: "Supplement added",
-          description: `${data.name} has been added to your list.`
-        });
+        // toast({ title: "Supplement added", description: `${data.name} has been added to your list.` }); // REMOVED
       }
       
       refreshData();
@@ -217,11 +199,7 @@ export default function Supplements() {
       setEditingSupplement(null);
       form.reset();
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save supplement. Please try again.",
-        variant: "destructive"
-      });
+      // toast({ title: "Error", description: "Failed to save supplement. Please try again.", variant: "destructive" }); // REMOVED
     }
   };
 
@@ -244,10 +222,7 @@ export default function Supplements() {
     if (window.confirm(`Are you sure you want to delete ${supplement.name}?`)) {
       storage.deleteSupplement(supplement.id);
       refreshData();
-      toast({
-        title: "Supplement deleted",
-        description: `${supplement.name} has been removed.`
-      });
+      // toast({ title: "Supplement deleted", description: `${supplement.name} has been removed.` }); // REMOVED
     }
   };
 
@@ -255,10 +230,8 @@ export default function Supplements() {
     const existingLog = todayLogs.find(log => log.supplementId === supplement.id);
     
     if (existingLog) {
-      // Toggle the taken status
       storage.updateSupplementLog(existingLog.id, { taken: !existingLog.taken });
     } else {
-      // Create new log
       const newLog: InsertSupplementLog = {
         supplementId: supplement.id,
         date: selectedDate,
@@ -269,12 +242,8 @@ export default function Supplements() {
     }
     
     refreshData();
-    
-    const wasMarkedTaken = !existingLog || !existingLog.taken;
-    toast({
-      title: wasMarkedTaken ? "Supplement taken" : "Supplement unmarked",
-      description: `${supplement.name} ${wasMarkedTaken ? 'marked as taken' : 'unmarked'} for today.`
-    });
+    // const wasMarkedTaken = !existingLog || !existingLog.taken;
+    // toast({ title: wasMarkedTaken ? "Supplement taken" : "Supplement unmarked", description: `${supplement.name} ${wasMarkedTaken ? 'marked as taken' : 'unmarked'} for today.` }); // REMOVED
   };
 
   const getSupplementStatus = (supplement: Supplement) => {
@@ -487,7 +456,7 @@ export default function Supplements() {
           </DialogTrigger>
           <DialogContent className="max-w-md bg-dark-secondary border-dark-border">
             <DialogHeader>
-              <DialogTitle className="font-['Montserrat']">
+              <DialogTitle className="text-text-primary font-['Montserrat']">
                 {editingSupplement ? 'Edit Supplement' : 'Add New Supplement'}
               </DialogTitle>
             </DialogHeader>
@@ -499,9 +468,9 @@ export default function Supplements() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel className="text-text-secondary">Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Vitamin D3" {...field} />
+                        <Input placeholder="e.g., Vitamin D3" {...field} className="bg-dark-elevated border-dark-border text-text-primary"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -513,9 +482,9 @@ export default function Supplements() {
                   name="brand"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Brand (Optional)</FormLabel>
+                      <FormLabel className="text-text-secondary">Brand (Optional)</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Nature Made" {...field} />
+                        <Input placeholder="e.g., Nature Made" {...field} className="bg-dark-elevated border-dark-border text-text-primary"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -528,18 +497,14 @@ export default function Supplements() {
                     name="type"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Type</FormLabel>
+                        <FormLabel className="text-text-secondary">Type</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select type" />
-                            </SelectTrigger>
+                            <SelectTrigger className="bg-dark-elevated border-dark-border text-text-primary"><SelectValue /></SelectTrigger>
                           </FormControl>
-                          <SelectContent>
+                          <SelectContent className="bg-dark-secondary border-dark-border">
                             {supplementTypes.map(type => (
-                              <SelectItem key={type.value} value={type.value}>
-                                {type.label}
-                              </SelectItem>
+                              <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -553,18 +518,14 @@ export default function Supplements() {
                     name="frequency"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Frequency</FormLabel>
+                        <FormLabel className="text-text-secondary">Frequency</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select frequency" />
-                            </SelectTrigger>
+                            <SelectTrigger className="bg-dark-elevated border-dark-border text-text-primary"><SelectValue /></SelectTrigger>
                           </FormControl>
-                          <SelectContent>
+                          <SelectContent className="bg-dark-secondary border-dark-border">
                             {frequencies.map(freq => (
-                              <SelectItem key={freq.value} value={freq.value}>
-                                {freq.label}
-                              </SelectItem>
+                              <SelectItem key={freq.value} value={freq.value}>{freq.label}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -580,13 +541,14 @@ export default function Supplements() {
                     name="dosage"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Dosage</FormLabel>
+                        <FormLabel className="text-text-secondary">Dosage</FormLabel>
                         <FormControl>
                           <Input 
                             type="number" 
                             placeholder="1000" 
                             {...field}
                             onChange={e => field.onChange(parseFloat(e.target.value) || 0)}
+                            className="bg-dark-elevated border-dark-border text-text-primary"
                           />
                         </FormControl>
                         <FormMessage />
@@ -599,18 +561,14 @@ export default function Supplements() {
                     name="unit"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Unit</FormLabel>
+                        <FormLabel className="text-text-secondary">Unit</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select unit" />
-                            </SelectTrigger>
+                            <SelectTrigger className="bg-dark-elevated border-dark-border text-text-primary"><SelectValue /></SelectTrigger>
                           </FormControl>
-                          <SelectContent>
+                          <SelectContent className="bg-dark-secondary border-dark-border">
                             {units.map(unit => (
-                              <SelectItem key={unit.value} value={unit.value}>
-                                {unit.label}
-                              </SelectItem>
+                              <SelectItem key={unit.value} value={unit.value}>{unit.label}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -625,18 +583,14 @@ export default function Supplements() {
                   name="timingPreference"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Timing Preference</FormLabel>
+                      <FormLabel className="text-text-secondary">Timing Preference</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select timing" />
-                          </SelectTrigger>
+                          <SelectTrigger className="bg-dark-elevated border-dark-border text-text-primary"><SelectValue /></SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent className="bg-dark-secondary border-dark-border">
                           {timingPreferences.map(timing => (
-                            <SelectItem key={timing.value} value={timing.value}>
-                              {timing.label}
-                            </SelectItem>
+                            <SelectItem key={timing.value} value={timing.value}>{timing.label}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -650,30 +604,18 @@ export default function Supplements() {
                   name="notes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Notes (Optional)</FormLabel>
+                      <FormLabel className="text-text-secondary">Notes (Optional)</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Any additional notes..." {...field} />
+                        <Textarea placeholder="Any additional notes..." {...field} className="bg-dark-elevated border-dark-border text-text-primary"/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                 
-                <div className="flex gap-2">
-                  <Button type="submit" className="flex-1 bg-accent-red hover:bg-accent-light-red">
-                    {editingSupplement ? 'Update' : 'Add'} Supplement
-                  </Button>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => {
-                      setIsAddDialogOpen(false);
-                      setEditingSupplement(null);
-                      form.reset();
-                    }}
-                  >
-                    Cancel
-                  </Button>
+                <div className="flex gap-2 pt-2">
+                  <Button type="submit" className="flex-1 bg-accent-red text-white"> {editingSupplement ? 'Update' : 'Add'} Supplement </Button>
+                  <Button type="button" variant="outline" onClick={() => { setIsAddDialogOpen(false); setEditingSupplement(null); form.reset(); }} className="bg-dark-elevated border-dark-border text-text-secondary"> Cancel </Button>
                 </div>
               </form>
             </Form>
@@ -682,7 +624,7 @@ export default function Supplements() {
       </div>
 
         <Tabs defaultValue="today" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-dark-elevated border border-dark-border">
+          <TabsList className="grid w-full grid-cols-2 bg-dark-elevated border-dark-border">
             <TabsTrigger value="today" className="data-[state=active]:bg-accent-red data-[state=active]:text-white">Today's Supplements</TabsTrigger>
             <TabsTrigger value="manage" className="data-[state=active]:bg-accent-red data-[state=active]:text-white">Manage Supplements</TabsTrigger>
           </TabsList>
