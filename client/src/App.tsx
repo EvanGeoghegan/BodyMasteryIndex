@@ -72,9 +72,26 @@ function App() {
     }
   };
 
+  // --- NEW: Inline styles to fix the Toaster ---
+  const toasterStyles = `
+    [data-sonner-toast] {
+      background-color: hsl(222, 47%, 11%) !important; /* --dark-secondary */
+      border-color: hsl(222, 47%, 21%) !important; /* --dark-border */
+    }
+    [data-sonner-toast] [data-title] {
+      color: hsl(220, 15%, 95%) !important; /* --text-primary */
+    }
+    [data-sonner-toast] [data-description] {
+      color: hsl(220, 10%, 80%) !important; /* --text-secondary */
+    }
+  `;
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        {/* --- NEW: Adding the <style> tag --- */}
+        <style>{toasterStyles}</style>
+        
         <main className="max-w-md mx-auto h-full bg-dark-primary text-text-primary overflow-y-auto pt-6">
           <div className="pb-24">
             {renderActiveTab()}
@@ -88,7 +105,6 @@ function App() {
           />
         </main>
         
-        {/* --- FIX: The problematic prop has been removed --- */}
         <Toaster />
         
       </TooltipProvider>
