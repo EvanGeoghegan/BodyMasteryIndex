@@ -17,21 +17,35 @@ interface ExerciseCardProps {
 
 export default function ExerciseCard({ exercise, workoutType, onUpdate, onDelete, startOpen = false }: ExerciseCardProps) {
   const [isOpen, setIsOpen] = useState(startOpen || !exercise.name);
-  const [selectedExerciseCategory, setSelectedExerciseCategory] = useState<string | null>(null);
 
   useEffect(() => {
-    if (startOpen) {
+    // This ensures that if a user adds a new card and then closes it
+    // without selecting an exercise, it doesn't pop open on the next render.
+    if (startOpen && !exercise.name) {
       setIsOpen(true);
     }
-  }, [startOpen]);
+  }, [startOpen, exercise.name]);
   
   const handleExerciseSelect = (exerciseName: string) => {
     const selected = masterExerciseList.find(ex => ex.name === exerciseName);
     const category = selected ? selected.category : workoutType;
-    onUpdate({ name: exerciseName, type: category as any });
-    if (exercise.sets.length === 0) {
-      addSet(category);
-    }
+
+    // --- FIX: Perform a single, atomic update ---
+    const newSet: ExerciseSet = {
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      completed: false,
+      weight: 0,
+      reps: 0,
+      duration: 0,
+      distance: 0,
+    };
+
+    onUpdate({ 
+      name: exerciseName, 
+      type: category as any,
+      // Add the first set at the same time as updating the name
+      sets: [newSet] 
+    });
   };
 
   const updateSet = (setIndex: number, updates: Partial<ExerciseSet>) => {
@@ -41,25 +55,16 @@ export default function ExerciseCard({ exercise, workoutType, onUpdate, onDelete
     onUpdate({ sets: updatedSets });
   };
 
-  const addSet = (category?: string) => {
-    const currentCategory = category || selectedExerciseCategory;
+  const addSet = () => {
     const lastSet = exercise.sets[exercise.sets.length - 1];
     const newSet: ExerciseSet = {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       completed: false,
+      weight: lastSet?.weight || 0,
+      reps: lastSet?.reps || 0,
+      duration: lastSet?.duration || 0,
+      distance: lastSet?.distance || 0,
     };
-
-    if (currentCategory === 'strength') {
-      newSet.weight = lastSet?.weight || 0;
-      newSet.reps = lastSet?.reps || 0;
-    } else if (currentCategory === 'core') {
-      newSet.reps = lastSet?.reps || 0;
-      newSet.duration = lastSet?.duration || 0;
-    } else {
-      newSet.duration = lastSet?.duration || 0;
-      newSet.distance = lastSet?.distance || 0;
-    }
-    
     onUpdate({ sets: [...exercise.sets, newSet] });
   };
 
@@ -80,7 +85,7 @@ export default function ExerciseCard({ exercise, workoutType, onUpdate, onDelete
   };
   
   const isCardComplete = exercise.sets.length > 0 && exercise.sets.every(set => set.completed);
-  const displayCategory = exercise.type as string; // FIX: Cast to string for comparison
+  const displayCategory = exercise.type as string;
 
   return (
     <div className={cn(
@@ -93,9 +98,14 @@ export default function ExerciseCard({ exercise, workoutType, onUpdate, onDelete
         onClick={() => setIsOpen(!isOpen)}
       >
         <div>
-          <h4 className="font-semibold text-lg text-text-primary">
-            {exercise.name || "Select an Exercise"}
-          </h4>
+          {/* --- FIX: Conditionally render the title to avoid duplication --- */}
+          {exercise.name ? (
+            <h4 className="font-semibold text-lg text-text-primary">
+              {exercise.name}
+            </h4>
+          ) : (
+            <p className="text-lg text-text-secondary italic">New Exercise</p>
+          )}
           <span className={cn(
               "text-sm px-2 py-0.5 rounded-full mt-1 inline-block",
               isCardComplete ? "bg-accent-green/20 text-accent-green" : "text-text-secondary bg-dark-primary"
@@ -166,7 +176,7 @@ export default function ExerciseCard({ exercise, workoutType, onUpdate, onDelete
                 ))}
               </div>
               
-              <Button onClick={() => addSet()} variant="ghost" className="text-accent-green hover:text-green-400 text-sm font-medium p-0 h-auto">
+              <Button onClick={addSet} variant="ghost" className="text-accent-green hover:text-green-400 text-sm font-medium p-0 h-auto">
                 <Plus className="mr-1" size={16} /> Add Set
               </Button>
             </>
