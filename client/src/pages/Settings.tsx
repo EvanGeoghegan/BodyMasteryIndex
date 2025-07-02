@@ -142,29 +142,144 @@ export default function Settings({}: SettingsProps) {
   };
 
   return (
-    <div className="bg-dark-primary">
-      <header className="bg-dark-secondary border-b border-dark-border p-4">
+    // --- FIX: Applying styles directly to override conflicts ---
+    <div style={{ backgroundColor: 'var(--dark-primary)' }}>
+      <header style={{ backgroundColor: 'var(--dark-secondary)', borderBottom: '1px solid var(--dark-border)'}} className="p-4">
         <h1 className="text-2xl font-bold text-text-primary font-['Montserrat']">Settings</h1>
         <p className="text-text-secondary mt-1">Manage your goals, preferences, and data</p>
       </header>
 
       <div className="p-4 space-y-6 pb-24">
-        {/* All JSX remains the same, only the toast calls in the functions above were removed */}
         <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
-          {/* Profile Section... */}
+          <div className="flex items-center gap-2 mb-4">
+            <User className="text-accent-red" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">Profile</h2>
+          </div>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="current-weight" className="text-text-secondary">Current Weight</Label>
+                <Input id="current-weight" type="number" step="0.1" placeholder="70.0" value={currentWeight} onChange={(e) => setCurrentWeight(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" />
+              </div>
+              <div>
+                <Label htmlFor="target-weight" className="text-text-secondary">Target Weight</Label>
+                <Input id="target-weight" type="number" step="0.1" placeholder="75.0" value={targetWeight} onChange={(e) => setTargetWeight(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" />
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium text-text-primary">Assessment Exercises</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="exercise1" className="text-text-secondary">Exercise 1</Label>
+                  <Input id="exercise1" type="text" value={assessmentExercise1} onChange={(e) => setAssessmentExercise1(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" />
+                </div>
+                <div>
+                  <Label htmlFor="exercise2" className="text-text-secondary">Exercise 2</Label>
+                  <Input id="exercise2" type="text" value={assessmentExercise2} onChange={(e) => setAssessmentExercise2(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
         <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
-          {/* Goals & Targets... */}
+          <div className="flex items-center gap-2 mb-4">
+            <Target className="text-accent-red" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">Goals & Targets</h2>
+          </div>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="protein-goal" className="text-text-secondary">Daily Protein Goal</Label>
+                <Input id="protein-goal" type="number" value={proteinGoal} onChange={(e) => setProteinGoal(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" />
+              </div>
+              <div>
+                <Label htmlFor="water-goal" className="text-text-secondary">Daily Water Goal</Label>
+                <Input id="water-goal" type="number" step="0.1" value={waterGoal} onChange={(e) => setWaterGoal(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" />
+              </div>
+            </div>
+          </div>
         </div>
+
         <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
-          {/* Workout Preferences... */}
+          <div className="flex items-center gap-2 mb-4">
+            <User className="text-accent-red" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">Workout Preferences</h2>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="weight-unit" className="text-text-secondary">Weight Unit</Label>
+              <Select value={weightUnit} onValueChange={setWeightUnit}>
+                <SelectTrigger className="mt-1 bg-dark-elevated border-dark-border text-text-primary">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-dark-secondary border-dark-border">
+                  <SelectItem value="kg">Kilograms (kg)</SelectItem>
+                  <SelectItem value="lbs">Pounds (lbs)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
+
         <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
-          {/* Notifications... */}
+          <div className="flex items-center gap-2 mb-4">
+            <Bell className="text-accent-red" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">Notifications</h2>
+          </div>
+          <div className="space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-text-primary font-medium">Workout Reminders</Label>
+                  <p className="text-xs text-text-secondary mt-1">Get reminded to log your workouts</p>
+                </div>
+                <Switch checked={workoutReminder} onCheckedChange={setWorkoutReminder} />
+              </div>
+              {workoutReminder && (
+                <div>
+                  <Label htmlFor="workout-time" className="text-text-secondary">Reminder Time</Label>
+                  <Input id="workout-time" type="time" value={workoutReminderTime} onChange={(e) => setWorkoutReminderTime(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" />
+                </div>
+              )}
+            </div>
+            <div className="space-y-3 border-t border-dark-border pt-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-text-primary font-medium">Nutrition Reminders</Label>
+                  <p className="text-xs text-text-secondary mt-1">Get reminded to log protein and water</p>
+                </div>
+                <Switch checked={nutritionReminder} onCheckedChange={setNutritionReminder} />
+              </div>
+              {nutritionReminder && (
+                <div>
+                  <Label htmlFor="nutrition-time" className="text-text-secondary">Reminder Time</Label>
+                  <Input id="nutrition-time" type="time" value={nutritionReminderTime} onChange={(e) => setNutritionReminderTime(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" />
+                </div>
+              )}
+            </div>
+          </div>
         </div>
+
         <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
-          {/* Data Management... */}
+          <div className="flex items-center gap-2 mb-4">
+            <Database className="text-accent-red" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">Data Management</h2>
+          </div>
+          <div className="space-y-3">
+            <input type="file" ref={fileInputRef} onChange={handleFileSelected} className="hidden" />
+            <Button onClick={handleImportClick} variant="outline" className="w-full bg-dark-elevated border-dark-border text-text-primary hover:bg-dark-border">
+              <Upload className="mr-2" size={16} /> Import Data from Backup
+            </Button>
+            <Button onClick={handleExportData} variant="outline" className="w-full bg-dark-elevated border-dark-border text-text-primary hover:bg-dark-border">
+              <Download className="mr-2" size={16} /> Export All Data
+            </Button>
+            <Button onClick={handleClearAllData} variant="outline" className="w-full bg-dark-elevated border-dark-border text-text-primary hover:bg-dark-border hover:text-accent-red">
+              <Trash2 className="mr-2" size={16} /> Clear All Data
+            </Button>
+          </div>
         </div>
+        
         <Button onClick={handleSaveSettings} className="w-full bg-accent-red hover:bg-accent-light-red text-white">
           Save Settings
         </Button>
