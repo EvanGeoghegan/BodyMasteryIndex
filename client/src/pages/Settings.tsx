@@ -69,6 +69,11 @@ export default function Settings({}: SettingsProps) {
               schedule: { on: { hour: hours, minute: minutes }, repeats: true },
               smallIcon: 'res://mipmap-hdpi/ic_launcher.png',
               largeIcon: 'res://mipmap-xxhdpi/ic_launcher.png',
+              // --- NEW: Add extra data to navigate on tap ---
+              extra: {
+                action: 'openPage',
+                page: 'workout'
+              }
             }]
           });
         }
@@ -83,6 +88,11 @@ export default function Settings({}: SettingsProps) {
               schedule: { on: { hour: hours, minute: minutes }, repeats: true },
               smallIcon: 'res://mipmap-hdpi/ic_launcher.png',
               largeIcon: 'res://mipmap-xxhdpi/ic_launcher.png',
+              // --- NEW: Add extra data to navigate on tap ---
+              extra: {
+                action: 'openPage',
+                page: 'supplements'
+              }
             }]
           });
         }
