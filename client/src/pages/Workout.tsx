@@ -36,7 +36,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
     if (initialWorkout) {
       setEditingWorkout(initialWorkout);
       setWorkoutName(initialWorkout.name);
-      setWorkoutType(initialWorkout.type as "strength" | "cardio" | "core" | "sports");
+      setWorkoutType(initialWorkout.type as any);
       setExercises(initialWorkout.exercises);
       setWorkoutDate(initialWorkout.date.split('T')[0]);
       setWorkoutNotes(initialWorkout.notes || "");
@@ -57,7 +57,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
   const editWorkout = (workout: Workout) => {
     setEditingWorkout(workout);
     setWorkoutName(workout.name);
-    setWorkoutType(workout.type as "strength" | "cardio" | "core" | "sports");
+    setWorkoutType(workout.type as any);
     setExercises(workout.exercises);
     setWorkoutDate(workout.date.split('T')[0]);
     setWorkoutNotes(workout.notes || "");
@@ -76,7 +76,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
 
   const loadFromTemplate = (template: Template) => {
     setWorkoutName(template.name);
-    setWorkoutType(template.type as "strength" | "cardio" | "core" | "sports" || "strength");
+    setWorkoutType(template.type as any || "strength");
     
     const templateExercises: Exercise[] = template.exercises.map(templateEx => ({
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
@@ -100,7 +100,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
     const newExercise: Exercise = {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       name: "",
-      type: workoutType as any,
+      type: workoutType as any, // FIX: Use type assertion
       sets: [],
     };
     setExercises(prevExercises => [...prevExercises, newExercise]);
@@ -133,7 +133,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
       name: workoutName,
       date: new Date(workoutDate + 'T' + new Date().toTimeString().split(' ')[0]).toISOString(),
       exercises: validExercises,
-      type: workoutType as any,
+      type: workoutType as any, // FIX: Use type assertion
       notes: workoutNotes,
     };
 
