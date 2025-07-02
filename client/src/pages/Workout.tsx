@@ -100,7 +100,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
     const newExercise: Exercise = {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       name: "",
-      type: workoutType as any, // Use type assertion to bypass strict check
+      type: workoutType as any,
       sets: [],
     };
     setExercises(prevExercises => [...prevExercises, newExercise]);
@@ -133,7 +133,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
       name: workoutName,
       date: new Date(workoutDate + 'T' + new Date().toTimeString().split(' ')[0]).toISOString(),
       exercises: validExercises,
-      type: workoutType as any, // Use type assertion to bypass strict check
+      type: workoutType as any,
       notes: workoutNotes,
     };
 
@@ -274,6 +274,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
                     onUpdate={(updatedData) => updateExercise(exercise.id, updatedData)}
                     onDelete={() => deleteExercise(exercise.id)}
                     startOpen={exercise.id === lastAddedExerciseId}
+                    workoutType={workoutType} 
                 />
             ))}
         </div>
