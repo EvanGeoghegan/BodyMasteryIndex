@@ -15,8 +15,7 @@ import Supplements from "@/pages/Supplements";
 import Settings from "@/pages/Settings";
 import { storage } from "@/lib/storage";
 import { Template, Workout as WorkoutType } from "@shared/schema";
-// --- NEW: Import the Local Notifications plugin ---
-import { LocalNotifications } from '@capacitor/local-notifications';
+import { LocalNotifications, ActionPerformed } from '@capacitor/local-notifications';
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -24,14 +23,27 @@ function App() {
   const [workoutToEdit, setWorkoutToEdit] = useState<WorkoutType | null>(null);
 
   useEffect(() => {
-    // This only initializes default templates now
     storage.initializeDefaultTemplates();
-
-    // --- NEW: Request notification permissions on app start ---
+    
     const requestPermissions = async () => {
       await LocalNotifications.requestPermissions();
     };
     requestPermissions();
+
+    // --- NEW: Add event listener for when a notification is tapped ---
+    const handleNotificationTap = async (notification: ActionPerformed) => {
+      const page = notification.notification.extra?.page;
+      if (page) {
+        setActiveTab(page);
+      }
+    };
+    
+    LocalNotifications.addListener('localNotificationActionPerformed', handleNotificationTap);
+
+    // Clean up the listener when the component unmounts
+    return () => {
+      LocalNotifications.removeAllListeners();
+    };
     // --- END NEW ---
 
   }, []);
@@ -93,6 +105,7 @@ function App() {
           
           <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
           
+          {/* We can likely remove this NotificationSystem component now */}
           <NotificationSystem 
             onNavigateToWorkout={handleNavigateToWorkout}
             onNavigateToNutrition={handleNavigateToNutrition}
