@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Download, Upload, User, Target, Database, Bell } from "lucide-react";
+import { Trash2, Download, Upload, User, Target, Database, HelpCircle, Bell, Check, Save } from "lucide-react"; // Import Check and Save
 import { storage } from "@/lib/storage";
 import { Switch } from "@/components/ui/switch";
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
@@ -12,7 +12,6 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { Workout, Template, PersonalBest, Supplement, SupplementLog } from "@shared/schema";
 import { cn } from "@/lib/utils";
 
-// The component no longer needs any props from App.tsx
 interface SettingsProps {}
 
 export default function Settings({}: SettingsProps) {
@@ -27,7 +26,7 @@ export default function Settings({}: SettingsProps) {
   const [workoutReminderTime, setWorkoutReminderTime] = useState("18:00");
   const [nutritionReminder, setNutritionReminder] = useState(true);
   const [nutritionReminderTime, setNutritionReminderTime] = useState("20:00");
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false); // State for save confirmation
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -53,10 +52,8 @@ export default function Settings({}: SettingsProps) {
     }
   }, []);
 
-  // --- NEW: Function to schedule the external notifications ---
   const scheduleNotifications = async () => {
     try {
-        // First, cancel any pending notifications to avoid duplicates
         const pending = await LocalNotifications.getPending();
         if (pending.notifications.length > 0) {
           await LocalNotifications.cancel(pending);
@@ -64,28 +61,26 @@ export default function Settings({}: SettingsProps) {
 
         const notificationsToSchedule = [];
 
-        // Schedule Workout Reminder
         if (workoutReminder) {
           const [hours, minutes] = workoutReminderTime.split(':').map(Number);
           notificationsToSchedule.push({
-              id: 1, // Unique ID for workout reminders
+              id: 1,
               title: "Time to train!",
               body: "Don't forget to log your workout and crush your goals today.",
               schedule: { on: { hour: hours, minute: minutes }, repeats: true },
-              smallIcon: 'ic_stat_icon_config_sample', // Required for Android
+              smallIcon: 'ic_stat_icon_config_sample',
               extra: { page: 'workout' }
           });
         }
 
-        // Schedule Nutrition Reminder
         if (nutritionReminder) {
           const [hours, minutes] = nutritionReminderTime.split(':').map(Number);
            notificationsToSchedule.push({
-              id: 2, // Unique ID for nutrition reminders
+              id: 2,
               title: "Nutrition Check-in",
               body: "Have you logged your protein and water intake for the day?",
               schedule: { on: { hour: hours, minute: minutes }, repeats: true },
-              smallIcon: 'ic_stat_icon_config_sample', // Required for Android
+              smallIcon: 'ic_stat_icon_config_sample',
               extra: { page: 'supplements' }
           });
         }
@@ -115,17 +110,24 @@ export default function Settings({}: SettingsProps) {
       nutritionReminderTime
     }));
     
-    scheduleNotifications(); // Schedule the notifications with the new settings
+    scheduleNotifications();
 
     setIsSaving(true);
-    setTimeout(() => setIsSaving(false), 500);
+    setTimeout(() => setIsSaving(false), 1000); // Show confirmation for 1 second
   };
 
-  // All other data handling functions remain the same
-  const handleExportData = async () => { /* ... */ };
-  const handleImportClick = () => { /* ... */ };
-  const handleFileSelected = (event: React.ChangeEvent<HTMLInputElement>) => { /* ... */ };
-  const handleClearAllData = () => { /* ... */ };
+  const handleExportData = async () => {
+    // This function remains the same
+  };
+  const handleImportClick = () => {
+    // This function remains the same
+  };
+  const handleFileSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // This function remains the same
+  };
+  const handleClearAllData = () => {
+    // This function remains the same
+  };
 
   return (
     <div className="bg-dark-primary">
@@ -246,11 +248,19 @@ export default function Settings({}: SettingsProps) {
 
         <Button 
           onClick={handleSaveSettings} 
+          disabled={isSaving}
           className={cn(
-            "w-full bg-accent-red hover:bg-accent-light-red text-white transition-all duration-300",
-            isSaving && "ring-2 ring-offset-2 ring-offset-dark-primary ring-accent-light-red"
+            "w-full text-white font-semibold py-3 px-6 transition-all duration-300",
+            isSaving 
+              ? "bg-accent-green" 
+              : "bg-accent-red hover:bg-accent-light-red"
           )}
         >
+          {isSaving ? (
+            <Check className="mr-2" size={20} />
+          ) : (
+            <Save className="mr-2" size={20} />
+          )}
           {isSaving ? "Saved!" : "Save Settings"}
         </Button>
       </div>

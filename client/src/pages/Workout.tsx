@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Save, Copy } from "lucide-react";
+import { Plus, Save, Copy, Check } from "lucide-react"; // Import Check icon
 import ExerciseCard from "@/components/ExerciseCard";
 import { storage } from "@/lib/storage";
 import { Exercise, Workout, Template } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils"; // Import cn utility
 
 interface WorkoutProps {
   onWorkoutSaved: () => void;
@@ -25,9 +26,10 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
   const [workoutNotes, setWorkoutNotes] = useState("");
   const [todaysWorkouts, setTodaysWorkouts] = useState<Workout[]>([]);
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
-  const { toast } = useToast(); // The hook is kept, but its calls are removed below
+  const { toast } = useToast();
   
   const [lastAddedExerciseId, setLastAddedExerciseId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false); // State for save confirmation
 
   useEffect(() => {
     setTemplates(storage.getTemplates());
@@ -119,13 +121,13 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
 
   const saveWorkout = () => {
     if (!workoutName.trim()) {
-      // toast({ title: "Error", description: "Please enter a workout name", variant: "destructive" }); // REMOVED
+      alert("Please enter a workout name");
       return;
     }
 
     const validExercises = exercises.filter(ex => ex.name.trim());
     if (validExercises.length === 0) {
-      // toast({ title: "Error", description: "Please add at least one exercise", variant: "destructive" }); // REMOVED
+      alert("Please add at least one exercise");
       return;
     }
 
@@ -187,13 +189,17 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
         }
       });
 
-      // toast({ title: "Success", description: editingWorkout ? "Workout updated successfully!" : "Workout saved successfully!" }); // REMOVED
+      // --- NEW: Trigger the save confirmation state ---
+      setIsSaving(true);
+      setTimeout(() => {
+          setIsSaving(false);
+          loadTodaysWorkouts();
+          clearWorkout();
+          onWorkoutSaved();
+      }, 1000); // Show confirmation for 1 second
 
-      loadTodaysWorkouts();
-      clearWorkout();
-      onWorkoutSaved();
     } catch (error) {
-      // toast({ title: "Error", description: "Failed to save workout", variant: "destructive" }); // REMOVED
+      alert("Failed to save workout");
     }
   };
 
@@ -218,7 +224,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => editWorkout(workout)} className="bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-red">Edit</Button>
-                    <Button variant="outline" size="sm" onClick={() => { storage.deleteWorkout(workout.id); loadTodaysWorkouts(); /* toast removed */ }} className="bg-dark-elevated border-dark-border text-red-500 hover:text-red-700">Delete</Button>
+                    <Button variant="outline" size="sm" onClick={() => { storage.deleteWorkout(workout.id); loadTodaysWorkouts(); }} className="bg-dark-elevated border-dark-border text-red-500 hover:text-red-700">Delete</Button>
                   </div>
                 </div>
               ))}
@@ -290,9 +296,23 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
           <textarea value={workoutNotes} onChange={(e) => setWorkoutNotes(e.target.value)} placeholder="Add notes about your workout..." className="w-full bg-dark-elevated text-text-primary border border-dark-border rounded-lg p-3 text-sm resize-none" rows={3} />
         </div>
 
-        <Button onClick={saveWorkout} className="w-full bg-accent-red hover:bg-accent-light-red text-white font-semibold py-3 px-6">
-          <Save className="mr-2" size={20} />
-          {editingWorkout ? "Update Workout" : "Save Workout"}
+        {/* --- UPDATED: Save button with confirmation effect --- */}
+        <Button
+          onClick={saveWorkout}
+          disabled={isSaving}
+          className={cn(
+            "w-full text-white font-semibold py-3 px-6 transition-all duration-300",
+            isSaving 
+              ? "bg-accent-green" 
+              : "bg-accent-red hover:bg-accent-light-red"
+          )}
+        >
+          {isSaving ? (
+            <Check className="mr-2" size={20} />
+          ) : (
+            <Save className="mr-2" size={20} />
+          )}
+          {isSaving ? "Saved!" : editingWorkout ? "Update Workout" : "Save Workout"}
         </Button>
       </div>
 
