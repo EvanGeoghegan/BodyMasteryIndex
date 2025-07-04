@@ -25,7 +25,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
   const [workoutNotes, setWorkoutNotes] = useState("");
   const [todaysWorkouts, setTodaysWorkouts] = useState<Workout[]>([]);
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
-  const { toast } = useToast(); // Keep the hook, but we'll remove the calls
+  const { toast } = useToast(); // The hook is kept, but its calls are removed below
   
   const [lastAddedExerciseId, setLastAddedExerciseId] = useState<string | null>(null);
 
@@ -218,7 +218,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => editWorkout(workout)} className="bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-red">Edit</Button>
-                    <Button variant="outline" size="sm" onClick={() => { storage.deleteWorkout(workout.id); loadTodaysWorkouts(); toast({ title: "Success", description: "Workout deleted successfully!" }); }} className="bg-dark-elevated border-dark-border text-red-500 hover:text-red-700">Delete</Button>
+                    <Button variant="outline" size="sm" onClick={() => { storage.deleteWorkout(workout.id); loadTodaysWorkouts(); /* toast removed */ }} className="bg-dark-elevated border-dark-border text-red-500 hover:text-red-700">Delete</Button>
                   </div>
                 </div>
               ))}
@@ -236,7 +236,9 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
 
         <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
           <div className="flex items-center justify-between mb-3">
-            <label className="block text-text-secondary text-sm font-medium">Workout Name</label>
+            <label className="block text-text-secondary text-sm font-medium">
+              Workout Name
+            </label>
             <Button onClick={() => setShowTemplateDialog(true)} variant="outline" size="sm" className="bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-navy">
               <Copy className="mr-1" size={14} /> From Template
             </Button>

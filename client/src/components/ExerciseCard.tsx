@@ -92,25 +92,35 @@ export default function ExerciseCard({ exercise, workoutType, onUpdate, onDelete
   const isCardComplete = exercise.sets.length > 0 && exercise.sets.every(set => set.completed);
   const displayCategory = exercise.type as string;
 
-  // --- NEW: Logic to determine border color ---
   const getBorderColorClass = () => {
-    if (!exercise.name) return 'border-dark-border'; // Default border
+    // --- FIX: Default to a white border instead of transparent ---
+    if (!exercise.name) return 'border-l-white'; 
     switch(displayCategory) {
       case 'strength': return 'border-l-blue-500';
       case 'cardio': return 'border-l-green-500';
       case 'core': return 'border-l-yellow-500';
       case 'sports': return 'border-l-purple-500';
-      default: return 'border-dark-border';
+      default: return 'border-l-white'; // Fallback to white
+    }
+  };
+
+  const getCompletionBgClass = () => {
+    if (!isCardComplete) return '';
+    switch(displayCategory) {
+      case 'strength': return 'bg-blue-900/30';
+      case 'cardio': return 'bg-green-900/30';
+      case 'core': return 'bg-yellow-900/30';
+      case 'sports': return 'bg-purple-900/30';
+      default: return '';
     }
   };
 
   return (
-    // --- UPDATED: Added border classes ---
     <div className={cn(
-        "bg-dark-elevated rounded-xl border-l-4 transition-all duration-300",
-        getBorderColorClass(), // Apply the dynamic border color
-        isOpen ? "border-accent-red/50" : "border-dark-border",
-        isCardComplete ? "border-green-500/30 bg-green-500/5" : ""
+        "bg-dark-elevated rounded-xl border-l-4 border-t border-r border-b transition-all duration-300",
+        getBorderColorClass(),
+        getCompletionBgClass(),
+        isOpen ? "border-t-accent-red/50 border-r-accent-red/50 border-b-accent-red/50" : "border-t-dark-border border-r-dark-border border-b-dark-border"
     )}>
       <div 
         className="flex items-center justify-between p-4 cursor-pointer"
