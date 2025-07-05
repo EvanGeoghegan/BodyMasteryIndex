@@ -4,8 +4,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* --- Original Stable Dark Theme Variables --- */
+/* --- Theme Variables --- */
 :root {
+  /* Existing Dark Theme */
   --dark-primary: hsl(222, 47%, 8%);
   --dark-secondary: hsl(222, 47%, 11%);
   --dark-elevated: hsl(222, 47%, 15%);
@@ -17,16 +18,35 @@
   --text-primary: hsl(220, 15%, 95%);
   --text-secondary: hsl(220, 10%, 80%);
   --text-disabled: hsl(220, 10%, 60%);
+  --bg-chart-uncompleted: var(--dark-elevated);
 }
+
+/* --- NEW: Cool Mist Light Theme --- */
+.light {
+  --dark-primary: #F8F9FA; /* Primary Background */
+  --dark-secondary: #FFFFFF; /* Card/Secondary Background */
+  --dark-elevated: #F8F9FA; /* Elevated Background */
+  --dark-border: #E9ECEF; /* Borders */
+  --accent-red: #4A90E2; /* Primary Accent (Cool Blue) */
+  --accent-light-red: #357ABD; /* Accent Hover */
+  --accent-green: #50C878; /* Secondary Accent (Mist Green) */
+  --accent-warning: #f59e0b; /* Warning */
+  --text-primary: #212529; /* Primary Text */
+  --text-secondary: #6C757D; /* Secondary Text */
+  --text-disabled: #ADB5BD; /* Disabled Text */
+  --bg-chart-uncompleted: var(--dark-border);
+}
+
 
 @layer base {
   body {
     font-family: 'Inter', sans-serif;
     @apply bg-dark-primary text-text-primary;
+    transition-property: background-color, color;
+    transition-duration: 0.3s;
   }
 
   /* --- FIX for Toast Notifications --- */
-  /* This targets the toast component and applies the correct theme colors */
   [data-sonner-toast] {
     background-color: var(--dark-secondary) !important;
     border-color: var(--dark-border) !important;

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Download, Upload, User, Target, Database, HelpCircle, Bell, Check, Save } from "lucide-react";
+import { Trash2, Download, Upload, User, Target, Database, HelpCircle, Bell, Check, Save, Settings as SettingsIcon } from "lucide-react"; // Added SettingsIcon
 import { storage } from "@/lib/storage";
 import { Switch } from "@/components/ui/switch";
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
@@ -11,6 +11,7 @@ import { Share } from '@capacitor/share';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { Workout, Template, PersonalBest, Supplement, SupplementLog } from "@shared/schema";
 import { cn } from "@/lib/utils";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher"; // --- 1. IMPORT THE SWITCHER ---
 
 interface SettingsProps {}
 
@@ -107,6 +108,18 @@ export default function Settings({}: SettingsProps) {
       </header>
 
       <div className="p-4 space-y-6 pb-24">
+        {/* --- 2. ADD THE THEME SWITCHER HERE --- */}
+        <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
+          <div className="flex items-center gap-2 mb-4">
+            <SettingsIcon className="text-accent-red" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">Preferences</h2>
+          </div>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="theme-switcher" className="text-text-primary font-medium">Appearance</Label>
+            <ThemeSwitcher />
+          </div>
+        </div>
+
         <div className="bg-dark-secondary rounded-lg p-6 border border-dark-border">
           <div className="flex items-center gap-2 mb-4">
             <User className="text-accent-red" size={20} />
