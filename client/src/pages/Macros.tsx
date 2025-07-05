@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, Pill, Calendar, Clock, Trash2, Edit, CheckCircle, XCircle } from "lucide-react";
+import { Plus, Pill, Calendar, Clock, PieChart, Trash2, Edit, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -57,7 +57,7 @@ const timingPreferences = [
   { value: "empty_stomach", label: "Empty Stomach" }
 ];
 
-export default function Supplements() {
+export default function Macros() {
   const [supplements, setSupplements] = useState<Supplement[]>(storage.getSupplements());
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [todayLogs, setTodayLogs] = useState<SupplementLog[]>(storage.getSupplementLogs(selectedDate));
@@ -262,7 +262,7 @@ export default function Supplements() {
       <header className="bg-dark-secondary border-b border-dark-border">
         <div className="p-4">
           <h1 className="text-2xl font-bold text-text-primary font-['Montserrat']">
-            Nutrition Log
+            Macronutrients Tracker
           </h1>
           <p className="text-text-secondary mt-1">
             Track your daily supplements, protein, and hydration
@@ -648,7 +648,7 @@ export default function Supplements() {
               {supplements.length === 0 ? (
                 <div className="bg-dark-secondary rounded-lg border border-dark-border">
                   <div className="flex flex-col items-center justify-center py-12 px-6">
-                    <Pill className="w-16 h-16 text-text-disabled mb-4" />
+                    <PieChart className="mr-3 text-accent-red" size={24} />
                     <h3 className="text-lg font-medium text-text-primary mb-2 font-['Montserrat']">
                       No supplements added yet
                     </h3>

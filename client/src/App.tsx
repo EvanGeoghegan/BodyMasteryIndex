@@ -11,7 +11,7 @@ import Templates from "@/pages/Templates";
 import CalendarPage from "@/pages/CalendarPage";
 import PersonalBests from "@/pages/PersonalBests";
 import ProgressDashboard from "@/pages/ProgressDashboard";
-import Supplements from "@/pages/Supplements";
+import Macros from "@/pages/Macros"; // --- CHANGE 1: Renamed import alias ---
 import Settings from "@/pages/Settings";
 import { storage } from "@/lib/storage";
 import { Template, Workout as WorkoutType } from "@shared/schema";
@@ -30,7 +30,6 @@ function App() {
     };
     requestPermissions();
 
-    // --- NEW: Add event listener for when a notification is tapped ---
     const handleNotificationTap = async (notification: ActionPerformed) => {
       const page = notification.notification.extra?.page;
       if (page) {
@@ -40,11 +39,9 @@ function App() {
     
     LocalNotifications.addListener('localNotificationActionPerformed', handleNotificationTap);
 
-    // Clean up the listener when the component unmounts
     return () => {
       LocalNotifications.removeAllListeners();
     };
-    // --- END NEW ---
 
   }, []);
 
@@ -69,7 +66,7 @@ function App() {
   };
 
   const handleNavigateToNutrition = () => {
-    setActiveTab("supplements");
+    setActiveTab("macros"); // --- CHANGE 2: Changed "supplements" to "macros" ---
   };
 
   const renderActiveTab = () => {
@@ -86,8 +83,8 @@ function App() {
         return <PersonalBests />;
       case "progress":
         return <ProgressDashboard />;
-      case "supplements":
-        return <Supplements />;
+      case "macros": // --- CHANGE 3: Changed "supplements" to "macros" ---
+        return <Macros />;
       case "settings":
         return <Settings />; 
       default:
@@ -105,7 +102,6 @@ function App() {
           
           <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
           
-          {/* We can likely remove this NotificationSystem component now */}
           <NotificationSystem 
             onNavigateToWorkout={handleNavigateToWorkout}
             onNavigateToNutrition={handleNavigateToNutrition}

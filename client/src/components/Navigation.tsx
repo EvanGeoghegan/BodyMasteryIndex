@@ -1,104 +1,86 @@
-import { Home, Dumbbell, Copy, Trophy, Calendar, BarChart3, Apple, Settings, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import { Home, Dumbbell, PieChart, BarChart3, Calendar, Cog } from "lucide-react";
+import { cn } from "@/lib/utils";
 
+// Define the props that this component will accept
 interface NavigationProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
 }
 
+const navLinks = [
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    icon: <Home className="w-6 h-6" />,
+  },
+  {
+    id: "workout",
+    label: "Workout",
+    icon: <Dumbbell className="w-6 h-6" />,
+  },
+  {
+    id: "macros",
+    label: "Macros",
+    icon: <PieChart className="w-6 h-6" />,
+  },
+  {
+    id: "progress",
+    label: "Progress",
+    icon: <BarChart3 className="w-6 h-6" />,
+  },
+  {
+    id: "calendar",
+    label: "Calendar",
+    icon: <Calendar className="w-6 h-6" />,
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    icon: <Cog className="w-6 h-6" />,
+  },
+];
+
 export default function Navigation({ activeTab, onTabChange }: NavigationProps) {
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const tabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'workout', label: 'Workout', icon: Dumbbell },
-    { id: 'supplements', label: 'Nutrition', icon: Apple },
-    { id: 'calendar', label: 'Calendar', icon: Calendar },
-    { id: 'records', label: 'Records', icon: Trophy },
-    { id: 'progress', label: 'Progress', icon: BarChart3 },
-    { id: 'templates', label: 'Templates', icon: Copy },
-    { id: 'settings', label: 'Settings', icon: Settings },
-  ];
-
-  const checkScrollPosition = () => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
-    }
-  };
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    checkScrollPosition();
-    const scrollElement = scrollRef.current;
-    if (scrollElement) {
-      scrollElement.addEventListener('scroll', checkScrollPosition);
-      return () => scrollElement.removeEventListener('scroll', checkScrollPosition);
-    }
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const scrollAmount = 200;
-      scrollRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  };
-
   return (
-    <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-dark-secondary border-t border-dark-border">
-      <div className="relative">
-        {/* Left scroll indicator */}
-        {canScrollLeft && (
-          <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center">
-            <button
-              onClick={() => scroll('left')}
-              className="bg-dark-secondary/90 backdrop-blur-sm p-1 rounded-r-md shadow-lg border-r border-dark-border"
-            >
-              <ChevronLeft size={16} className="text-accent-red" />
-            </button>
-          </div>
-        )}
-        
-        {/* Right scroll indicator */}
-        {canScrollRight && (
-          <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center">
-            <button
-              onClick={() => scroll('right')}
-              className="bg-dark-secondary/90 backdrop-blur-sm p-1 rounded-l-md shadow-lg border-l border-dark-border"
-            >
-              <ChevronRight size={16} className="text-accent-red" />
-            </button>
-          </div>
-        )}
-
-        <div ref={scrollRef} className="overflow-x-auto scrollbar-hide">
-          <div className="flex gap-1 py-3 px-2 min-w-max">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => onTabChange(tab.id)}
-                  className={`flex flex-col items-center py-2 px-3 transition-colors rounded-lg whitespace-nowrap min-w-[72px] ${
-                    isActive 
-                      ? 'text-accent-red bg-accent-red/10' 
-                      : 'text-text-secondary hover:text-accent-light-red hover:bg-dark-elevated'
-                  }`}
-                >
-                  <Icon className="mb-1" size={18} />
-                  <span className="text-xs font-medium">{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+    <nav
+      className={cn(
+        "fixed bottom-0 left-0 right-0 h-20 z-40 transition-all duration-300",
+        isScrolled
+          ? "bg-dark-secondary/80 backdrop-blur-lg border-t border-dark-border"
+          : "bg-dark-secondary border-t border-dark-border"
+      )}
+    >
+      <div className="flex justify-around items-center h-full max-w-2xl mx-auto px-2">
+        {navLinks.map((link) => (
+          <button
+            key={link.id}
+            onClick={() => onTabChange(link.id)}
+            className={cn(
+              "flex flex-col items-center justify-center text-center w-16 transition-colors duration-200",
+              activeTab === link.id
+                ? "text-accent-red"
+                : "text-text-disabled hover:text-text-secondary"
+            )}
+          >
+            {link.icon}
+            <span className="text-xs mt-1 font-medium">{link.label}</span>
+          </button>
+        ))}
       </div>
     </nav>
   );
