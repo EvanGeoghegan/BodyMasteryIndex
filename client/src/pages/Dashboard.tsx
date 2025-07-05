@@ -151,7 +151,7 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
             <p className="text-sm text-text-secondary">Today's Dashboard</p>
           </div>
           <div className="w-16 h-16 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border border-dark-border">
-            <img src={logoPath} alt="Body Mastery Index" className="w-12 h-12 object-contain" />
+            <img src="/assets/icon.png" alt="Body Mastery Index Icon" className="w-full h-full object-cover" />
           </div>
         </div>
       </header>
