@@ -40,6 +40,9 @@
 
 @layer base {
   body {
+    html, body {
+  overflow-x: hidden;
+}
     font-family: 'Inter', sans-serif;
     @apply bg-dark-primary text-text-primary;
     transition-property: background-color, color;
@@ -59,13 +62,20 @@
   }
   /* --- END OF TOAST FIX --- */
 
-  /* Hide scrollbar for ALL elements */
-  *::-webkit-scrollbar {
-    display: none;
-  }
-  * {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+ /* Hide scrollbar for Chrome, Safari and Opera */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+html,
+body,
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
   }
 
   /* Fix for autofill background in dark mode */
@@ -76,7 +86,6 @@
     -webkit-box-shadow: 0 0 0 30px var(--dark-elevated) inset !important;
     -webkit-text-fill-color: var(--text-primary) !important;
   }
-}
 
 /* --- Utility Class Definitions --- */
 @layer components {

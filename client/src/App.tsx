@@ -95,7 +95,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <main className="max-w-md mx-auto h-full bg-dark-primary text-text-primary overflow-y-auto pt-6">
+        <main className="max-w-md mx-auto h-full bg-dark-primary text-text-primary pt-6">
           <div className="pb-24">
             {renderActiveTab()}
           </div>
