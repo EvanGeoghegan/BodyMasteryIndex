@@ -4,52 +4,96 @@
 @tailwind components;
 @tailwind utilities;
 
-/* --- Theme Variables --- */
-:root {
-  /* Existing Dark Theme */
-  --dark-primary: hsl(222, 47%, 8%);
-  --dark-secondary: hsl(222, 47%, 11%);
-  --dark-elevated: hsl(222, 47%, 15%);
-  --dark-border: hsl(222, 47%, 21%);
-  --accent-red: hsl(0, 75%, 45%);
-  --accent-light-red: hsl(0, 78%, 55%);
-  --accent-green: hsl(135, 65%, 55%);
-  --accent-warning: hsl(28, 90%, 60%);
-  --text-primary: hsl(220, 15%, 95%);
-  --text-secondary: hsl(220, 10%, 80%);
-  --text-disabled: hsl(220, 10%, 60%);
-  --bg-chart-uncompleted: var(--dark-elevated);
-}
-
-/* --- NEW: Cool Mist Light Theme --- */
-.light {
-  --dark-primary: #F8F9FA; /* Primary Background */
-  --dark-secondary: #FFFFFF; /* Card/Secondary Background */
-  --dark-elevated: #F8F9FA; /* Elevated Background */
-  --dark-border: #E9ECEF; /* Borders */
-  --accent-red: #4A90E2; /* Primary Accent (Cool Blue) */
-  --accent-light-red: #357ABD; /* Accent Hover */
-  --accent-green: #50C878; /* Secondary Accent (Mist Green) */
-  --accent-warning: #f59e0b; /* Warning */
-  --text-primary: #212529; /* Primary Text */
-  --text-secondary: #6C757D; /* Secondary Text */
-  --text-disabled: #ADB5BD; /* Disabled Text */
-  --bg-chart-uncompleted: var(--dark-border);
-}
-
-
 @layer base {
+  /* --- Theme Variable Definitions --- */
+  :root {
+    /* Default Dark Theme */
+    --dark-primary: hsl(222, 47%, 8%);
+    --dark-secondary: hsl(222, 47%, 11%);
+    --dark-elevated: hsl(222, 47%, 15%);
+    --dark-border: hsl(222, 47%, 21%);
+    --accent-red: hsl(0, 75%, 45%);
+    --accent-light-red: hsl(0, 78%, 55%);
+    --accent-green: hsl(135, 65%, 55%);
+    --accent-warning: hsl(28, 90%, 60%);
+    --text-primary: hsl(220, 15%, 95%);
+    --text-secondary: hsl(220, 10%, 80%);
+    --text-disabled: hsl(220, 10%, 60%);
+    --bg-chart-uncompleted: var(--dark-elevated);
+  }
+
+  /* Cool Mist Light Theme */
+  .light {
+    --dark-primary: #F8F9FA;
+    --dark-secondary: #FFFFFF;
+    --dark-elevated: #F8F9FA;
+    --dark-border: #E9ECEF;
+    --accent-red: #4A90E2;
+    --accent-light-red: #357ABD;
+    --accent-green: #50C878;
+    --accent-warning: #f59e0b;
+    --text-primary: #212529;
+    --text-secondary: #6C757D;
+    --text-disabled: #ADB5BD;
+    --bg-chart-uncompleted: var(--dark-border);
+  }
+
+  /* --- Base Layout & Font Styles --- */
+  html, body, #root {
+    @apply h-full overflow-hidden;
+  }
+
   body {
-    html, body {
-  overflow-x: hidden;
-}
     font-family: 'Inter', sans-serif;
     @apply bg-dark-primary text-text-primary;
     transition-property: background-color, color;
     transition-duration: 0.3s;
   }
 
-  /* --- FIX for Toast Notifications --- */
+  /* --- Global Style Fixes --- */
+  *::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--dark-elevated) inset !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+  }
+}
+
+@layer components {
+  /* --- Utility Class Definitions --- */
+  .bg-dark-primary { background-color: var(--dark-primary); }
+  .bg-dark-secondary { background-color: var(--dark-secondary); }
+  .bg-dark-elevated { background-color: var(--dark-elevated); }
+  .border-dark-border { border-color: var(--dark-border); }
+  .text-text-primary { color: var(--text-primary); }
+  .text-text-secondary { color: var(--text-secondary); }
+  .text-text-disabled { color: var(--text-disabled); }
+  .text-accent-red { color: var(--accent-red); }
+  .bg-accent-red { background-color: var(--accent-red); }
+  .text-accent-green { color: var(--accent-green); }
+  .bg-accent-green { background-color: var(--accent-green); }
+  .text-blue-400 { color: hsl(210, 80%, 60%); }
+  
+  /* --- Component Style Overrides --- */
+  .radix-dialog-content, [data-radix-select-content] {
+    background-color: var(--dark-secondary) !important;
+    border: 1px solid var(--dark-border) !important;
+  }
+  [data-radix-select-item]:hover {
+    background-color: var(--accent-red) !important;
+  }
+  nav {
+    background-color: var(--dark-secondary);
+    border-top: 1px solid var(--dark-border);
+  }
   [data-sonner-toast] {
     background-color: var(--dark-secondary) !important;
     border-color: var(--dark-border) !important;
@@ -60,67 +104,8 @@
   [data-sonner-toast] [data-description] {
     color: var(--text-secondary) !important;
   }
-  /* --- END OF TOAST FIX --- */
 
- /* Hide scrollbar for Chrome, Safari and Opera */
-html::-webkit-scrollbar,
-body::-webkit-scrollbar,
-*::-webkit-scrollbar {
-  display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-html,
-body,
-* {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-  }
-
-  /* Fix for autofill background in dark mode */
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover, 
-  input:-webkit-autofill:focus, 
-  input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px var(--dark-elevated) inset !important;
-    -webkit-text-fill-color: var(--text-primary) !important;
-  }
-
-/* --- Utility Class Definitions --- */
-@layer components {
-  .bg-dark-primary { background-color: var(--dark-primary); }
-  .bg-dark-secondary { background-color: var(--dark-secondary); }
-  .bg-dark-elevated { background-color: var(--dark-elevated); }
-  .border-dark-border { border-color: var(--dark-border); }
-  
-  .text-text-primary { color: var(--text-primary); }
-  .text-text-secondary { color: var(--text-secondary); }
-  .text-text-disabled { color: var(--text-disabled); }
-
-  .text-accent-red { color: var(--accent-red); }
-  .bg-accent-red { background-color: var(--accent-red); }
-  
-  .text-accent-green { color: var(--accent-green); }
-  .bg-accent-green { background-color: var(--accent-green); }
-
-  .text-blue-400 { color: hsl(210, 80%, 60%); }
-}
-
-/* --- Component Fixes (Pop-ups & Nav) --- */
-.radix-dialog-content, [data-radix-select-content] {
-  background-color: var(--dark-secondary) !important;
-  border: 1px solid var(--dark-border) !important;
-}
-[data-radix-select-item]:hover {
-  background-color: var(--accent-red) !important;
-}
-nav {
-  background-color: var(--dark-secondary);
-  border-top: 1px solid var(--dark-border);
-}
-/* --- Custom Light Theme Overrides --- */
-@layer components {
+  /* Custom Light Theme Calendar Fix */
   .light .activity-calendar-grid > div:not(.bg-accent-red) {
     background-color: #f1f3f5;
   }
