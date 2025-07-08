@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Home, Dumbbell, PieChart, BarChart3, Calendar, Cog } from "lucide-react";
+import { Home, Dumbbell, PieChart, BarChart3, Calendar, Cog, LayoutTemplate } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Define the props that this component will accept
@@ -19,6 +19,11 @@ const navLinks = [
     label: "Workout",
     icon: <Dumbbell className="w-6 h-6" />,
   },
+  {
+  id: "templates",
+  label: "Templates",
+  icon: <LayoutTemplate className="w-6 h-6" />,
+},
   {
     id: "macros",
     label: "Macros",
