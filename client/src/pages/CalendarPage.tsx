@@ -210,7 +210,7 @@ export default function CalendarPage() {
                       {workoutData?.types.includes('cardio') && <div className="w-1.5 h-1.5 bg-green-400 rounded-full" />}
                       {workoutData?.types.includes('core') && <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full" />}
                     </div>
-                    {supplementsTaken && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                    {supplementsTaken && <div className="w-1.5 h-1.5 bg-white rounded-full supplement-dot" />}
                   </div>
 
                 </div>

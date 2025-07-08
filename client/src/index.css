@@ -107,9 +107,12 @@
 
   /* Custom Light Theme Calendar Fix */
   .light .activity-calendar-grid > div:not(.bg-accent-red) {
-    background-color: #f1f3f5;
-  }
-  .light .activity-calendar-grid > div:not(.bg-accent-red):hover {
     background-color: #e9ecef;
   }
+  .light .activity-calendar-grid > div:not(.bg-accent-red):hover {
+    background-color: #dee2e6;
+  }
+  .light .supplement-dot {
+  border: 1px solid #000; /* A light grey border */
+}
 }
