@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Download, Upload, User, Target, Database, HelpCircle, Bell, Check, Save, Settings as SettingsIcon } from "lucide-react"; // Added SettingsIcon
+import { Trash2, Save, Download, Upload, User, Target, Database, HelpCircle, Bell, Check, Cog, Settings as SettingsIcon } from "lucide-react"; // Added SettingsIcon
 import { storage } from "@/lib/storage";
 import { Switch } from "@/components/ui/switch";
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
@@ -102,10 +102,29 @@ export default function Settings({}: SettingsProps) {
 
   return (
     <div className="bg-dark-primary">
-      <header className="bg-dark-secondary border-b border-dark-border p-4">
-        <h1 className="text-2xl font-bold text-text-primary font-['Montserrat']">Settings</h1>
-        <p className="text-text-secondary mt-1">Manage your goals, preferences, and data</p>
-      </header>
+      <header className="bg-dark-secondary p-2 shadow-lg">
+  <div className="flex items-center justify-between">
+    {/* Left side: Page Icon + Title */}
+    <div className="flex items-center">
+      <Cog className="text-accent-red mr-4" size={28} />
+      <div>
+        <h2 className="text-xl font-bold text-text-primary font-heading">
+          Settings
+        </h2>
+        <p className="text-text-secondary mt-1">Manage goals and preferences.</p>
+      </div>
+    </div>
+
+    {/* Right side: App Logo */}
+    <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
+      <img 
+        src="/assets/icon.png" 
+        alt="Body Mastery Index Icon" 
+        className="w-full h-full object-cover rounded-full" 
+      />
+    </div>
+  </div>
+</header>
 
       <div className="p-4 space-y-6 pb-24">
         {/* --- 2. ADD THE THEME SWITCHER HERE --- */}

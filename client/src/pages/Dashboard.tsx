@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Quote, History, Sparkles, Droplets, Target, Edit } from "lucide-react";
+import { Quote, History, Sparkles, Droplets, Target, Home, Edit } from "lucide-react";
 import logoPath from "@assets/Scale Logo draft _Nero_AI_Background_Remover_1750025859630.png";
 import { storage } from "@/lib/storage";
 import { getMotivationalQuote } from "@/lib/quotes";
@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 interface DashboardProps {
   onNavigateToWorkout: () => void;
   onEditWorkout?: (workout: Workout) => void;
-  refreshTrigger?: number; 
+  refreshTrigger?: number;
   onNavigateToNutrition?: () => void;
 }
 
@@ -60,24 +60,24 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
       exercise2: assessmentExercise2,
       exercise2Reps: parseInt(exercise2Reps) || 0
     };
-    
+
     const existingResults = JSON.parse(localStorage.getItem('assessment_results') || '[]');
     const weekIndex = existingResults.findIndex((r: any) => r.week === currentWeek);
-    
+
     if (weekIndex >= 0) {
       existingResults[weekIndex] = results;
     } else {
       existingResults.push(results);
     }
-    
+
     localStorage.setItem('assessment_results', JSON.stringify(existingResults));
     setWeeklyAssessmentDone(true);
-    
+
     toast({
       title: "Weekly assessment saved",
       description: `${assessmentExercise1}: ${exercise1Reps}, ${assessmentExercise2}: ${exercise2Reps}`
     });
-    
+
     setExercise1Reps("");
     setExercise2Reps("");
   };
@@ -113,13 +113,13 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
     const congratsDismissedDate = localStorage.getItem('congratsDismissedDate');
     const hasShownCongratsToday = lastCongratsDate === today;
     const wasDismissedToday = congratsDismissedDate === today;
-    
+
     if (todayWorkouts.length > 0 && !hasShownCongratsToday && !wasDismissedToday) {
       setShowCongrats(true);
       localStorage.setItem('lastCongratsDate', today);
     }
   };
-  
+
   const triggerCelebration = () => {
     confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
   };
@@ -137,129 +137,142 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
   const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
   };
-  
+
   const getCurrentDate = (): string => {
     return new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
   };
 
   return (
     <div className="bg-dark-primary text-text-primary pb-20">
-      <header className="bg-dark-secondary p-6 shadow-lg">
+      <header className="bg-dark-secondary p-2 shadow-lg">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold font-heading">Body Mastery Index</h1>
-            <p className="text-sm text-text-secondary">Today's Dashboard</p>
+          {/* Left side: Standalone Page Icon + Title */}
+          <div className="flex items-center">
+            <Home className="text-accent-red mr-4" size={28} />
+            <div>
+              <h2 className="text-xl font-bold text-text-primary font-heading">
+                Dashboard
+              </h2>
+              <p className="text-text-secondary mt-1">Your daily overview</p>
+            </div>
           </div>
-          <div className="w-16 h-16 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border border-dark-border">
-            <img src="/assets/icon.png" alt="Body Mastery Index Icon" className="w-full h-full object-cover" />
+
+          {/* Right side: App Logo */}
+          <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
+            {/* The key change here is adding rounded-full to the image itself */}
+            <img
+              src="/assets/icon.png"
+              alt="Body Mastery Index Icon"
+              className="w-full h-full object-cover rounded-full"
+            />
           </div>
         </div>
       </header>
 
       <div className="p-4 space-y-4">
-          {showCongrats && (
-            <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 rounded-xl p-6 border border-green-500/30 shadow-lg">
-              <div className="flex items-center justify-center mb-3">
-                <Sparkles className="text-green-400 mr-2" size={24} />
-                <h2 className="text-xl font-bold text-green-400">Congratulations!</h2>
-                <Sparkles className="text-green-400 ml-2" size={24} />
+        {showCongrats && (
+          <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 rounded-xl p-6 border border-green-500/30 shadow-lg">
+            <div className="flex items-center justify-center mb-3">
+              <Sparkles className="text-green-400 mr-2" size={24} />
+              <h2 className="text-xl font-bold text-green-400">Congratulations!</h2>
+              <Sparkles className="text-green-400 ml-2" size={24} />
+            </div>
+            <p className="text-text-primary text-center font-medium">
+              You've completed a workout today! Keep up the great work.
+            </p>
+            <Button
+              onClick={() => {
+                setShowCongrats(false);
+                const today = new Date().toISOString().split('T')[0];
+                localStorage.setItem('congratsDismissedDate', today);
+              }}
+              variant="ghost"
+              className="w-full mt-4 text-green-400 hover:text-green-300 hover:bg-green-500/10"
+            >
+              Dismiss
+            </Button>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors" onClick={() => onNavigateToNutrition?.()}>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-text-primary">Protein</h3>
+              <img src={logoPath} alt="Protein" className="w-4 h-4 object-contain" />
+            </div>
+            <div className="relative w-20 h-20 mx-auto mb-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={[{ value: Math.min(currentProtein, proteinGoal || 1), fill: 'var(--accent-red)' }, { value: Math.max(0, (proteinGoal || 1) - currentProtein), fill: 'var(--dark-elevated)' }]} cx="50%" cy="50%" innerRadius={25} outerRadius={40} startAngle={90} endAngle={-270} dataKey="value" />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs font-bold text-text-primary">{Math.round((currentProtein / (proteinGoal || 1)) * 100)}%</span>
               </div>
-              <p className="text-text-primary text-center font-medium">
-                You've completed a workout today! Keep up the great work.
-              </p>
-              <Button
-                onClick={() => {
-                  setShowCongrats(false);
-                  const today = new Date().toISOString().split('T')[0];
-                  localStorage.setItem('congratsDismissedDate', today);
-                }}
-                variant="ghost"
-                className="w-full mt-4 text-green-400 hover:text-green-300 hover:bg-green-500/10"
-              >
-                Dismiss
-              </Button>
+            </div>
+            <div className="text-center">
+              <div className="text-sm font-bold text-accent-red">{currentProtein}g</div>
+              <div className="text-xs text-text-secondary">of {proteinGoal}g</div>
+            </div>
+          </div>
+
+          <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors" onClick={() => onNavigateToNutrition?.()}>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-text-primary">Water</h3>
+              <Droplets className="text-blue-400" size={16} />
+            </div>
+            <div className="relative w-20 h-20 mx-auto mb-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={[{ value: Math.min(currentWater, waterGoal || 1), fill: 'hsl(210, 80%, 60%)' }, { value: Math.max(0, (waterGoal || 1) - currentWater), fill: 'var(--dark-elevated)' }]} cx="50%" cy="50%" innerRadius={25} outerRadius={40} startAngle={90} endAngle={-270} dataKey="value" />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs font-bold text-text-primary">{Math.round((currentWater / (waterGoal || 1)) * 100)}%</span>
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-sm font-bold text-blue-400">{currentWater}L</div>
+              <div className="text-xs text-text-secondary">of {waterGoal}L</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
+          <div className="flex items-center gap-2 mb-4">
+            <Target className="text-accent-red" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">Weekly Assessment</h2>
+          </div>
+          {weeklyAssessmentDone ? (
+            <div className="text-center py-4"><div className="text-accent-green mb-2">✓</div><p className="text-text-secondary text-sm">Weekly assessment completed!</p><p className="text-text-secondary text-xs mt-1">Come back next week.</p></div>
+          ) : (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="text-sm font-medium text-text-secondary">{assessmentExercise1}</label><Input type="number" placeholder="0" value={exercise1Reps} onChange={(e) => setExercise1Reps(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" /></div>
+                <div><label className="text-sm font-medium text-text-secondary">{assessmentExercise2}</label><Input type="number" placeholder="0" value={exercise2Reps} onChange={(e) => setExercise2Reps(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" /></div>
+              </div>
+              <Button onClick={saveAssessmentResults} disabled={!exercise1Reps || !exercise2Reps} className="w-full bg-accent-red text-white disabled:opacity-50">Save Weekly Assessment</Button>
             </div>
           )}
+        </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors" onClick={() => onNavigateToNutrition?.()}>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-text-primary">Protein</h3>
-                <img src={logoPath} alt="Protein" className="w-4 h-4 object-contain" />
-              </div>
-              <div className="relative w-20 h-20 mx-auto mb-2">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={[{ value: Math.min(currentProtein, proteinGoal || 1), fill: 'var(--accent-red)' }, { value: Math.max(0, (proteinGoal || 1) - currentProtein), fill: 'var(--dark-elevated)' }]} cx="50%" cy="50%" innerRadius={25} outerRadius={40} startAngle={90} endAngle={-270} dataKey="value" />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-xs font-bold text-text-primary">{Math.round((currentProtein / (proteinGoal || 1)) * 100)}%</span>
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-sm font-bold text-accent-red">{currentProtein}g</div>
-                <div className="text-xs text-text-secondary">of {proteinGoal}g</div>
-              </div>
-            </div>
+        <div className="bg-gradient-to-br from-dark-secondary to-dark-elevated rounded-xl p-6 border border-dark-border shadow-lg">
+          <p className="text-text-primary text-base italic leading-relaxed font-medium">"{motivationalQuote.text}"</p>
+          <p className="text-accent-red text-sm mt-4 font-medium">— {motivationalQuote.author}</p>
+          {daysSinceLastWorkout >= 3 && (<div className="mt-3 px-3 py-2 bg-accent-red/10 border border-accent-red/20 rounded-lg"><p className="text-accent-red text-xs font-medium">{daysSinceLastWorkout === 999 ? "No workouts logged yet" : `${daysSinceLastWorkout} days since last workout`}</p></div>)}
+        </div>
 
-            <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors" onClick={() => onNavigateToNutrition?.()}>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-text-primary">Water</h3>
-                <Droplets className="text-blue-400" size={16} />
-              </div>
-              <div className="relative w-20 h-20 mx-auto mb-2">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={[{ value: Math.min(currentWater, waterGoal || 1), fill: 'hsl(210, 80%, 60%)' }, { value: Math.max(0, (waterGoal || 1) - currentWater), fill: 'var(--dark-elevated)' }]} cx="50%" cy="50%" innerRadius={25} outerRadius={40} startAngle={90} endAngle={-270} dataKey="value" />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-xs font-bold text-text-primary">{Math.round((currentWater / (waterGoal || 1)) * 100)}%</span>
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-sm font-bold text-blue-400">{currentWater}L</div>
-                <div className="text-xs text-text-secondary">of {waterGoal}L</div>
-              </div>
+        <div className="bg-dark-secondary rounded-xl p-5 border border-dark-border shadow-lg">
+          <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center"><History className="text-accent-red mr-2" size={20} />Last Activity</h3>
+          {lastWorkout ? (
+            <div className="space-y-3">
+              <div className="flex justify-between items-center"><span className="text-text-secondary">Workout</span><span className="text-text-primary font-medium">{lastWorkout.name}</span></div>
+              <div className="flex justify-between items-center"><span className="text-text-secondary">Date</span><span className="text-text-primary font-medium">{formatDate(lastWorkout.date)}</span></div>
+              <div className="flex justify-between items-center"><span className="text-text-secondary">Exercises</span><span className="text-text-primary font-medium">{lastWorkout.exercises.length} exercises</span></div>
+              {onEditWorkout && (<Button onClick={() => onEditWorkout(lastWorkout)} variant="secondary" size="sm" className="w-full mt-3 bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-red">Edit Workout</Button>)}
             </div>
-          </div>
-          
-          <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
-            <div className="flex items-center gap-2 mb-4">
-              <Target className="text-accent-red" size={20} />
-              <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">Weekly Assessment</h2>
-            </div>
-            {weeklyAssessmentDone ? (
-              <div className="text-center py-4"><div className="text-accent-green mb-2">✓</div><p className="text-text-secondary text-sm">Weekly assessment completed!</p><p className="text-text-secondary text-xs mt-1">Come back next week.</p></div>
-            ) : (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div><label className="text-sm font-medium text-text-secondary">{assessmentExercise1}</label><Input type="number" placeholder="0" value={exercise1Reps} onChange={(e) => setExercise1Reps(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" /></div>
-                  <div><label className="text-sm font-medium text-text-secondary">{assessmentExercise2}</label><Input type="number" placeholder="0" value={exercise2Reps} onChange={(e) => setExercise2Reps(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" /></div>
-                </div>
-                <Button onClick={saveAssessmentResults} disabled={!exercise1Reps || !exercise2Reps} className="w-full bg-accent-red text-white disabled:opacity-50">Save Weekly Assessment</Button>
-              </div>
-            )}
-          </div>
-          
-          <div className="bg-gradient-to-br from-dark-secondary to-dark-elevated rounded-xl p-6 border border-dark-border shadow-lg">
-            <p className="text-text-primary text-base italic leading-relaxed font-medium">"{motivationalQuote.text}"</p>
-            <p className="text-accent-red text-sm mt-4 font-medium">— {motivationalQuote.author}</p>
-            {daysSinceLastWorkout >= 3 && (<div className="mt-3 px-3 py-2 bg-accent-red/10 border border-accent-red/20 rounded-lg"><p className="text-accent-red text-xs font-medium">{daysSinceLastWorkout === 999 ? "No workouts logged yet" : `${daysSinceLastWorkout} days since last workout`}</p></div>)}
-          </div>
-
-          <div className="bg-dark-secondary rounded-xl p-5 border border-dark-border shadow-lg">
-            <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center"><History className="text-accent-red mr-2" size={20} />Last Activity</h3>
-            {lastWorkout ? (
-              <div className="space-y-3">
-                <div className="flex justify-between items-center"><span className="text-text-secondary">Workout</span><span className="text-text-primary font-medium">{lastWorkout.name}</span></div>
-                <div className="flex justify-between items-center"><span className="text-text-secondary">Date</span><span className="text-text-primary font-medium">{formatDate(lastWorkout.date)}</span></div>
-                <div className="flex justify-between items-center"><span className="text-text-secondary">Exercises</span><span className="text-text-primary font-medium">{lastWorkout.exercises.length} exercises</span></div>
-                {onEditWorkout && (<Button onClick={() => onEditWorkout(lastWorkout)} variant="secondary" size="sm" className="w-full mt-3 bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-red">Edit Workout</Button>)}
-              </div>
-            ) : (<p className="text-text-secondary">No workouts logged yet. Start your first workout!</p>)}
-          </div>
+          ) : (<p className="text-text-secondary">No workouts logged yet. Start your first workout!</p>)}
+        </div>
       </div>
 
       <div className="px-4 pb-4">

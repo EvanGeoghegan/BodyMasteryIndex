@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Edit } from "lucide-react";
+import { Plus, LayoutTemplate, Edit } from "lucide-react";
 import TemplateCard from "@/components/TemplateCard";
 import { storage } from "@/lib/storage";
 import { Template, InsertTemplate } from "@shared/schema";
@@ -35,7 +35,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
   const loadTemplates = () => {
     const loadedTemplates = storage.getTemplates();
     setTemplates(loadedTemplates);
-    
+
     // Initialize default templates if none exist
     if (loadedTemplates.length === 0) {
       storage.initializeDefaultTemplates();
@@ -93,7 +93,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
           description: "Template created successfully!",
         });
       }
-      
+
       loadTemplates();
       setShowCreateDialog(false);
     } catch (error) {
@@ -148,15 +148,28 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
 
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
-      <header className="bg-dark-secondary p-4 shadow-lg flex items-center justify-between">
-        <h2 className="text-xl font-bold text-text-primary font-heading">Templates</h2>
-        <Button
-          onClick={openCreateDialog}
-          className="bg-accent-green hover:bg-green-500 text-dark-primary px-4 py-2"
-        >
-          <Plus className="mr-1" size={16} />
-          Create
-        </Button>
+      <header className="bg-dark-secondary p-2 shadow-lg">
+        <div className="flex items-center justify-between">
+          {/* Left side: Page Icon + Title */}
+          <div className="flex items-center">
+            <LayoutTemplate className="text-accent-red mr-4" size={28} />
+            <div>
+              <h2 className="text-xl font-bold text-text-primary font-heading">
+                Workout Templates
+              </h2>
+              <p className="text-text-secondary mt-1">Start your session quickly.</p>
+            </div>
+          </div>
+
+          {/* Right side: App Logo */}
+          <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
+            <img
+              src="/assets/icon.png"
+              alt="Body Mastery Index Icon"
+              className="w-full h-full object-cover rounded-full"
+            />
+          </div>
+        </div>
       </header>
 
       <div className="p-4 space-y-4">
@@ -191,7 +204,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
               {editingTemplate ? 'Edit Template' : 'Create Template'}
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div>
               <label className="text-text-secondary text-sm font-medium mb-2 block">
@@ -273,7 +286,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
                   <Plus size={14} />
                 </Button>
               </div>
-              
+
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {formData.exercises.map((exercise, index) => (
                   <div key={index} className="bg-dark-elevated p-3 rounded border border-dark-border">
@@ -292,7 +305,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
                         className="bg-dark-primary text-text-primary border-dark-border text-sm"
                       />
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-2 mb-2">
                       <Select value={exercise.type || "strength"} onValueChange={(value: "strength" | "cardio") => updateExercise(index, 'type', value)}>
                         <SelectTrigger className="bg-dark-primary text-text-primary border-dark-border text-sm">
@@ -303,10 +316,10 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
                           <SelectItem value="cardio">Cardio</SelectItem>
                         </SelectContent>
                       </Select>
-                      
+
 
                     </div>
-                    
+
                     {exercise.type === "cardio" ? (
                       <div className="grid grid-cols-3 gap-2">
                         <Input

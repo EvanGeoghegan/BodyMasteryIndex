@@ -18,17 +18,17 @@ export default function CalendarPage() {
       setWorkoutDays(storage.getWorkoutDays());
       setRefreshKey(prev => prev + 1);
     };
-    
+
     refreshData();
-    
+
     const handleVisibilityChange = () => {
       if (!document.hidden) {
         refreshData();
       }
     };
-    
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
@@ -73,8 +73,8 @@ export default function CalendarPage() {
   const isToday = (date: Date) => {
     const todayDate = new Date();
     return date.getDate() === todayDate.getDate() &&
-           date.getMonth() === todayDate.getMonth() &&
-           date.getFullYear() === todayDate.getFullYear();
+      date.getMonth() === todayDate.getMonth() &&
+      date.getFullYear() === todayDate.getFullYear();
   };
   // --- END FIX ---
 
@@ -99,9 +99,9 @@ export default function CalendarPage() {
     const dateString = toLocalDateString(date);
     const allWorkouts = storage.getWorkouts();
     const workouts = allWorkouts.filter(w => w.date.startsWith(dateString));
-    
+
     if (workouts.length === 0) return null;
-    
+
     const workoutTypes = new Set(workouts.map(w => w.type));
     return {
       hasWorkouts: true,
@@ -117,13 +117,13 @@ export default function CalendarPage() {
 
   const handleDateClick = (date: Date) => {
     if (isFutureDate(date)) return;
-    
+
     const dateString = toLocalDateString(date);
     const workouts = storage.getWorkouts().filter(w => w.date.startsWith(dateString));
     const logs = storage.getSupplementLogs(dateString);
     const takenSupplements = logs.filter(log => log.taken && log.supplementId);
     setSelectedSupplements(takenSupplements);
-    
+
     setSelectedDate(date);
     setSelectedWorkouts(workouts);
   };
@@ -135,15 +135,15 @@ export default function CalendarPage() {
   };
 
   const formatWorkoutSummary = (workout: Workout) => {
-    const completedSets = workout.exercises.reduce((acc, ex) => 
+    const completedSets = workout.exercises.reduce((acc, ex) =>
       acc + ex.sets.filter(set => set.completed).length, 0
     );
-    const totalVolume = workout.exercises.reduce((vol, ex) => 
-      vol + ex.sets.reduce((setVol, set) => 
+    const totalVolume = workout.exercises.reduce((vol, ex) =>
+      vol + ex.sets.reduce((setVol, set) =>
         set.completed && set.weight && set.reps ? setVol + (set.weight * set.reps) : setVol, 0
       ), 0
     );
-    
+
     return {
       exercises: workout.exercises.length,
       completedSets,
@@ -153,11 +153,28 @@ export default function CalendarPage() {
 
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
-      <header className="bg-dark-secondary p-6 shadow-lg">
-        <h2 className="text-xl font-bold text-text-primary font-heading flex items-center">
-          <Calendar className="mr-2 text-accent-red" size={24} />
-          Activity Calendar
-        </h2>
+      <header className="bg-dark-secondary p-2 shadow-lg">
+        <div className="flex items-center justify-between">
+          {/* Left side: Page Icon + Title */}
+          <div className="flex items-center">
+            <Calendar className="text-accent-red mr-4" size={28} />
+            <div>
+              <h2 className="text-xl font-bold text-text-primary font-heading">
+                Activity Calendar
+              </h2>
+              <p className="text-text-secondary mt-1">Review your workout history.</p>
+            </div>
+          </div>
+
+          {/* Right side: App Logo */}
+          <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
+            <img
+              src="/assets/icon.png"
+              alt="Body Mastery Index Icon"
+              className="w-full h-full object-cover rounded-full"
+            />
+          </div>
+        </div>
       </header>
 
       <div className="p-4">
@@ -183,7 +200,7 @@ export default function CalendarPage() {
               </div>
             ))}
           </div>
-          
+
           {/* Calendar Days */}
           <div className="grid grid-cols-7 gap-2">
             {days.map((date, index) => {
@@ -208,7 +225,7 @@ export default function CalendarPage() {
                   )}
                 >
                   <span className="z-10 text-center text-sm">{date.getDate()}</span>
-                  
+
                   <div className="absolute bottom-1.5 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-1">
                     <div className="flex gap-1">
                       {workoutData?.types.includes('strength') && <div className="w-1.5 h-1.5 bg-blue-400 rounded-full" />}
@@ -222,7 +239,7 @@ export default function CalendarPage() {
               );
             })}
           </div>
-          
+
           {/* Calendar Legend */}
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-8 pt-6 border-t border-dark-border">
             <div className="flex items-center space-x-3">
@@ -253,7 +270,7 @@ export default function CalendarPage() {
         </div>
       </div>
 
-{/* Workout Details Modal */}
+      {/* Workout Details Modal */}
       {selectedDate && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-dark-secondary rounded-xl max-w-md w-full max-h-[85vh] overflow-y-auto border border-dark-border shadow-2xl">
@@ -265,7 +282,7 @@ export default function CalendarPage() {
                 <X size={20} />
               </Button>
             </div>
-            
+
             <div className="p-4">
               {selectedWorkouts.length > 0 || selectedSupplements.length > 0 ? (
                 <div className="space-y-6">

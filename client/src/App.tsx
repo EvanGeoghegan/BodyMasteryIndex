@@ -11,7 +11,7 @@ import Templates from "@/pages/Templates";
 import CalendarPage from "@/pages/CalendarPage";
 import PersonalBests from "@/pages/PersonalBests";
 import ProgressDashboard from "@/pages/ProgressDashboard";
-import Supplements from "@/pages/Macros";
+import Macros from "@/pages/Macros";
 import Settings from "@/pages/Settings";
 import { storage } from "@/lib/storage";
 import { Template, Workout as WorkoutType } from "@shared/schema";
@@ -66,7 +66,7 @@ function App() {
   };
 
   const handleNavigateToNutrition = () => {
-    setActiveTab("supplements");
+    setActiveTab("macros");
   };
 
   const renderActiveTab = () => {
@@ -83,8 +83,8 @@ function App() {
         return <PersonalBests />;
       case "progress":
         return <ProgressDashboard />;
-      case "supplements":
-        return <Supplements />;
+      case "macros":
+        return <Macros />;
       case "settings":
         return <Settings />; 
       default:
@@ -95,7 +95,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <main className="max-w-md mx-auto h-full bg-dark-primary text-text-primary overflow-y-auto">
+        <main className="max-w-md mx-auto h-full bg-dark-primary text-text-primary overflow-y-auto pt-8">
           <div className="pb-24">
             {renderActiveTab()}
           </div>

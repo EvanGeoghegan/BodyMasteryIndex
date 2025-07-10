@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Save, Copy, Check } from "lucide-react"; // Import Check icon
+import { Plus, Save, Copy, Dumbbell, Check } from "lucide-react"; // Import Check icon
 import ExerciseCard from "@/components/ExerciseCard";
 import { storage } from "@/lib/storage";
 import { Exercise, Workout, Template } from "@shared/schema";
@@ -27,14 +27,14 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
   const [todaysWorkouts, setTodaysWorkouts] = useState<Workout[]>([]);
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
   const { toast } = useToast();
-  
+
   const [lastAddedExerciseId, setLastAddedExerciseId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false); // State for save confirmation
 
   useEffect(() => {
     setTemplates(storage.getTemplates());
     loadTodaysWorkouts();
-    
+
     if (initialWorkout) {
       setEditingWorkout(initialWorkout);
       setWorkoutName(initialWorkout.name);
@@ -63,7 +63,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
     setExercises(workout.exercises);
     setWorkoutDate(workout.date.split('T')[0]);
     setWorkoutNotes(workout.notes || "");
-    setLastAddedExerciseId(null); 
+    setLastAddedExerciseId(null);
   };
 
   const clearWorkout = () => {
@@ -79,7 +79,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
   const loadFromTemplate = (template: Template) => {
     setWorkoutName(template.name);
     setWorkoutType(template.type as any || "strength");
-    
+
     const templateExercises: Exercise[] = template.exercises.map(templateEx => ({
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       name: templateEx.name,
@@ -93,9 +93,9 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
         completed: false,
       }))
     }));
-    
+
     setExercises(templateExercises);
-    setLastAddedExerciseId(null); 
+    setLastAddedExerciseId(null);
   };
 
   const addExercise = () => {
@@ -110,7 +110,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
   };
 
   const updateExercise = (exerciseId: string, updatedData: Partial<Exercise>) => {
-    setExercises(exercises.map(ex => 
+    setExercises(exercises.map(ex =>
       ex.id === exerciseId ? { ...ex, ...updatedData } : ex
     ));
   };
@@ -145,19 +145,19 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
       } else {
         storage.createWorkout(workout);
       }
-      
+
       const workoutDateOnly = workout.date.split('T')[0];
       const today = new Date().toISOString().split('T')[0];
       if (workoutDateOnly === today) {
         localStorage.removeItem('congratsDismissedDate');
       }
-      
+
       validExercises.forEach(exercise => {
         if (exercise.type !== "strength") return;
-        
+
         const completedSets = exercise.sets.filter(set => set.completed && (set.weight || 0) > 0 && (set.reps || 0) > 0);
         if (completedSets.length === 0) return;
-        
+
         const bestSetInWorkout = completedSets.reduce((best, current) => {
           const best1RM = (best.weight || 0) * (1 + (best.reps || 0) / 30);
           const current1RM = (current.weight || 0) * (1 + (current.reps || 0) / 30);
@@ -172,30 +172,30 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
         };
 
         if (existingPB) {
-            const existing1RM = (existingPB.weight || 0) * (1 + (existingPB.reps || 0) / 30);
-            const new1RM = (newPbData.weight || 0) * (1 + (newPbData.reps || 0) / 30);
+          const existing1RM = (existingPB.weight || 0) * (1 + (existingPB.reps || 0) / 30);
+          const new1RM = (newPbData.weight || 0) * (1 + (newPbData.reps || 0) / 30);
 
-            if (new1RM > existing1RM) {
-                storage.updatePersonalBest(existingPB.id, newPbData);
-            }
+          if (new1RM > existing1RM) {
+            storage.updatePersonalBest(existingPB.id, newPbData);
+          }
         } else {
-             storage.createPersonalBest({
-                exerciseName: exercise.name.trim(),
-                weight: newPbData.weight,
-                reps: newPbData.reps,
-                date: newPbData.date,
-                type: newPbData.reps === 1 ? '1RM' : 'volume',
-            });
+          storage.createPersonalBest({
+            exerciseName: exercise.name.trim(),
+            weight: newPbData.weight,
+            reps: newPbData.reps,
+            date: newPbData.date,
+            type: newPbData.reps === 1 ? '1RM' : 'volume',
+          });
         }
       });
 
       // --- NEW: Trigger the save confirmation state ---
       setIsSaving(true);
       setTimeout(() => {
-          setIsSaving(false);
-          loadTodaysWorkouts();
-          clearWorkout();
-          onWorkoutSaved();
+        setIsSaving(false);
+        loadTodaysWorkouts();
+        clearWorkout();
+        onWorkoutSaved();
       }, 1000); // Show confirmation for 1 second
 
     } catch (error) {
@@ -205,8 +205,28 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
 
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
-      <header className="bg-dark-secondary p-4 shadow-lg">
-        <h2 className="text-xl font-bold text-text-primary font-heading">Log Workout</h2>
+      <header className="bg-dark-secondary p-2 shadow-lg">
+        <div className="flex items-center justify-between">
+          {/* Left side: Page Icon + Title */}
+          <div className="flex items-center">
+            <Dumbbell className="text-accent-red mr-4" size={28} />
+            <div>
+              <h2 className="text-xl font-bold text-text-primary font-heading">
+                Log Workout
+              </h2>
+              <p className="text-text-secondary mt-1">Track your sets, reps, and weight.</p>
+            </div>
+          </div>
+
+          {/* Right side: App Logo */}
+          <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
+            <img
+              src="/assets/icon.png"
+              alt="Body Mastery Index Icon"
+              className="w-full h-full object-cover rounded-full"
+            />
+          </div>
+        </div>
       </header>
 
       <div className="p-4 space-y-4">
@@ -250,7 +270,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
             </Button>
           </div>
           <Input value={workoutName} onChange={(e) => setWorkoutName(e.target.value)} className="w-full bg-dark-elevated text-text-primary border-dark-border mb-3" placeholder="e.g., Push Day, Leg Day" />
-          
+
           <div className="grid grid-cols-2 gap-3 mb-3">
             <div>
               <label className="text-text-secondary text-sm font-medium mb-1 block">Workout Date</label>
@@ -274,25 +294,25 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
         </div>
 
         <div className="space-y-3">
-            {exercises.map((exercise) => (
-                <ExerciseCard 
-                    key={exercise.id}
-                    exercise={exercise}
-                    onUpdate={(updatedData) => updateExercise(exercise.id, updatedData)}
-                    onDelete={() => deleteExercise(exercise.id)}
-                    startOpen={exercise.id === lastAddedExerciseId}
-                    workoutType={workoutType} 
-                />
-            ))}
+          {exercises.map((exercise) => (
+            <ExerciseCard
+              key={exercise.id}
+              exercise={exercise}
+              onUpdate={(updatedData) => updateExercise(exercise.id, updatedData)}
+              onDelete={() => deleteExercise(exercise.id)}
+              startOpen={exercise.id === lastAddedExerciseId}
+              workoutType={workoutType}
+            />
+          ))}
         </div>
-        
+
         <Button onClick={addExercise} variant="outline" className="w-full bg-dark-secondary hover:bg-dark-elevated border-dark-border text-text-secondary font-medium">
-            <Plus className="mr-2" size={16} />
-            Add Another Exercise
+          <Plus className="mr-2" size={16} />
+          Add Another Exercise
         </Button>
 
         <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
-           <label className="block text-text-secondary text-sm font-medium mb-2">Workout Notes</label>
+          <label className="block text-text-secondary text-sm font-medium mb-2">Workout Notes</label>
           <textarea value={workoutNotes} onChange={(e) => setWorkoutNotes(e.target.value)} placeholder="Add notes about your workout..." className="w-full bg-dark-elevated text-text-primary border border-dark-border rounded-lg p-3 text-sm resize-none" rows={3} />
         </div>
 
@@ -302,8 +322,8 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
           disabled={isSaving}
           className={cn(
             "w-full text-white font-semibold py-3 px-6 transition-all duration-300",
-            isSaving 
-              ? "bg-accent-green" 
+            isSaving
+              ? "bg-accent-green"
               : "bg-accent-red hover:bg-accent-light-red"
           )}
         >
