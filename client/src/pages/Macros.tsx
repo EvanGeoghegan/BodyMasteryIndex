@@ -268,7 +268,7 @@ export default function Macros() {
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Macro Tracker
               </h2>
-              <p className="text-text-secondary mt-1">Log your daily protein, water, and supplements.</p>
+              <p className="text-text-secondary mt-1">Log your daily macro/micronutrients.</p>
             </div>
           </div>
 
