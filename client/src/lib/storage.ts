@@ -171,6 +171,11 @@ class LocalStorage {
   getSupplements(): Supplement[] {
     return this.getData<Supplement>('supplements');
   }
+  
+  getSupplementById(id: string): Supplement | undefined {
+  const supplements = this.getSupplements();
+  return supplements.find(s => s.id === id);
+  }
 
   getSupplement(id: string): Supplement | undefined {
     const supplements = this.getSupplements();

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Calendar, X, Dumbbell, Clock } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, X, Dumbbell, Clock, Pill } from "lucide-react";
 import { storage } from "@/lib/storage";
-import { Workout } from "@shared/schema";
+import { Workout, SupplementLog } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +11,7 @@ export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedWorkouts, setSelectedWorkouts] = useState<Workout[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [selectedSupplements, setSelectedSupplements] = useState<SupplementLog[]>([]);
 
   useEffect(() => {
     const refreshData = () => {
@@ -119,6 +120,9 @@ export default function CalendarPage() {
     
     const dateString = toLocalDateString(date);
     const workouts = storage.getWorkouts().filter(w => w.date.startsWith(dateString));
+    const logs = storage.getSupplementLogs(dateString);
+    const takenSupplements = logs.filter(log => log.taken && log.supplementId);
+    setSelectedSupplements(takenSupplements);
     
     setSelectedDate(date);
     setSelectedWorkouts(workouts);
@@ -127,6 +131,7 @@ export default function CalendarPage() {
   const closeModal = () => {
     setSelectedDate(null);
     setSelectedWorkouts([]);
+    setSelectedSupplements([]);
   };
 
   const formatWorkoutSummary = (workout: Workout) => {
@@ -248,7 +253,7 @@ export default function CalendarPage() {
         </div>
       </div>
 
-      {/* Workout Details Modal */}
+{/* Workout Details Modal */}
       {selectedDate && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-dark-secondary rounded-xl max-w-md w-full max-h-[85vh] overflow-y-auto border border-dark-border shadow-2xl">
@@ -262,32 +267,50 @@ export default function CalendarPage() {
             </div>
             
             <div className="p-4">
-              {selectedWorkouts.length > 0 ? (
-                <div className="space-y-4">
-                  {selectedWorkouts.map((workout, workoutIndex) => {
-                    const summary = formatWorkoutSummary(workout);
-                    return (
-                      <div key={workout.id} className="bg-dark-elevated p-4 rounded-lg border border-dark-border">
-                         <div className="flex items-center justify-between mb-3">
+              {selectedWorkouts.length > 0 || selectedSupplements.length > 0 ? (
+                <div className="space-y-6">
+                  {/* Workouts Section */}
+                  {selectedWorkouts.length > 0 && (
+                    <div>
+                      {selectedWorkouts.map((workout) => (
+                        <div key={workout.id} className="bg-dark-elevated p-4 rounded-lg border border-dark-border mb-4">
+                          <div className="flex items-center justify-between mb-3">
                             <h4 className="font-semibold text-text-primary">{workout.name}</h4>
-                            <span className="text-xs px-2 py-1 rounded-full bg-accent-red/10 text-accent-red font-medium">{workout.type}</span>
-                         </div>
-                        
-                        <div className="space-y-2">
+                            <span className="text-xs px-2 py-1 rounded-full bg-accent-red/10 text-accent-red font-medium capitalize">{workout.type}</span>
+                          </div>
+                          <div className="space-y-2">
                             {workout.exercises.map((exercise, index) => (
-                                <div key={index} className="text-sm text-text-secondary border-t border-dark-border pt-2">
-                                    <span className="font-medium text-text-primary">{exercise.name}</span> - {exercise.sets.filter(s => s.completed).length} sets
-                                </div>
+                              <div key={index} className="text-sm text-text-secondary border-t border-dark-border pt-2 first:border-t-0 first:pt-0">
+                                <span className="font-medium text-text-primary">{exercise.name}</span> - {exercise.sets.filter(s => s.completed).length} sets
+                              </div>
                             ))}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Supplements Section */}
+                  {selectedSupplements.length > 0 && (
+                    <div className="pt-4 border-t border-dark-border">
+                      <h4 className="font-semibold text-text-primary mb-3 flex items-center">
+                        <Pill className="mr-2 text-accent-green" size={18} />
+                        Supplements Logged
+                      </h4>
+                      <ul className="space-y-2 text-text-secondary">
+                        {selectedSupplements.map(log => (
+                          <li key={log.id} className="bg-dark-elevated p-2 rounded-md text-sm">
+                            {storage.getSupplementById(log.supplementId)?.name || 'Unknown Supplement'}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="text-center py-8">
                   <Calendar className="mx-auto text-text-disabled mb-4" size={48} />
-                  <p className="text-text-secondary mb-2">No workout logged</p>
+                  <p className="text-text-secondary mb-2">No Activity Logged</p>
                   <p className="text-text-disabled text-sm">This was a rest day.</p>
                 </div>
               )}
