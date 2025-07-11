@@ -81,7 +81,33 @@
   .text-accent-green { color: var(--accent-green); }
   .bg-accent-green { background-color: var(--accent-green); }
   .text-blue-400 { color: hsl(210, 80%, 60%); }
-  
+
+  .pie-chart-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+.pie-chart-container::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(var(--color) calc(var(--p, 0) * 1%), var(--bg-chart-uncompleted) 0);
+  transition: background 0.3s;
+}
+.pie-chart-center {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  display: grid;
+  place-items: center;
+}
   /* --- Component Style Overrides --- */
   .radix-dialog-content, [data-radix-select-content] {
     background-color: var(--dark-secondary) !important;
