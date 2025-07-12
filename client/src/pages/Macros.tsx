@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
-import { Plus, Pill, Calendar, Clock, PieChart, Trash2, Edit, RotateCcw, CheckCircle, XCircle, Info } from "lucide-react";
+import { Plus, Pill, Clock, PieChart as PieChartIcon, Trash2, Edit, RotateCcw, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose, DialogDescription } from "@/components/ui/dialog";
-import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerFooter, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerFooter, DrawerTitle } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,8 +13,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { insertSupplementSchema, Supplement, SupplementLog, InsertSupplement, InsertSupplementLog } from "@shared/schema";
 import { storage } from "@/lib/storage";
-import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { PieChart as RechartsPieChart, Pie, ResponsiveContainer } from "recharts";
 
 const supplementTypes = [
   { value: "vitamin", label: "Vitamin" },
@@ -61,9 +58,10 @@ const timingPreferences = [
 ];
 
 export default function Macros() {
-  const [supplements, setSupplements] = useState<Supplement[]>(storage.getSupplements());
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [todayLogs, setTodayLogs] = useState<SupplementLog[]>(storage.getSupplementLogs(selectedDate));
+  const [activeTab, setActiveTab] = useState("today");
+  const [supplements, setSupplements] = useState<Supplement[]>([]);
+  const [selectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [todayLogs, setTodayLogs] = useState<SupplementLog[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingSupplement, setEditingSupplement] = useState<Supplement | null>(null);
   const [proteinGoal, setProteinGoal] = useState(150);
@@ -71,12 +69,9 @@ export default function Macros() {
   const [currentProtein, setCurrentProtein] = useState(0);
   const [currentWater, setCurrentWater] = useState(0);
 
-  // State for the new logging drawer
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [activeMetric, setActiveMetric] = useState<'protein' | 'water' | null>(null);
   const [sliderValue, setSliderValue] = useState(0);
-
-  const { toast } = useToast();
 
   const form = useForm<InsertSupplement>({
     resolver: zodResolver(insertSupplementSchema),
@@ -93,31 +88,33 @@ export default function Macros() {
   });
 
   const refreshData = () => {
-    const today = new Date().toISOString().split('T')[0];
-    const savedSettings = localStorage.getItem('bmi_settings');
-    if (savedSettings) {
-      try {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const savedSettings = localStorage.getItem('bmi_settings');
+      if (savedSettings) {
         const settings = JSON.parse(savedSettings);
         setProteinGoal(settings.proteinGoal || 150);
         setWaterGoal(settings.waterGoal || 3.0);
-      } catch (error) { console.error('Error loading settings:', error); }
-    }
+      }
 
-    const nutritionData = localStorage.getItem(`nutrition_${today}`);
-    if (nutritionData) {
-      try {
+      const nutritionData = localStorage.getItem(`nutrition_${today}`);
+      if (nutritionData) {
         const data = JSON.parse(nutritionData);
         setCurrentProtein(data.protein || 0);
         setCurrentWater(data.water || 0);
-      } catch (error) { console.error('Error loading nutrition data:', error); }
-    } else {
-      setCurrentProtein(0);
-      setCurrentWater(0);
-    }
+      } else {
+        setCurrentProtein(0);
+        setCurrentWater(0);
+      }
 
-    setSupplements(storage.getSupplements());
-    setTodayLogs(storage.getSupplementLogs(selectedDate));
+      setSupplements(storage.getSupplements());
+      setTodayLogs(storage.getSupplementLogs(selectedDate));
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+      // Optionally, set a state to show an error message to the user
+    }
   };
+
 
   useEffect(() => {
     refreshData();
@@ -159,18 +156,6 @@ export default function Macros() {
     setSliderValue(0);
     setIsDrawerOpen(true);
   };
-
-  const checkpoints = { 25: "Great start!", 50: "Halfway there!", 75: "Almost there!", 100: "Goal Complete! 🎉" };
-  const getCheckpointMessage = (percent: number) => {
-    if (percent >= 100) return checkpoints[100];
-    if (percent >= 75) return checkpoints[75];
-    if (percent >= 50) return checkpoints[50];
-    if (percent >= 25) return checkpoints[25];
-    return "";
-  };
-
-  const proteinPercent = proteinGoal > 0 ? (currentProtein / proteinGoal) * 100 : 0;
-  const waterPercent = waterGoal > 0 ? (currentWater / waterGoal) * 100 : 0;
 
   const onSubmit = (data: InsertSupplement) => {
     try {
@@ -239,10 +224,10 @@ export default function Macros() {
 
   return (
     <div className="min-h-screen bg-dark-primary">
-      <header className="bg-dark-secondary p-6 shadow-lg">
+      <header className="bg-dark-secondary p-2 shadow-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <PieChart className="text-accent-red mr-4" size={28} />
+            <PieChartIcon className="text-accent-red mr-4" size={28} />
             <div>
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Macro Tracker
@@ -261,43 +246,55 @@ export default function Macros() {
       </header>
 
       <div className="p-4 space-y-6 pb-24">
-        {/* Protein Tracker */}
-        <div className="bg-dark-secondary rounded-xl p-6 text-center">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold text-text-primary">Protein</h3>
-            <Button onClick={() => handleReset('protein')} variant="ghost" size="sm" className="text-xs text-text-secondary hover:text-text-primary">
-              <RotateCcw size={12} className="mr-1" /> Reset
-            </Button>
-          </div>
-          <div className="pie-chart-container mx-auto my-4" style={{ '--p': proteinPercent, '--color': 'var(--accent-red)' } as React.CSSProperties}>
-            <div className="pie-chart-center">
-              <div>
-                <span className="text-2xl font-bold text-text-primary">{currentProtein.toFixed(0)}g</span>
-                <span className="text-text-secondary">/ {proteinGoal}g</span>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors" onClick={() => openDrawer('protein')}>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-text-primary">Protein</h3>
+              <Button onClick={(e) => { e.stopPropagation(); handleReset('protein') }} variant="ghost" size="sm" className="text-xs text-text-secondary hover:text-text-primary">
+                <RotateCcw size={12} className="mr-1" /> Reset
+              </Button>
+            </div>
+            <div className="relative w-24 h-24 mx-auto mb-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <RechartsPieChart>
+                  <Pie data={[{ value: Math.min(currentProtein, proteinGoal || 1), fill: 'var(--accent-red)' }, { value: Math.max(0, (proteinGoal || 1) - currentProtein), fill: 'var(--dark-elevated)' }]} cx="50%" cy="50%" innerRadius={30} outerRadius={45} startAngle={90} endAngle={-270} dataKey="value" paddingAngle={currentProtein > 0 ? 2 : 0} />
+                </RechartsPieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-sm font-bold text-text-primary">{Math.round((currentProtein / (proteinGoal || 1)) * 100)}%</span>
               </div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold text-accent-red">{currentProtein}g</div>
+              <div className="text-xs text-text-secondary">of {proteinGoal}g</div>
+            </div>
+          </div>
+
+          <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors" onClick={() => openDrawer('water')}>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-text-primary">Water</h3>
+              <Button onClick={(e) => { e.stopPropagation(); handleReset('water') }} variant="ghost" size="sm" className="text-xs text-text-secondary hover:text-text-primary">
+                <RotateCcw size={12} className="mr-1" /> Reset
+              </Button>
+            </div>
+            <div className="relative w-24 h-24 mx-auto mb-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <RechartsPieChart>
+                  <Pie data={[{ value: Math.min(currentWater, waterGoal || 1), fill: 'hsl(210, 80%, 60%)' }, { value: Math.max(0, (waterGoal || 1) - currentWater), fill: 'var(--dark-elevated)' }]} cx="50%" cy="50%" innerRadius={30} outerRadius={45} startAngle={90} endAngle={-270} dataKey="value" paddingAngle={currentWater > 0 ? 2 : 0} />
+                </RechartsPieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-sm font-bold text-text-primary">{Math.round((currentWater / (waterGoal || 1)) * 100)}%</span>
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold text-blue-400">{currentWater.toFixed(1)}L</div>
+              <div className="text-xs text-text-secondary">of {waterGoal.toFixed(1)}L</div>
             </div>
           </div>
         </div>
 
-        {/* Hydration Tracker */}
-        <div className="bg-dark-secondary rounded-xl p-6 text-center">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold text-text-primary">Water</h3>
-            <Button onClick={() => handleReset('water')} variant="ghost" size="sm" className="text-xs text-text-secondary hover:text-text-primary">
-              <RotateCcw size={12} className="mr-1" /> Reset
-            </Button>
-          </div>
-          <div className="pie-chart-container mx-auto my-4" style={{ '--p': waterPercent, '--color': '#3b82f6' } as React.CSSProperties}>
-            <div className="pie-chart-center">
-              <div>
-                <span className="text-2xl font-bold text-text-primary">{(currentWater * 1000).toFixed(0)}ml</span>
-                <span className="text-text-secondary">/ {(waterGoal * 1000).toFixed(0)}ml</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <Tabs defaultValue="today" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-dark-elevated border-dark-border">
             <TabsTrigger value="today" className="data-[state=active]:bg-accent-red data-[state=active]:text-white">Today's Supplements</TabsTrigger>
             <TabsTrigger value="manage" className="data-[state=active]:bg-accent-red data-[state=active]:text-white">Manage Supplements</TabsTrigger>
@@ -329,10 +326,7 @@ export default function Macros() {
                     <p className="text-text-secondary text-center mb-6">
                       Start tracking your supplements by adding them to your routine.
                     </p>
-                    <Button
-                      onClick={() => setIsAddDialogOpen(true)}
-                      className="bg-accent-red hover:bg-accent-light-red text-white"
-                    >
+                    <Button onClick={() => setActiveTab("manage")} className="bg-accent-red hover:bg-accent-light-red text-white">
                       <Plus className="w-4 h-4 mr-2" />
                       Add Your First Supplement
                     </Button>
@@ -363,8 +357,8 @@ export default function Macros() {
                                 {supplement.brand && <span className="text-text-secondary font-normal"> by {supplement.brand}</span>}
                               </h3>
                               <p className="text-sm text-text-secondary">
-                                {supplement.dosage} {supplement.unit} • {supplement.frequency.replace('_', ' ')}
-                                {supplement.timingPreference && ` • ${supplement.timingPreference.replace('_', ' ')}`}
+                                {supplement.dosage} {supplement.unit} • {supplement.frequency.replace(/_/g, ' ')}
+                                {supplement.timingPreference && ` • ${supplement.timingPreference.replace(/_/g, ' ')}`}
                               </p>
                               {log?.time && (
                                 <p className="text-xs text-text-secondary flex items-center gap-1 mt-1">
@@ -376,7 +370,7 @@ export default function Macros() {
                           </div>
 
                           <div className={`px-2 py-1 rounded text-xs font-medium ${isTaken ? 'bg-accent-green/20 text-accent-green' : 'bg-dark-elevated text-text-secondary'}`}>
-                            {supplement.type.replace('_', ' ')}
+                            {supplement.type.replace(/_/g, ' ')}
                           </div>
                         </div>
                       </div>
@@ -388,6 +382,13 @@ export default function Macros() {
           </TabsContent>
 
           <TabsContent value="manage" className="space-y-4 mt-6">
+            <Button
+              onClick={() => { form.reset(); setEditingSupplement(null); setIsAddDialogOpen(true); }}
+              className="w-full bg-accent-red hover:bg-accent-light-red text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add New Supplement
+            </Button>
             {supplements.length === 0 ? (
               <div className="bg-dark-secondary rounded-lg border border-dark-border">
                 <div className="flex flex-col items-center justify-center py-12 px-6">
@@ -395,16 +396,9 @@ export default function Macros() {
                   <h3 className="text-lg font-medium text-text-primary mb-2 font-['Montserrat']">
                     No supplements to manage
                   </h3>
-                  <p className="text-text-secondary text-center mb-6">
+                  <p className="text-text-secondary text-center">
                     Add some supplements to start managing your routine.
                   </p>
-                  <Button
-                    onClick={() => setIsAddDialogOpen(true)}
-                    className="bg-accent-red hover:bg-accent-light-red text-white"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Supplement
-                  </Button>
                 </div>
               </div>
             ) : (
@@ -418,8 +412,8 @@ export default function Macros() {
                           {supplement.brand && <span className="text-text-secondary font-normal"> by {supplement.brand}</span>}
                         </h3>
                         <p className="text-sm text-text-secondary">
-                          {supplement.dosage} {supplement.unit} • {supplement.frequency.replace('_', ' ')}
-                          {supplement.timingPreference && ` • ${supplement.timingPreference.replace('_', ' ')}`}
+                          {supplement.dosage} {supplement.unit} • {supplement.frequency.replace(/_/g, ' ')}
+                          {supplement.timingPreference && ` • ${supplement.timingPreference.replace(/_/g, ' ')}`}
                         </p>
                         {supplement.notes && (
                           <p className="text-xs text-text-secondary mt-1">
@@ -428,7 +422,7 @@ export default function Macros() {
                         )}
                         <div className="flex items-center gap-2 mt-2">
                           <div className="px-2 py-1 bg-dark-elevated rounded text-xs font-medium text-text-secondary">
-                            {supplement.type.replace('_', ' ')}
+                            {supplement.type.replace(/_/g, ' ')}
                           </div>
                         </div>
                       </div>
@@ -474,15 +468,16 @@ export default function Macros() {
               </span>
             </div>
             <Slider
+              style={{ '--slider-track-color': activeMetric === 'protein' ? 'var(--accent-red)' : 'hsl(210, 80%, 60%)' } as React.CSSProperties}
               value={[sliderValue]}
               onValueChange={(value) => setSliderValue(value[0])}
               max={activeMetric === 'protein' ? 100 : 1000}
               step={activeMetric === 'protein' ? 1 : 50}
-              className={cn("data-[state=checked]:bg-accent-red", activeMetric === 'water' && "[&>span:first-child]:bg-blue-500")}
+              className="[&>span:first-child>span]:bg-[--slider-track-color]"
             />
           </div>
           <DrawerFooter className="pt-2">
-            <Button onClick={handleAddIntake} className={cn("bg-accent-red", activeMetric === 'water' && "bg-blue-500 hover:bg-blue-600")}>Add Intake</Button>
+            <Button onClick={handleAddIntake} className={cn(activeMetric === 'protein' ? 'bg-accent-red' : 'bg-blue-500 hover:bg-blue-600')}>Add Intake</Button>
             <DrawerClose asChild>
               <Button variant="outline">Cancel</Button>
             </DrawerClose>
@@ -490,7 +485,7 @@ export default function Macros() {
         </DrawerContent>
       </Drawer>
 
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+      <Dialog open={isAddDialogOpen} onOpenChange={(isOpen) => { if (!isOpen) { setEditingSupplement(null); form.reset(); } setIsAddDialogOpen(isOpen); }}>
         <DialogContent className="max-w-md bg-dark-secondary border-dark-border">
           <DialogHeader>
             <DialogTitle className="text-text-primary font-['Montserrat']">
@@ -535,7 +530,7 @@ export default function Macros() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-text-secondary">Type</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger className="bg-dark-elevated border-dark-border text-text-primary"><SelectValue /></SelectTrigger>
                         </FormControl>
@@ -556,7 +551,7 @@ export default function Macros() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-text-secondary">Frequency</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger className="bg-dark-elevated border-dark-border text-text-primary"><SelectValue /></SelectTrigger>
                         </FormControl>
@@ -599,7 +594,7 @@ export default function Macros() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-text-secondary">Unit</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger className="bg-dark-elevated border-dark-border text-text-primary"><SelectValue /></SelectTrigger>
                         </FormControl>
@@ -621,7 +616,7 @@ export default function Macros() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-text-secondary">Timing Preference</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="bg-dark-elevated border-dark-border text-text-primary"><SelectValue /></SelectTrigger>
                       </FormControl>
@@ -652,7 +647,9 @@ export default function Macros() {
 
               <div className="flex gap-2 pt-2">
                 <Button type="submit" className="flex-1 bg-accent-red text-white"> {editingSupplement ? 'Update' : 'Add'} Supplement </Button>
-                <Button type="button" variant="outline" onClick={() => { setIsAddDialogOpen(false); setEditingSupplement(null); form.reset(); }} className="bg-dark-elevated border-dark-border text-text-secondary"> Cancel </Button>
+                <DialogClose asChild>
+                  <Button type="button" variant="outline" className="bg-dark-elevated border-dark-border text-text-secondary"> Cancel </Button>
+                </DialogClose>
               </div>
             </form>
           </Form>
