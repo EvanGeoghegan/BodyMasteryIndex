@@ -220,7 +220,7 @@ export default function CalendarPage() {
                       "cursor-not-allowed": isFuture,
                       "bg-accent-red text-white font-bold border-accent-red": isToday(date),
                       "bg-dark-elevated text-text-primary border-transparent": !isToday(date),
-                      "border-red-500/50": !workoutData && !supplementsTaken && !isFuture && !isToday(date) && isCurrentMonth(date)
+                      "border-red-500/50": !workoutData && !isFuture && !isToday(date) && isCurrentMonth(date)
                     }
                   )}
                 >
