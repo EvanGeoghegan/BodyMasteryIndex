@@ -135,6 +135,8 @@
   { "id": "core027", "name": "V-ups", "category": "core" },
   { "id": "core028", "name": "Wood Chops (Cable)", "category": "core" },
   { "id": "core029", "name": "X-Man Crunch", "category": "core" },
+  { "id": "core030", "name": "Yoga", "category": "core" },
+  { "id": "core031", "name": "Pilates", "category": "core" },
   { "id": "fullbody001", "name": "Barbell Clean and Press", "category": "strength" },
   { "id": "fullbody002", "name": "Clean", "category": "strength" },
   { "id": "fullbody003", "name": "Clean and Jerk", "category": "strength" },
