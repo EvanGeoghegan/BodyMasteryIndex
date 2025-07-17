@@ -98,7 +98,7 @@ export default function ExerciseCard({ exercise, workoutType, onUpdate, onDelete
     switch(displayCategory) {
       case 'strength': return 'border-l-blue-500';
       case 'cardio': return 'border-l-green-500';
-      case 'core': return 'border-l-yellow-500';
+      case 'core': return 'border-l-orange-500';
       case 'sports': return 'border-l-purple-500';
       default: return 'border-l-white'; // Fallback to white
     }
@@ -109,7 +109,7 @@ export default function ExerciseCard({ exercise, workoutType, onUpdate, onDelete
     switch(displayCategory) {
       case 'strength': return 'bg-blue-900/30';
       case 'cardio': return 'bg-green-900/30';
-      case 'core': return 'bg-yellow-900/30';
+      case 'core': return 'bg-orange-900/30';
       case 'sports': return 'bg-purple-900/30';
       default: return '';
     }

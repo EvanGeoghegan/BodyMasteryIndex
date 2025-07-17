@@ -230,7 +230,7 @@ export default function CalendarPage() {
                     <div className="flex gap-1">
                       {workoutData?.types.includes('strength') && <div className="w-1.5 h-1.5 bg-blue-400 rounded-full" />}
                       {workoutData?.types.includes('cardio') && <div className="w-1.5 h-1.5 bg-green-400 rounded-full" />}
-                      {workoutData?.types.includes('core') && <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full" />}
+                      {workoutData?.types.includes('core') && <div className="w-1.5 h-1.5 bg-orange-500 rounded-full" />}
                     </div>
                     {supplementsTaken && <div className="w-1.5 h-1.5 bg-white rounded-full supplement-dot" />}
                   </div>
@@ -259,7 +259,7 @@ export default function CalendarPage() {
               <span className="text-text-secondary text-sm">Cardio</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+              <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
               <span className="text-text-secondary text-sm">Core</span>
             </div>
             <div className="flex items-center space-x-2">
