@@ -37,32 +37,32 @@ class LocalStorage {
       ...workout,
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
     };
-    
+
     const workouts = this.getWorkouts();
     workouts.push(newWorkout);
     this.setData('workouts', workouts);
-    
+
     return newWorkout;
   }
 
   updateWorkout(id: string, updates: Partial<Workout>): Workout | undefined {
     const workouts = this.getWorkouts();
     const index = workouts.findIndex(w => w.id === id);
-    
+
     if (index === -1) return undefined;
-    
+
     workouts[index] = { ...workouts[index], ...updates };
     this.setData('workouts', workouts);
-    
+
     return workouts[index];
   }
 
   deleteWorkout(id: string): boolean {
     const workouts = this.getWorkouts();
     const filtered = workouts.filter(w => w.id !== id);
-    
+
     if (filtered.length === workouts.length) return false;
-    
+
     this.setData('workouts', filtered);
     return true;
   }
@@ -81,32 +81,32 @@ class LocalStorage {
       ...template,
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
     };
-    
+
     const templates = this.getTemplates();
     templates.push(newTemplate);
     this.setData('templates', templates);
-    
+
     return newTemplate;
   }
 
   updateTemplate(id: string, updates: Partial<Template>): Template | undefined {
     const templates = this.getTemplates();
     const index = templates.findIndex(t => t.id === id);
-    
+
     if (index === -1) return undefined;
-    
+
     templates[index] = { ...templates[index], ...updates };
     this.setData('templates', templates);
-    
+
     return templates[index];
   }
 
   deleteTemplate(id: string): boolean {
     const templates = this.getTemplates();
     const filtered = templates.filter(t => t.id !== id);
-    
+
     if (filtered.length === templates.length) return false;
-    
+
     this.setData('templates', filtered);
     return true;
   }
@@ -125,34 +125,67 @@ class LocalStorage {
       ...personalBest,
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
     };
-    
+
     const personalBests = this.getPersonalBests();
     personalBests.push(newPB);
     this.setData('personalBests', personalBests);
-    
+
     return newPB;
   }
 
   updatePersonalBest(id: string, updates: Partial<PersonalBest>): PersonalBest | undefined {
     const personalBests = this.getPersonalBests();
     const index = personalBests.findIndex(pb => pb.id === id);
-    
+
     if (index === -1) return undefined;
-    
+
     personalBests[index] = { ...personalBests[index], ...updates };
     this.setData('personalBests', personalBests);
-    
+
     return personalBests[index];
   }
 
   deletePersonalBest(id: string): boolean {
     const personalBests = this.getPersonalBests();
     const filtered = personalBests.filter(pb => pb.id !== id);
-    
+
     if (filtered.length === personalBests.length) return false;
-    
+
     this.setData('personalBests', filtered);
     return true;
+  }
+  // ADD THIS ENTIRE FUNCTION
+  getLastPerformance(exerciseName: string): { weight: number; reps: number; date: string } | null {
+    const allWorkouts = this.getWorkouts();
+    let lastPerformance = null;
+
+    // We go through all workouts in chronological order
+    for (const workout of allWorkouts.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())) {
+      for (const exercise of workout.exercises) {
+        if (exercise.name.toLowerCase() === exerciseName.toLowerCase() && exercise.type === 'strength') {
+          // Find the best completed set in this workout for this exercise
+          const bestSet = exercise.sets
+            .filter(set => set.completed && set.weight && set.reps)
+            .reduce((best, current) => {
+              if (!current.weight || !current.reps) return best;
+              if (!best.weight || !best.reps) return current;
+
+              const best1RM = best.weight * (1 + best.reps / 30);
+              const current1RM = current.weight * (1 + current.reps / 30);
+              return current1RM > best1RM ? current : best;
+            }, {} as { weight?: number, reps?: number });
+
+          if (bestSet.weight && bestSet.reps) {
+            lastPerformance = {
+              weight: bestSet.weight,
+              reps: bestSet.reps,
+              date: workout.date,
+            };
+          }
+        }
+      }
+    }
+    return lastPerformance;
   }
 
   // Get workout days for calendar
@@ -171,10 +204,10 @@ class LocalStorage {
   getSupplements(): Supplement[] {
     return this.getData<Supplement>('supplements');
   }
-  
+
   getSupplementById(id: string): Supplement | undefined {
-  const supplements = this.getSupplements();
-  return supplements.find(s => s.id === id);
+    const supplements = this.getSupplements();
+    return supplements.find(s => s.id === id);
   }
 
   getSupplement(id: string): Supplement | undefined {
@@ -198,9 +231,9 @@ class LocalStorage {
   updateSupplement(id: string, updates: Partial<Supplement>): Supplement | undefined {
     const supplements = this.getSupplements();
     const index = supplements.findIndex(s => s.id === id);
-    
+
     if (index === -1) return undefined;
-    
+
     supplements[index] = { ...supplements[index], ...updates };
     this.setData('supplements', supplements);
     return supplements[index];
@@ -209,16 +242,16 @@ class LocalStorage {
   deleteSupplement(id: string): boolean {
     const supplements = this.getSupplements();
     const filteredSupplements = supplements.filter(s => s.id !== id);
-    
+
     if (filteredSupplements.length === supplements.length) return false;
-    
+
     this.setData('supplements', filteredSupplements);
-    
+
     // Also delete all logs for this supplement
     const logs = this.getSupplementLogs();
     const filteredLogs = logs.filter(l => l.supplementId !== id);
     this.setData('supplementLogs', filteredLogs);
-    
+
     return true;
   }
 
@@ -251,9 +284,9 @@ class LocalStorage {
   updateSupplementLog(id: string, updates: Partial<SupplementLog>): SupplementLog | undefined {
     const logs = this.getSupplementLogs();
     const index = logs.findIndex(l => l.id === id);
-    
+
     if (index === -1) return undefined;
-    
+
     logs[index] = { ...logs[index], ...updates };
     this.setData('supplementLogs', logs);
     return logs[index];
@@ -262,9 +295,9 @@ class LocalStorage {
   deleteSupplementLog(id: string): boolean {
     const logs = this.getSupplementLogs();
     const filteredLogs = logs.filter(l => l.id !== id);
-    
+
     if (filteredLogs.length === logs.length) return false;
-    
+
     this.setData('supplementLogs', filteredLogs);
     return true;
   }
@@ -286,12 +319,12 @@ class LocalStorage {
     localStorage.removeItem(this.getStorageKey('personalBests'));
     localStorage.removeItem(this.getStorageKey('supplements'));
     localStorage.removeItem(this.getStorageKey('supplementLogs'));
-    
+
     // Clear other app data
     localStorage.removeItem('congratsDismissedDate');
     localStorage.removeItem('lastWorkoutDate');
     localStorage.removeItem('lastCongratsDate');
-    
+
     // Reinitialize default templates
     this.initializeDefaultTemplates();
   }
