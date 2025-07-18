@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Home, Dumbbell, PieChart, BarChart3, Calendar, Cog, LayoutTemplate } from "lucide-react";
+import { Home, Dumbbell, UtensilsCrossed, BarChart3, Calendar, Cog, LayoutTemplate } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Define the props that this component will accept
@@ -27,7 +27,7 @@ const navLinks = [
   {
     id: "macros",
     label: "Macros",
-    icon: <PieChart className="w-6 h-6" />,
+    icon: <UtensilsCrossed className="w-6 h-6" />,
   },
   {
     id: "progress",
