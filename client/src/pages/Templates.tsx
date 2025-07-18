@@ -38,8 +38,6 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
 
     // Initialize default templates if none exist
     if (loadedTemplates.length === 0) {
-      storage.initializeDefaultTemplates();
-      setTemplates(storage.getTemplates());
     }
   };
 
