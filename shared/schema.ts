@@ -202,3 +202,12 @@ export type DbTemplate = typeof templates.$inferSelect;
 export type InsertDbTemplate = typeof templates.$inferInsert;
 export type DbPersonalBest = typeof personalBests.$inferSelect;
 export type InsertDbPersonalBest = typeof personalBests.$inferInsert;
+export const recoveryScoreSchema = z.object({
+  id: z.string(),
+  date: z.string(), // YYYY-MM-DD format
+  score: z.number().min(1).max(10),
+  notes: z.string().optional(),
+});
+
+export type RecoveryScore = z.infer<typeof recoveryScoreSchema>;
+export type InsertRecoveryScore = Omit<RecoveryScore, 'id'>;
