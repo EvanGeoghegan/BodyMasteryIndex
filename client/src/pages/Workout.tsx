@@ -39,7 +39,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
       setEditingWorkout(initialWorkout);
       setWorkoutName(initialWorkout.name);
       // Map "mixed" from storage back to "sports" for the UI
-      setWorkoutType(initialWorkout.type === 'mixed' ? 'sports' : initialWorkout.type as any);
+      setWorkoutType(initialWorkout.type);
       setExercises(initialWorkout.exercises);
       setWorkoutDate(initialWorkout.date.split('T')[0]);
       setWorkoutNotes(initialWorkout.notes || "");
@@ -60,7 +60,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
   const editWorkout = (workout: Workout) => {
     setEditingWorkout(workout);
     setWorkoutName(workout.name);
-    setWorkoutType(workout.type === 'mixed' ? 'sports' : workout.type as any);
+    setWorkoutType(workout.type);
     setExercises(workout.exercises);
     setWorkoutDate(workout.date.split('T')[0]);
     setWorkoutNotes(workout.notes || "");
@@ -79,7 +79,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
 
   const loadFromTemplate = (template: Template) => {
     setWorkoutName(template.name);
-    setWorkoutType(template.type === 'mixed' ? 'sports' : template.type as any);
+    setWorkoutType(template.type);
 
     const templateExercises: Exercise[] = template.exercises.map(templateEx => ({
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
@@ -122,13 +122,13 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
 
   const saveWorkout = () => {
     if (!workoutName.trim()) {
-      toast({ title: "Workout Name Required", description: "Please enter a name for your workout.", variant: "destructive"});
+      toast({ title: "Workout Name Required", description: "Please enter a name for your workout.", variant: "destructive" });
       return;
     }
 
     const validExercises = exercises.filter(ex => ex.name.trim() && ex.sets.length > 0);
     if (validExercises.length === 0) {
-      toast({ title: "No Exercises Added", description: "Please add and complete at least one exercise.", variant: "destructive"});
+      toast({ title: "No Exercises Added", description: "Please add and complete at least one exercise.", variant: "destructive" });
       return;
     }
 
@@ -136,7 +136,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
       name: workoutName,
       date: new Date(workoutDate + 'T' + new Date().toTimeString().split(' ')[0]).toISOString(),
       exercises: validExercises,
-      type: workoutType === 'sports' ? 'mixed' : workoutType,
+      type: workoutType,
       notes: workoutNotes,
     };
 
@@ -199,10 +199,10 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
       }, 1000);
 
     } catch (error) {
-      toast({ title: "Error", description: "Failed to save workout.", variant: "destructive"});
+      toast({ title: "Error", description: "Failed to save workout.", variant: "destructive" });
     }
   };
-  
+
   const handleSaveAsTemplate = () => {
     if (!workoutName.trim()) {
       toast({
@@ -212,7 +212,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
       });
       return;
     }
-    
+
     const validExercises = exercises.filter(ex => ex.name.trim());
     if (validExercises.length === 0) {
       toast({
@@ -222,7 +222,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
       });
       return;
     }
-    
+
     const templateName = prompt("Enter a name for your new template:", workoutName);
     if (!templateName) {
       return; // User cancelled
@@ -231,7 +231,7 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
     const newTemplate: InsertTemplate = {
       name: templateName,
       description: `Template created from '${workoutName}'`,
-      type: workoutType === 'sports' ? 'mixed' : workoutType,
+      type: workoutType,
       exercises: validExercises.map(ex => {
         const firstSet = ex.sets[0];
         return {
@@ -302,13 +302,13 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
 
         <div className="bg-dark-secondary rounded-lg p-4 border border-dark-border">
           {editingWorkout && (
-              <div className="mb-3 pb-3 border-b border-dark-border">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-accent-red font-semibold">Editing: {editingWorkout.name}</p>
-                  <Button variant="ghost" size="sm" onClick={clearWorkout} className="text-text-secondary hover:text-text-primary">Cancel Edit</Button>
-                </div>
+            <div className="mb-3 pb-3 border-b border-dark-border">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-accent-red font-semibold">Editing: {editingWorkout.name}</p>
+                <Button variant="ghost" size="sm" onClick={clearWorkout} className="text-text-secondary hover:text-text-primary">Cancel Edit</Button>
               </div>
-            )}
+            </div>
+          )}
           <div className="flex items-center justify-between mb-3">
             <label className="block text-text-secondary text-sm font-medium">
               Workout Name
@@ -365,31 +365,31 @@ export default function WorkoutPage({ onWorkoutSaved, initialTemplate, initialWo
         </div>
 
         <div className="grid grid-cols-2 gap-2">
-            <Button
-              onClick={handleSaveAsTemplate}
-              variant="outline"
-              className="w-full bg-dark-elevated border-dark-border text-text-primary hover:bg-dark-border"
-            >
+          <Button
+            onClick={handleSaveAsTemplate}
+            variant="outline"
+            className="w-full bg-dark-elevated border-dark-border text-text-primary hover:bg-dark-border"
+          >
+            <Save className="mr-2" size={20} />
+            Save as Template
+          </Button>
+          <Button
+            onClick={saveWorkout}
+            disabled={isSaving}
+            className={cn(
+              "w-full text-white font-semibold py-3 px-6 transition-all duration-300",
+              isSaving
+                ? "bg-accent-green"
+                : "bg-accent-red hover:bg-accent-light-red"
+            )}
+          >
+            {isSaving ? (
+              <Check className="mr-2" size={20} />
+            ) : (
               <Save className="mr-2" size={20} />
-              Save as Template
-            </Button>
-            <Button
-              onClick={saveWorkout}
-              disabled={isSaving}
-              className={cn(
-                "w-full text-white font-semibold py-3 px-6 transition-all duration-300",
-                isSaving
-                  ? "bg-accent-green"
-                  : "bg-accent-red hover:bg-accent-light-red"
-              )}
-            >
-              {isSaving ? (
-                <Check className="mr-2" size={20} />
-              ) : (
-                <Save className="mr-2" size={20} />
-              )}
-              {isSaving ? "Saved!" : editingWorkout ? "Update Workout" : "Save Workout"}
-            </Button>
+            )}
+            {isSaving ? "Saved!" : editingWorkout ? "Update Workout" : "Save Workout"}
+          </Button>
         </div>
       </div>
 

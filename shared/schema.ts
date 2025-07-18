@@ -36,7 +36,7 @@ export const workoutSchema = z.object({
   date: z.string(), // ISO date string
   exercises: z.array(exerciseSchema),
   notes: z.string().optional(),
-  type: z.enum(["strength", "cardio", "core", "mixed"]).default("strength"),
+  type: z.enum(["strength", "cardio", "core", "sports"]).default("strength"),
 });
 
 export type Workout = z.infer<typeof workoutSchema>;
@@ -57,7 +57,7 @@ export const templateSchema = z.object({
   })),
   estimatedDuration: z.number().optional(), // in minutes
   category: z.string().optional(), // e.g., "Push", "Pull", "Legs", "Cardio"
-  type: z.enum(["strength", "cardio", "core", "mixed"]).default("strength"),
+  type: z.enum(["strength", "cardio", "core", "sports"]).default("strength"),
 });
 
 export type Template = z.infer<typeof templateSchema>;
