@@ -24,10 +24,10 @@
 
   /* Cool Mist Light Theme */
   .light {
-    --dark-primary: #F8F9FA;
-    --dark-secondary: #FFFFFF;
-    --dark-elevated: #F8F9FA;
-    --dark-border: #E9ECEF;
+    --dark-primary: #F1F3F5;      /* Was #F8F9FA - now a more distinct light grey */
+    --dark-secondary: #FFFFFF;     /* Stays pure white */
+    --dark-elevated: #E9ECEF;     /* A slightly off-white for elevated elements */
+    --dark-border: #DEE2E6;       /* Was #E9ECEF - a slightly darker border to match */
     --accent-red: #4A90E2;
     --accent-light-red: #357ABD;
     --accent-green: #50C878;
