@@ -394,7 +394,6 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
 
       <div className="px-4 pb-4">
         <Button onClick={onNavigateToWorkout} className="w-full bg-accent-red text-white font-medium py-4 px-4 rounded-xl shadow-lg border border-transparent transition-all duration-200 hover:shadow-xl hover:scale-105">
-          <img src={logoPath} alt="Workout" className="w-6 h-6 object-contain mr-3" />
           <span>Log Workout</span>
         </Button>
       </div>
