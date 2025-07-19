@@ -324,7 +324,7 @@ export default function Macros() {
                 </p>
                 <div className="w-full bg-dark-elevated rounded-full h-3">
                   <div
-                    className="bg-gradient-to-r from-accent-red to-accent-light-red h-3 rounded-full transition-all duration-300"
+                    className="bg-accent-red h-3 rounded-full transition-all duration-300"
                     style={{ width: `${getCompletionRate()}%` }}
                   />
                 </div>
