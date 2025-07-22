@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Quote, History, Sparkles, Droplets, Target, Home, Edit } from "lucide-react";
-import logoPath from "@assets/Scale Logo draft _Nero_AI_Background_Remover_1750025859630.png";
+import logoPath from "../assets/logo.png";
 import { storage } from "@/lib/storage";
 import { getMotivationalQuote } from "@/lib/quotes";
 import { Workout } from "@shared/schema";
@@ -161,7 +161,7 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
           <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
             {/* The key change here is adding rounded-full to the image itself */}
             <img
-              src="/assets/icon.png"
+              src="logo"
               alt="Body Mastery Index Icon"
               className="w-full h-full object-cover rounded-full"
             />
