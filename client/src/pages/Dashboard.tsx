@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Quote, History, Plus, Minus, Sparkles, Droplets, Target, Home, Edit, Bed, MessageSquare, Save } from "lucide-react";
+import { Quote, History, Plus, Minus, Sparkles, Droplets, Target, Home, Edit, Flame, Bed, MessageSquare, Save } from "lucide-react";
 import logoPath from '@/assets/logo.png';
-
 import { storage } from "@/lib/storage";
 import { getMotivationalQuote } from "@/lib/quotes";
 import { Workout, RecoveryScore } from "@shared/schema";
@@ -34,6 +33,7 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
   const [exercise2Reps, setExercise2Reps] = useState("");
   const [showCongrats, setShowCongrats] = useState(false);
   const [weeklyAssessmentDone, setWeeklyAssessmentDone] = useState(false);
+  const [workoutStreak, setWorkoutStreak] = useState({ streak: 0, status: 'none' as 'active' | 'at_risk' | 'none' });
   const { toast } = useToast();
 
   const getDaysSinceLastWorkout = (): number => {
@@ -62,6 +62,10 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
       setRecoveryScore(todaysScore.score);
       setRecoveryNotes(todaysScore.notes || "");
     }
+
+    const streakData = storage.getWorkoutStreak();
+    setWorkoutStreak(streakData);
+
   }, []);
 
   const handleSaveRecovery = () => {
@@ -197,7 +201,7 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
           <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
             {/* The key change here is adding rounded-full to the image itself */}
             <img
-              src="/assets/logo.png"
+              src="/assets/icon.png"
               alt="Body Mastery Index Icon"
               className="w-full h-full object-cover rounded-full"
             />
@@ -213,7 +217,7 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
           <p className="text-accent-red text-sm mt-4 font-medium">— {motivationalQuote.author}</p>
           {daysSinceLastWorkout >= 3 && (<div className="mt-3 px-3 py-2 bg-accent-red/10 border border-accent-red/20 rounded-lg"><p className="text-accent-red text-xs font-medium">{daysSinceLastWorkout === 999 ? "No workouts logged yet" : `${daysSinceLastWorkout} days since last workout`}</p></div>)}
         </div>
-    {/* The rest of your dashboard content follows... */}
+    
         {showCongrats && (
           <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 rounded-xl p-6 border border-green-500/30 shadow-lg">
             <div className="flex items-center justify-center mb-3">
@@ -238,6 +242,148 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
           </div>
         )}
 
+        <div className="grid grid-cols-2 gap-4">
+
+          {/* Card 1: Daily Recovery (Now half-width) */}
+          <Card className="bg-dark-secondary border-dark-border">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <Bed className="w-6 h-6 text-accent-red" />
+                <div>
+                  <CardTitle className="text-base font-semibold text-text-primary font-heading">Daily Recovery</CardTitle>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {todaysRecovery ? (
+                // View when score is logged
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-text-primary font-medium">Today's Score:</span>
+                    <span className="text-2xl font-bold text-accent-red">{todaysRecovery.score}<span className="text-sm text-text-secondary">/10</span></span>
+                  </div>
+                  {todaysRecovery.notes && (
+                    <div className="text-sm text-text-secondary border-l-2 border-dark-border pl-3">
+                      {todaysRecovery.notes}
+                    </div>
+                  )}
+                  <Button variant="outline" size="sm" onClick={() => setTodaysRecovery(null)} className="w-full">
+                    Edit Score
+                  </Button>
+                </div>
+              ) : (
+                // View to show if score has NOT been logged yet
+                <div className="space-y-4">
+                  {/* Vertically Stacked Circular Input */}
+                  <div className="flex flex-col items-center justify-center gap-3">
+                    <div className="relative w-24 h-24">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={[{ value: recoveryScore, fill: 'var(--accent-red)' }, { value: 10 - recoveryScore, fill: 'var(--dark-elevated)' }]}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={32}
+                            outerRadius={45}
+                            startAngle={90}
+                            endAngle={-270}
+                            dataKey="value"
+                            stroke="none"
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-3xl font-bold text-accent-red">{recoveryScore}</span>
+                        <span className="text-xs text-text-secondary -mt-1">/ 10</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center gap-3">
+                      <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setRecoveryScore(s => Math.max(1, s - 1))}>
+                        <Minus className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setRecoveryScore(s => Math.min(10, s + 1))}>
+                        <Plus className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* The notes input and save button follow */}
+                  <div className="relative">
+                    <MessageSquare className="absolute top-1/2 -translate-y-1/2 left-3 w-4 h-4 text-text-disabled" />
+                    <Input
+                      type="text"
+                      placeholder="Notes..."
+                      value={recoveryNotes}
+                      onChange={(e) => setRecoveryNotes(e.target.value)}
+                      className="pl-9 bg-dark-elevated border-dark-border text-sm h-10"
+                    />
+                  </div>
+                  <Button onClick={handleSaveRecovery} className="w-full">
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Recovery Score
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Card 2: Workout Streak (The new card) */}
+          <Card className={`bg-dark-secondary border-dark-border transition-colors ${workoutStreak.status === 'at_risk' ? 'border-accent-warning' : ''}`}>
+            <CardHeader>
+                <div className="flex items-center gap-3">
+                    <Flame className="w-6 h-6 text-accent-red" />
+                    <div>
+                        <CardTitle className="text-base font-semibold text-text-primary font-heading">
+                            {workoutStreak.status === 'at_risk' ? 'Streak at Risk!' : 'Workout Streak'}
+                        </CardTitle>
+                    </div>
+                </div>
+            </CardHeader>
+            <CardContent className="text-center">
+                <div className="my-2 h-24 flex items-center justify-center relative overflow-hidden">
+                    {workoutStreak.streak >= 10 && (
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-accent-red/20 rounded-full blur-2xl -z-10"></div>
+                    )}
+                    <Flame 
+                        className={`transition-all duration-500
+                            ${workoutStreak.streak === 0 && 'w-16 h-16 text-text-disabled'}
+                            ${workoutStreak.streak >= 1 && workoutStreak.streak < 10 && 'w-20 h-20 text-accent-red animate-pulse'}
+                            ${workoutStreak.streak >= 10 && 'w-24 h-24 text-accent-red fill-orange-500 animate-pulse'}
+                            ${workoutStreak.status === 'at_risk' && 'text-text-disabled'}`
+                        } 
+                    />
+                </div>
+                <p className={`text-3xl font-bold ${workoutStreak.streak > 0 ? 'text-accent-red' : 'text-text-primary'} ${workoutStreak.status === 'at_risk' && 'text-accent-warning'}`}>
+                    {workoutStreak.streak} Day{workoutStreak.streak !== 1 && 's'}
+                </p>
+                <p className="text-xs text-text-secondary h-4 mt-1">
+                    {workoutStreak.status === 'at_risk' && 'Workout today to save your streak!'}
+                    {workoutStreak.status === 'active' && workoutStreak.streak > 1 && "You're on fire!"}
+                    {workoutStreak.status === 'active' && workoutStreak.streak === 1 && 'Keep it going!'}
+                </p>
+            </CardContent>
+          </Card>
+
+        </div> {/* --- End of the new grid container --- */}
+
+        <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
+          <div className="flex items-center gap-2 mb-4">
+            <Target className="text-accent-red" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">Weekly Assessment</h2>
+          </div>
+          {weeklyAssessmentDone ? (
+            <div className="text-center py-4"><div className="text-accent-green mb-2">✓</div><p className="text-text-secondary text-sm">Weekly assessment completed!</p><p className="text-text-secondary text-xs mt-1">Come back next week.</p></div>
+          ) : (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="text-sm font-medium text-text-secondary">{assessmentExercise1}</label><Input type="number" placeholder="0" value={exercise1Reps} onChange={(e) => setExercise1Reps(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" /></div>
+                <div><label className="text-sm font-medium text-text-secondary">{assessmentExercise2}</label><Input type="number" placeholder="0" value={exercise2Reps} onChange={(e) => setExercise2Reps(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" /></div>
+              </div>
+              <Button onClick={saveAssessmentResults} disabled={!exercise1Reps || !exercise2Reps} className="w-full bg-accent-red text-white disabled:opacity-50">Save Weekly Assessment</Button>
+            </div>
+          )}
+        </div>
+         
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors" onClick={() => onNavigateToNutrition?.()}>
             <div className="flex items-center justify-between mb-2">
@@ -282,103 +428,7 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
           </div>
         </div>
 
-        <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
-          <div className="flex items-center gap-2 mb-4">
-            <Target className="text-accent-red" size={20} />
-            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">Weekly Assessment</h2>
-          </div>
-          {weeklyAssessmentDone ? (
-            <div className="text-center py-4"><div className="text-accent-green mb-2">✓</div><p className="text-text-secondary text-sm">Weekly assessment completed!</p><p className="text-text-secondary text-xs mt-1">Come back next week.</p></div>
-          ) : (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div><label className="text-sm font-medium text-text-secondary">{assessmentExercise1}</label><Input type="number" placeholder="0" value={exercise1Reps} onChange={(e) => setExercise1Reps(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" /></div>
-                <div><label className="text-sm font-medium text-text-secondary">{assessmentExercise2}</label><Input type="number" placeholder="0" value={exercise2Reps} onChange={(e) => setExercise2Reps(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" /></div>
-              </div>
-              <Button onClick={saveAssessmentResults} disabled={!exercise1Reps || !exercise2Reps} className="w-full bg-accent-red text-white disabled:opacity-50">Save Weekly Assessment</Button>
-            </div>
-          )}
-        </div>
-         {/* UPDATED RECOVERY CARD */}
-          <Card className="col-span-2 bg-dark-secondary border-dark-border">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                {/* Changed icon color to red */}
-                <Bed className="w-6 h-6 text-accent-red" />
-                <div>
-                  <CardTitle className="text-lg font-semibold text-text-primary font-heading">Daily Recovery</CardTitle>
-                  <p className="text-sm text-text-secondary">Rate your readiness for the day.</p>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {todaysRecovery ? (
-                // View to show if score is already logged for today
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-text-primary font-medium">Today's Score:</span>
-                    <span className="text-2xl font-bold text-accent-red">{todaysRecovery.score}<span className="text-sm text-text-secondary">/10</span></span>
-                  </div>
-                  {todaysRecovery.notes && (
-                    <div className="text-sm text-text-secondary border-l-2 border-dark-border pl-3">
-                      {todaysRecovery.notes}
-                    </div>
-                  )}
-                  <Button variant="outline" size="sm" onClick={() => setTodaysRecovery(null)} className="w-full">
-                    Edit Score
-                  </Button>
-                </div>
-              ) : (
-                // View to show if score has NOT been logged yet
-                <div className="space-y-4">
-                  {/* Smaller Circular Input */}
-                  <div className="flex items-center justify-center gap-3">
-                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setRecoveryScore(s => Math.max(1, s - 1))}>
-                      <Minus className="w-4 h-4" />
-                    </Button>
-                    <div className="relative w-24 h-24">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={[{ value: recoveryScore, fill: 'var(--accent-red)' }, { value: 10 - recoveryScore, fill: 'var(--dark-elevated)' }]}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={32}
-                            outerRadius={45}
-                            startAngle={90}
-                            endAngle={-270}
-                            dataKey="value"
-                            stroke="none"
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-3xl font-bold text-accent-red">{recoveryScore}</span>
-                        <span className="text-xs text-text-secondary -mt-1">/ 10</span>
-                      </div>
-                    </div>
-                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setRecoveryScore(s => Math.min(10, s + 1))}>
-                      <Plus className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <div className="relative">
-                    <MessageSquare className="absolute top-1/2 -translate-y-1/2 left-3 w-4 h-4 text-text-disabled" />
-                    <Input
-                      type="text"
-                      placeholder="Optional notes..."
-                      value={recoveryNotes}
-                      onChange={(e) => setRecoveryNotes(e.target.value)}
-                      className="pl-9 bg-dark-elevated border-dark-border text-sm h-10"
-                    />
-                  </div>
-                  <Button onClick={handleSaveRecovery} className="w-full">
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Recovery Score
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+        
 
         <div className="bg-dark-secondary rounded-xl p-5 border border-dark-border shadow-lg">
           <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center"><History className="text-accent-red mr-2" size={20} />Last Activity</h3>

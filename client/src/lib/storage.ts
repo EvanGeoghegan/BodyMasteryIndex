@@ -189,6 +189,55 @@ class LocalStorage {
     return lastPerformance;
   }
 
+  getWorkoutStreak(): { streak: number; status: 'active' | 'at_risk' | 'none' } {
+    // Get a sorted, unique list of workout dates
+    const workoutDates = Array.from(new Set(this.getWorkouts().map(w => w.date.split('T')[0]))).sort().reverse();
+
+    if (workoutDates.length === 0) {
+      return { streak: 0, status: 'none' };
+    }
+
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const todayStr = today.toISOString().split('T')[0];
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+    const lastWorkoutStr = workoutDates[0];
+
+    const workedOutToday = lastWorkoutStr === todayStr;
+    const workedOutYesterday = lastWorkoutStr === yesterdayStr;
+
+    // If the last workout was more than a day ago, there's no active streak
+    if (!workedOutToday && !workedOutYesterday) {
+      return { streak: 0, status: 'none' };
+    }
+
+    let streak = 0;
+    let lastDate = new Date(workoutDates[0]);
+
+    // Loop through the dates backwards to calculate the streak
+    for (const dateStr of workoutDates) {
+      const currentDate = new Date(dateStr);
+      const diffInDays = (lastDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24);
+
+      if (diffInDays <= 1) { // Consecutive days
+        streak++;
+      } else if (diffInDays === 2) { // One rest day
+        streak++;
+      } else {
+        // A gap of more than one day breaks the streak
+        break;
+      }
+      lastDate = currentDate;
+    }
+
+    const status = workedOutToday ? 'active' : 'at_risk';
+
+    return { streak, status };
+  }
+
   // Get workout days for calendar
   getWorkoutDays(): string[] {
     return this.getWorkouts().map(w => w.date.split('T')[0]);
@@ -216,7 +265,7 @@ class LocalStorage {
       // Add new score
       scores.push(newScore);
     }
-    
+
     this.setData('recoveryScores', scores);
     return newScore;
   }
