@@ -1,4 +1,5 @@
 import { Workout, Template, PersonalBest, InsertWorkout, InsertTemplate, InsertPersonalBest, Supplement, InsertSupplement, SupplementLog, InsertSupplementLog } from "@shared/schema";
+import { RecoveryScore, InsertRecoveryScore } from '@shared/schema';
 
 class LocalStorage {
   private getStorageKey(key: string): string {
@@ -191,6 +192,33 @@ class LocalStorage {
   // Get workout days for calendar
   getWorkoutDays(): string[] {
     return this.getWorkouts().map(w => w.date.split('T')[0]);
+  }
+
+  // Recovery Score
+  getRecoveryScores(): RecoveryScore[] {
+    return this.getData('recoveryScores') || [];
+  }
+
+  saveRecoveryScore(score: InsertRecoveryScore): RecoveryScore {
+    const scores = this.getRecoveryScores();
+    const today = new Date().toISOString().split('T')[0];
+
+    // Check if a score for today already exists
+    const existingIndex = scores.findIndex(s => s.date === today);
+
+    const newScore: RecoveryScore = { id: `recovery-${Date.now()}`, ...score };
+
+    if (existingIndex > -1) {
+      // Update existing score for today
+      const existingId = scores[existingIndex].id;
+      scores[existingIndex] = { ...newScore, id: existingId };
+    } else {
+      // Add new score
+      scores.push(newScore);
+    }
+    
+    this.setData('recoveryScores', scores);
+    return newScore;
   }
 
   // Get last workout

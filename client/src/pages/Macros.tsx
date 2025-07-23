@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { Plus, Pill, Clock, PieChart as PieChartIcon, Trash2, Edit, RotateCcw, CheckCircle } from "lucide-react";
+import { Plus, Pill, Clock, UtensilsCrossed, Trash2, Edit, RotateCcw, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerFooter, DrawerTitle } from "@/components/ui/drawer";
@@ -236,7 +235,7 @@ export default function Macros() {
       <header className="bg-dark-secondary p-2 shadow-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <PieChartIcon className="text-accent-red mr-4" size={28} />
+            <UtensilsCrossed className="text-accent-red mr-4" size={28} />
             <div>
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Macro Tracker

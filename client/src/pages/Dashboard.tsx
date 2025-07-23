@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Quote, History, Sparkles, Droplets, Target, Home, Edit } from "lucide-react";
-import logoPath from "../assets/logo.png";
+import { Quote, History, Plus, Minus, Sparkles, Droplets, Target, Home, Edit, Bed, MessageSquare, Save } from "lucide-react";
+import logoPath from '@/assets/logo.png';
+
 import { storage } from "@/lib/storage";
 import { getMotivationalQuote } from "@/lib/quotes";
-import { Workout } from "@shared/schema";
+import { Workout, RecoveryScore } from "@shared/schema";
 import confetti from 'canvas-confetti';
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 
 interface DashboardProps {
@@ -42,6 +46,38 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
 
   const daysSinceLastWorkout = getDaysSinceLastWorkout();
   const motivationalQuote = getMotivationalQuote(daysSinceLastWorkout);
+
+  // ADD THESE NEW STATE HOOKS AND HANDLER FUNCTION
+  const [todaysRecovery, setTodaysRecovery] = useState<RecoveryScore | null>(null);
+  const [recoveryScore, setRecoveryScore] = useState(5);
+  const [recoveryNotes, setRecoveryNotes] = useState("");
+
+  useEffect(() => {
+    // This will run when the component loads to check for today's score
+    const today = new Date().toISOString().split('T')[0];
+    const scores = storage.getRecoveryScores();
+    const todaysScore = scores.find(s => s.date === today) || null;
+    setTodaysRecovery(todaysScore);
+    if (todaysScore) {
+      setRecoveryScore(todaysScore.score);
+      setRecoveryNotes(todaysScore.notes || "");
+    }
+  }, []);
+
+  const handleSaveRecovery = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const scoreToSave = {
+      date: today,
+      score: recoveryScore,
+      notes: recoveryNotes,
+    };
+    const saved = storage.saveRecoveryScore(scoreToSave);
+    setTodaysRecovery(saved);
+    toast({
+      title: "Recovery Logged",
+      description: `Your score of ${recoveryScore}/10 has been saved.`,
+    });
+  };
 
   const getCurrentWeek = () => {
     const now = new Date();
@@ -161,7 +197,7 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
           <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
             {/* The key change here is adding rounded-full to the image itself */}
             <img
-              src="logo"
+              src="/assets/logo.png"
               alt="Body Mastery Index Icon"
               className="w-full h-full object-cover rounded-full"
             />
@@ -169,7 +205,15 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
         </div>
       </header>
 
+      
+
       <div className="p-4 space-y-4">
+      <div className="bg-gradient-to-br from-dark-secondary to-dark-elevated rounded-xl p-6 border border-dark-border shadow-lg">
+          <p className="text-text-primary text-base italic leading-relaxed font-medium">"{motivationalQuote.text}"</p>
+          <p className="text-accent-red text-sm mt-4 font-medium">— {motivationalQuote.author}</p>
+          {daysSinceLastWorkout >= 3 && (<div className="mt-3 px-3 py-2 bg-accent-red/10 border border-accent-red/20 rounded-lg"><p className="text-accent-red text-xs font-medium">{daysSinceLastWorkout === 999 ? "No workouts logged yet" : `${daysSinceLastWorkout} days since last workout`}</p></div>)}
+        </div>
+    {/* The rest of your dashboard content follows... */}
         {showCongrats && (
           <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 rounded-xl p-6 border border-green-500/30 shadow-lg">
             <div className="flex items-center justify-center mb-3">
@@ -255,12 +299,86 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
             </div>
           )}
         </div>
-
-        <div className="bg-gradient-to-br from-dark-secondary to-dark-elevated rounded-xl p-6 border border-dark-border shadow-lg">
-          <p className="text-text-primary text-base italic leading-relaxed font-medium">"{motivationalQuote.text}"</p>
-          <p className="text-accent-red text-sm mt-4 font-medium">— {motivationalQuote.author}</p>
-          {daysSinceLastWorkout >= 3 && (<div className="mt-3 px-3 py-2 bg-accent-red/10 border border-accent-red/20 rounded-lg"><p className="text-accent-red text-xs font-medium">{daysSinceLastWorkout === 999 ? "No workouts logged yet" : `${daysSinceLastWorkout} days since last workout`}</p></div>)}
-        </div>
+         {/* UPDATED RECOVERY CARD */}
+          <Card className="col-span-2 bg-dark-secondary border-dark-border">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                {/* Changed icon color to red */}
+                <Bed className="w-6 h-6 text-accent-red" />
+                <div>
+                  <CardTitle className="text-lg font-semibold text-text-primary font-heading">Daily Recovery</CardTitle>
+                  <p className="text-sm text-text-secondary">Rate your readiness for the day.</p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {todaysRecovery ? (
+                // View to show if score is already logged for today
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-text-primary font-medium">Today's Score:</span>
+                    <span className="text-2xl font-bold text-accent-red">{todaysRecovery.score}<span className="text-sm text-text-secondary">/10</span></span>
+                  </div>
+                  {todaysRecovery.notes && (
+                    <div className="text-sm text-text-secondary border-l-2 border-dark-border pl-3">
+                      {todaysRecovery.notes}
+                    </div>
+                  )}
+                  <Button variant="outline" size="sm" onClick={() => setTodaysRecovery(null)} className="w-full">
+                    Edit Score
+                  </Button>
+                </div>
+              ) : (
+                // View to show if score has NOT been logged yet
+                <div className="space-y-4">
+                  {/* Smaller Circular Input */}
+                  <div className="flex items-center justify-center gap-3">
+                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setRecoveryScore(s => Math.max(1, s - 1))}>
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                    <div className="relative w-24 h-24">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={[{ value: recoveryScore, fill: 'var(--accent-red)' }, { value: 10 - recoveryScore, fill: 'var(--dark-elevated)' }]}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={32}
+                            outerRadius={45}
+                            startAngle={90}
+                            endAngle={-270}
+                            dataKey="value"
+                            stroke="none"
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-3xl font-bold text-accent-red">{recoveryScore}</span>
+                        <span className="text-xs text-text-secondary -mt-1">/ 10</span>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setRecoveryScore(s => Math.min(10, s + 1))}>
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <div className="relative">
+                    <MessageSquare className="absolute top-1/2 -translate-y-1/2 left-3 w-4 h-4 text-text-disabled" />
+                    <Input
+                      type="text"
+                      placeholder="Optional notes..."
+                      value={recoveryNotes}
+                      onChange={(e) => setRecoveryNotes(e.target.value)}
+                      className="pl-9 bg-dark-elevated border-dark-border text-sm h-10"
+                    />
+                  </div>
+                  <Button onClick={handleSaveRecovery} className="w-full">
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Recovery Score
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
         <div className="bg-dark-secondary rounded-xl p-5 border border-dark-border shadow-lg">
           <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center"><History className="text-accent-red mr-2" size={20} />Last Activity</h3>
@@ -277,7 +395,6 @@ export default function Dashboard({ onNavigateToWorkout, onEditWorkout, refreshT
 
       <div className="px-4 pb-4">
         <Button onClick={onNavigateToWorkout} className="w-full bg-accent-red text-white font-medium py-4 px-4 rounded-xl shadow-lg border border-transparent transition-all duration-200 hover:shadow-xl hover:scale-105">
-          <img src={logoPath} alt="Workout" className="w-6 h-6 object-contain mr-3" />
           <span>Log Workout</span>
         </Button>
       </div>
