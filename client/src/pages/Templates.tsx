@@ -35,12 +35,6 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
   const loadTemplates = () => {
     const loadedTemplates = storage.getTemplates();
     setTemplates(loadedTemplates);
-
-    // Initialize default templates if none exist
-    if (loadedTemplates.length === 0) {
-      storage.initializeDefaultTemplates();
-      setTemplates(storage.getTemplates());
-    }
   };
 
   const openCreateDialog = () => {
