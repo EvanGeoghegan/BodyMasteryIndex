@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Plus, Pill, Clock, PieChart as PieChartIcon, Trash2, Edit, RotateCcw, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -86,6 +87,14 @@ export default function Macros() {
       notes: ""
     }
   });
+
+  const getCheckpointMessage = (percent: number) => {
+    if (percent >= 100) return "Goal Complete! 🎉";
+    if (percent >= 75) return "Almost there!";
+    if (percent >= 50) return "Halfway there!";
+    if (percent >= 25) return "Great start!";
+    return ""; // Return empty string if less than 25%
+  };
 
   const refreshData = () => {
     try {
@@ -250,46 +259,54 @@ export default function Macros() {
           <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors" onClick={() => openDrawer('protein')}>
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-text-primary">Protein</h3>
-              <Button onClick={(e) => { e.stopPropagation(); handleReset('protein') }} variant="ghost" size="sm" className="text-xs text-text-secondary hover:text-text-primary">
+              <Button onClick={(e) => { e.stopPropagation(); handleReset('protein')}} variant="ghost" size="sm" className="text-xs text-text-secondary hover:text-text-primary">
                 <RotateCcw size={12} className="mr-1" /> Reset
               </Button>
             </div>
-            <div className="relative w-24 h-24 mx-auto mb-2">
+            {/* Increased size from w-24 h-24 to w-32 h-32 */}
+            <div className="relative w-32 h-32 mx-auto mb-2">
               <ResponsiveContainer width="100%" height="100%">
                 <RechartsPieChart>
-                  <Pie data={[{ value: Math.min(currentProtein, proteinGoal || 1), fill: 'var(--accent-red)' }, { value: Math.max(0, (proteinGoal || 1) - currentProtein), fill: 'var(--dark-elevated)' }]} cx="50%" cy="50%" innerRadius={30} outerRadius={45} startAngle={90} endAngle={-270} dataKey="value" paddingAngle={currentProtein > 0 ? 2 : 0} />
+                  {/* Adjusted radius for a bigger chart */}
+                  <Pie data={[{ value: Math.min(currentProtein, proteinGoal || 1), fill: 'var(--accent-red)' }, { value: Math.max(0, (proteinGoal || 1) - currentProtein), fill: 'var(--dark-elevated)' }]} cx="50%" cy="50%" innerRadius={40} outerRadius={60} startAngle={90} endAngle={-270} dataKey="value" paddingAngle={currentProtein > 0 ? 2 : 0} />
                 </RechartsPieChart>
               </ResponsiveContainer>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-sm font-bold text-text-primary">{Math.round((currentProtein / (proteinGoal || 1)) * 100)}%</span>
+                <span className="text-lg font-bold text-text-primary">{Math.round((currentProtein / (proteinGoal || 1)) * 100)}%</span>
               </div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-accent-red">{currentProtein}g</div>
+              <div className="text-xl font-bold text-accent-red">{currentProtein}g</div>
               <div className="text-xs text-text-secondary">of {proteinGoal}g</div>
+              {/* Added motivational message */}
+              <p className="text-xs text-accent-green mt-2 h-4">{getCheckpointMessage((currentProtein / (proteinGoal || 1)) * 100)}</p>
             </div>
           </div>
 
           <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors" onClick={() => openDrawer('water')}>
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-medium text-text-primary">Water</h3>
-              <Button onClick={(e) => { e.stopPropagation(); handleReset('water') }} variant="ghost" size="sm" className="text-xs text-text-secondary hover:text-text-primary">
+               <Button onClick={(e) => { e.stopPropagation(); handleReset('water')}} variant="ghost" size="sm" className="text-xs text-text-secondary hover:text-text-primary">
                 <RotateCcw size={12} className="mr-1" /> Reset
               </Button>
             </div>
-            <div className="relative w-24 h-24 mx-auto mb-2">
+            {/* Increased size from w-24 h-24 to w-32 h-32 */}
+            <div className="relative w-32 h-32 mx-auto mb-2">
               <ResponsiveContainer width="100%" height="100%">
                 <RechartsPieChart>
-                  <Pie data={[{ value: Math.min(currentWater, waterGoal || 1), fill: 'hsl(210, 80%, 60%)' }, { value: Math.max(0, (waterGoal || 1) - currentWater), fill: 'var(--dark-elevated)' }]} cx="50%" cy="50%" innerRadius={30} outerRadius={45} startAngle={90} endAngle={-270} dataKey="value" paddingAngle={currentWater > 0 ? 2 : 0} />
+                  {/* Adjusted radius for a bigger chart */}
+                  <Pie data={[{ value: Math.min(currentWater, waterGoal || 1), fill: 'hsl(210, 80%, 60%)' }, { value: Math.max(0, (waterGoal || 1) - currentWater), fill: 'var(--dark-elevated)' }]} cx="50%" cy="50%" innerRadius={40} outerRadius={60} startAngle={90} endAngle={-270} dataKey="value" paddingAngle={currentWater > 0 ? 2 : 0} />
                 </RechartsPieChart>
               </ResponsiveContainer>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-sm font-bold text-text-primary">{Math.round((currentWater / (waterGoal || 1)) * 100)}%</span>
+                <span className="text-lg font-bold text-text-primary">{Math.round((currentWater / (waterGoal || 1)) * 100)}%</span>
               </div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-blue-400">{currentWater.toFixed(1)}L</div>
+              <div className="text-xl font-bold text-blue-400">{currentWater.toFixed(1)}L</div>
               <div className="text-xs text-text-secondary">of {waterGoal.toFixed(1)}L</div>
+              {/* Added motivational message */}
+              <p className="text-xs text-accent-green mt-2 h-4">{getCheckpointMessage((currentWater / (waterGoal || 1)) * 100)}</p>
             </div>
           </div>
         </div>
