@@ -15,7 +15,8 @@ import Macros from "@/pages/Macros";
 import Settings from "@/pages/Settings";
 import { storage } from "@/lib/storage";
 import { Template, Workout as WorkoutType } from "@shared/schema";
-import { LocalNotifications, ActionPerformed } from '@capacitor/local-notifications';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { initNotifications, listenForNotificationActions } from '@/lib/notifications';
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -23,27 +24,30 @@ function App() {
   const [workoutToEdit, setWorkoutToEdit] = useState<WorkoutType | null>(null);
 
   useEffect(() => {
-    storage.initializeDefaultTemplates();
-    
-    const requestPermissions = async () => {
-      await LocalNotifications.requestPermissions();
-    };
-    requestPermissions();
+  (async () => {
+    await initNotifications();
 
-    const handleNotificationTap = async (notification: ActionPerformed) => {
-      const page = notification.notification.extra?.page;
-      if (page) {
-        setActiveTab(page);
-      }
-    };
-    
-    LocalNotifications.addListener('localNotificationActionPerformed', handleNotificationTap);
+    listenForNotificationActions(
+  () => {
+    // workout
+    setWorkoutToEdit(null);
+    setActiveTab('workout');
+  },
+  () => {
+    // nutrition/macros
+    setActiveTab('macros');
+  }
+);
 
-    return () => {
-      LocalNotifications.removeAllListeners();
-    };
 
-  }, []);
+    // TEMP test
+    // await fireTestNotification();
+  })();
+
+  return () => {
+    LocalNotifications.removeAllListeners();
+  };
+}, []);
 
   const handleWorkoutSaved = () => {
     setActiveTab("dashboard");

@@ -12,6 +12,7 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { Workout, Template, PersonalBest, Supplement, SupplementLog } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher"; // --- 1. IMPORT THE SWITCHER ---
+import { scheduleDailyReminder, cancelReminder, WORKOUT_REMINDER_ID, NUTRITION_REMINDER_ID,} from '@/lib/notifications';
 
 interface SettingsProps {}
 
@@ -56,6 +57,41 @@ export default function Settings({}: SettingsProps) {
       }
     }
   }, []);
+
+  useEffect(() => {
+  const run = async () => {
+    if (workoutReminder && workoutReminderTime) {
+      await scheduleDailyReminder(
+        WORKOUT_REMINDER_ID,
+        'Log your workout?',
+        'Tap Quick Add to jump straight to the logger.',
+        'workout',
+        workoutReminderTime
+      );
+    } else {
+      await cancelReminder(WORKOUT_REMINDER_ID);
+    }
+  };
+  run();
+}, [workoutReminder, workoutReminderTime]);
+
+// When user toggles nutrition reminder or time changes
+useEffect(() => {
+  const run = async () => {
+    if (nutritionReminder && nutritionReminderTime) {
+      await scheduleDailyReminder(
+        NUTRITION_REMINDER_ID,
+        'Log your nutrition',
+        'Don’t forget protein & water!',
+        'macros',
+        nutritionReminderTime
+      );
+    } else {
+      await cancelReminder(NUTRITION_REMINDER_ID);
+    }
+  };
+  run();
+}, [nutritionReminder, nutritionReminderTime]);
 
   const scheduleNotifications = async () => {
     // This function is assumed to be correct from previous steps
