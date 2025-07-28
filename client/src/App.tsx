@@ -16,7 +16,7 @@ import Settings from "@/pages/Settings";
 import { storage } from "@/lib/storage";
 import { Template, Workout as WorkoutType } from "@shared/schema";
 import { LocalNotifications } from '@capacitor/local-notifications';
-import { initNotifications, listenForNotificationActions } from '@/lib/notifications';
+import { initNotifications, listenForNotificationActions,scheduleWeeklyAssessmentReminder } from '@/lib/notifications';
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -26,6 +26,8 @@ function App() {
   useEffect(() => {
   (async () => {
     await initNotifications();
+    // ensure our weekly assessment reminder is scheduled
++   await scheduleWeeklyAssessmentReminder("20:00");
 
     listenForNotificationActions(
   () => {
@@ -36,6 +38,9 @@ function App() {
   () => {
     // nutrition/macros
     setActiveTab('macros');
+  },
+  () => { 
+    setActiveTab("assessment"); 
   }
 );
 

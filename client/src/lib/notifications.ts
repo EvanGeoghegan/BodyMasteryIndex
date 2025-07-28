@@ -7,6 +7,7 @@ const ANDROID_CHANNEL_ID = 'bmi_reminders';
 // Unique IDs for the 2 repeating reminders
 export const WORKOUT_REMINDER_ID   = 1111;
 export const NUTRITION_REMINDER_ID = 2222;
+export const ASSESSMENT_REMINDER_ID = 3333;
 
 let listenersAdded = false;
 
@@ -32,7 +33,8 @@ export async function initNotifications() {
 
 export function listenForNotificationActions(
   goToWorkout: () => void,
-  goToNutrition: () => void
+  goToNutrition: () => void,
+  goToAssessment: () => void
 ) {
   if (listenersAdded) return;
   listenersAdded = true;
@@ -44,7 +46,9 @@ export function listenForNotificationActions(
       goToWorkout();
     } else if (page === 'macros') {
       goToNutrition();
-    }
+    } else if (page === "assessment") {
+        goToAssessment();
+      }
     // else: do nothing or navigate to a default page
   });
 }
@@ -72,6 +76,34 @@ export async function scheduleDailyReminder(id: number, title: string, body: str
           allowWhileIdle: true,
         },
         smallIcon: 'ic_bmi_notif',
+        channelId: ANDROID_CHANNEL_ID,
+      },
+    ],
+  });
+}
+
+/** Schedule the weekly assessment reminder every Sunday at 20:00 */
+export async function scheduleWeeklyAssessmentReminder(
+  timeHHMM: string = "20:00"
+) {
+  const [hourStr, minuteStr] = timeHHMM.split(":");
+  const hour = parseInt(hourStr, 10);
+  const minute = parseInt(minuteStr, 10);
+
+  await LocalNotifications.schedule({
+    notifications: [
+      {
+        id: ASSESSMENT_REMINDER_ID,
+        title: "Weekly Assessment Ready",
+        body: "Tap to view your end‑of‑week stats!",
+        extra: { page: "assessment" },
+        schedule: {
+          // 1 = Sunday
+          on: { weekday: 1, hour, minute },
+          repeats: true,
+          allowWhileIdle: true,
+        },
+        smallIcon: "ic_bmi_notif",    // your custom icon resource
         channelId: ANDROID_CHANNEL_ID,
       },
     ],
