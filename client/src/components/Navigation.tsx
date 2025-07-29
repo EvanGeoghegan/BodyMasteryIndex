@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Home, Dumbbell, UtensilsCrossed, BarChart3, Calendar, Cog, LayoutTemplate } from "lucide-react";
 import { cn } from "@/lib/utils";
+import React from "react";
+
 
 // Define the props that this component will accept
 interface NavigationProps {
@@ -70,20 +72,24 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
           : "bg-dark-secondary border-t border-dark-border"
       )}
     >
-      <div className="flex justify-around items-center h-full max-w-2xl mx-auto px-2">
+      <div className="flex overflow-x-auto items-center h-full px-4 space-x-3 scrollbar-hide">
         {navLinks.map((link) => (
           <button
             key={link.id}
             onClick={() => onTabChange(link.id)}
             className={cn(
-              "flex flex-col items-center justify-center text-center w-16 transition-colors duration-200",
+              "flex flex-col items-center justify-center text-center w-14 transition-colors duration-200",
               activeTab === link.id
                 ? "text-accent-red"
                 : "text-text-disabled hover:text-text-secondary"
             )}
           >
-            {link.icon}
-            <span className="text-xs mt-1 font-medium">{link.label}</span>
+            {React.cloneElement(link.icon, {
+              size: activeTab === link.id ? 30 : 20,
+            })}
+            {activeTab === link.id && (
+              <span className="text-xs mt-1 font-medium">{link.label}</span>
+            )}
           </button>
         ))}
       </div>
