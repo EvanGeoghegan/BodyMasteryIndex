@@ -21,6 +21,7 @@ interface ExerciseOption {
   id: string;
   name: string;
   category: string;
+  equipment?: string[];
 }
 
 interface ExerciseComboboxProps {
