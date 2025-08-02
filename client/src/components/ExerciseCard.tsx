@@ -15,6 +15,7 @@ interface ExerciseCardProps {
   onUpdate: (data: Partial<Exercise>) => void;
   onDelete: () => void;
   startOpen?: boolean;
+  workoutExercises?: Exercise[];
 }
 
 interface LastPerformance {
@@ -29,7 +30,10 @@ export default function ExerciseCard({
   onUpdate,
   onDelete,
   startOpen = false,
+  workoutExercises = [],
 }: ExerciseCardProps) {
+  const otherExercises =
+    workoutExercises?.filter((ex) => ex.id !== exercise.id) || [];
   const [isOpen, setIsOpen] = useState(startOpen || !exercise.name);
   const [lastPerformance, setLastPerformance] =
     useState<LastPerformance | null>(null);
@@ -57,11 +61,10 @@ export default function ExerciseCard({
       name: exerciseName,
       type: category as any,
       equipment: Array.isArray(selected?.equipment)
-       ? selected?.equipment
-       : selected?.equipment
-          ? [selected.equipment]
-          : [],
-
+        ? selected?.equipment
+        : selected?.equipment
+        ? [selected.equipment]
+        : [],
     };
 
     if (exercise.sets.length === 0) {
@@ -72,7 +75,10 @@ export default function ExerciseCard({
       updates.sets = [newSet];
     }
 
-    onUpdate(updates);
+    onUpdate({
+      ...exercise,
+      ...updates,
+    });
   };
 
   const updateSet = (setIndex: number, updates: Partial<ExerciseSet>) => {
@@ -157,6 +163,11 @@ export default function ExerciseCard({
     }
   };
 
+  const getGroupLabel = () => {
+    if (!exercise.groupType || !exercise.groupId) return null;
+    return exercise.groupType === "circuit" ? "Circuit" : "Superset";
+  };
+
   return (
     <div
       className={cn(
@@ -173,9 +184,14 @@ export default function ExerciseCard({
         onClick={() => setIsOpen(!isOpen)}
       >
         <div>
-          <h4 className="font-semibold text-lg text-text-primary">
-            {exercise.name || "Select an Exercise"}
-          </h4>
+            <h4 className="font-semibold text-lg text-text-primary">
+              {exercise.name?.trim() || "Select an Exercise"}
+            </h4>
+
+          {getGroupLabel() && (
+            <p className="text-xs text-accent-yellow mt-1">{getGroupLabel()}</p>
+          )}
+
           <span
             className={cn(
               "text-sm px-2 py-0.5 rounded-full mt-1 inline-block",
@@ -220,11 +236,13 @@ export default function ExerciseCard({
 
       {isOpen && (
         <div className="p-4 border-t border-dark-border space-y-4">
-          <ExerciseCombobox
-            value={exercise.name}
-            onSelect={handleExerciseSelect}
-            filter={workoutType}
-          />
+          {!exercise.name && (
+            <ExerciseCombobox
+              value={exercise.name}
+              onSelect={handleExerciseSelect}
+              filter={workoutType}
+            />
+          )}
 
           {exercise.name && (
             <>
@@ -243,7 +261,20 @@ export default function ExerciseCard({
                 </div>
               )}
 
-              <div className="flex items-center space-x-2 text-sm text-center mb-2">
+              {exercise.groupId && (
+                <div className="mt-3 text-center">
+                  <button
+                    onClick={() => onUpdate({ groupId: undefined })}
+                    className="text-red-500 text-sm hover:text-red-600"
+                  >
+                    {exercise.groupType === "circuit"
+                      ? "Remove from Circuit"
+                      : "Ungroup from Superset"}
+                  </button>
+                </div>
+              )}
+
+              <div className="flex items-center space-x-2 text-xs text-text-secondary mb-1 opacity-70">
                 <span className="text-text-secondary w-8 text-left">Set</span>
                 {displayCategory === "strength" && (
                   <>

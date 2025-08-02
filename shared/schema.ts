@@ -26,6 +26,8 @@ export const exerciseSchema = z.object({
   type: z.enum(["strength", "cardio", "core"]).default("strength"),
   cardioType: z.enum(["run", "cycle", "swim", "hike", "sauna", "other"]).optional(),
   equipment: z.array(z.string()).optional(),
+  groupId: z.string().optional(),
+  groupType: z.enum(["superset", "circuit"]).optional(), 
 });
 
 export type Exercise = z.infer<typeof exerciseSchema>;
