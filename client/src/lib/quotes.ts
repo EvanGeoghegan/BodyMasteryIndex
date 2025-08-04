@@ -45,45 +45,50 @@ export const quotes: Quote[] = [
 
 export const harshQuotes: Quote[] = [
   {
-    text: "You've been making excuses for days. Your goals are collecting dust while you collect comfort.",
-    author: "Reality Check"
-  },
-  {
-    text: "The gym doesn't miss you, but your future self will regret what you're not doing today.",
-    author: "Hard Truth"
-  },
-  {
-    text: "Every day you skip is a day your competition gets stronger. What's your excuse this time?",
-    author: "Wake Up Call"
-  },
-  {
-    text: "Your body is keeping score of every missed workout. The bill is coming due.",
-    author: "Accountability"
-  },
-  {
-    text: "Dreams don't work unless you do. Stop dreaming and start sweating.",
-    author: "No Mercy"
-  },
-  {
-    text: "The only thing worse than starting over is wishing you had. Stop wishing, start working.",
-    author: "Tough Love"
-  },
-  {
-    text: "Your comfort zone is a beautiful place, but nothing ever grows there. Time to get uncomfortable.",
-    author: "Push Forward"
-  },
-  {
-    text: "Everyone has the same 24 hours. Champions just use theirs differently than you do.",
-    author: "Time Management"
-  },
-  {
-    text: "Your body can stand almost anything. It's your mind that you have to convince. Stop convincing it to quit.",
-    author: "Mental Toughness"
-  },
-  {
-    text: "The voice in your head that says you can't do this is lying. The one that says you won't is telling the truth.",
-    author: "Inner Battle"
-  }
+  text: "You are in danger of living a life so comfortable and soft, that you will die without ever realizing your true potential.",
+  author: "David Goggins",
+},
+{
+  text: "Don’t stop when you’re tired. Stop when you’re done.",
+  author: "David Goggins",
+},
+{
+  text: "If you're going through hell, keep going.",
+  author: "Winston Churchill",
+},
+{
+  text: "The most important conversations you’ll ever have are the ones you’ll have with yourself.",
+  author: "David Goggins",
+},
+{
+  text: "Suffering is the true test of life.",
+  author: "David Goggins",
+},
+{
+  text: "Be more than motivated. Be more than driven. Become literally obsessed to the point where people think you’re f***ing crazy.",
+  author: "David Goggins",
+},
+{
+  text: "Get comfortable being uncomfortable.",
+  author: "David Goggins",
+},
+{
+  text: "You don’t rise to the level of your expectations. You fall to the level of your training.",
+  author: "Archilochus",
+},
+{
+  text: "Excuses sound best to the person making them.",
+  author: "Eric Thomas",
+},
+{
+  text: "Discipline is doing what needs to be done, even if you don’t want to do it.",
+  author: "Unknown",
+},
+{
+  text: "You said tomorrow yesterday.",
+  author: "Unknown",
+}
+
 ];
 
 export function getRandomQuote(): Quote {
@@ -103,8 +108,8 @@ export function getDailyQuote(): Quote {
 }
 
 export function getMotivationalQuote(daysSinceLastWorkout: number): Quote {
-  // Use harsh quotes if user hasn't worked out for 3+ days
-  if (daysSinceLastWorkout >= 3) {
+  // Use harsh quotes if user hasn't worked out for 2+ days
+  if (daysSinceLastWorkout >= 2) {
     const today = new Date().toDateString();
     const hash = today.split('').reduce((a, b) => {
       a = ((a << 5) - a) + b.charCodeAt(0);
