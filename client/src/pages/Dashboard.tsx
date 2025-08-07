@@ -28,6 +28,7 @@ import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import FullBodyHeatmap from "@/components/FullBodyHeatmap";
 
 interface DashboardProps {
   onNavigateToWorkout: () => void;
@@ -559,6 +560,8 @@ export default function Dashboard({
             <span>Log Workout</span>
           </Button>
         </div>
+
+        <FullBodyHeatmap />
       </div>
     </div>
   );
