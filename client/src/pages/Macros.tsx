@@ -232,7 +232,7 @@ export default function Macros() {
 
   return (
     <div className="min-h-screen bg-dark-primary">
-      <header className="bg-dark-secondary p-2 shadow-lg">
+      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <UtensilsCrossed className="text-accent-red mr-4" size={28} />

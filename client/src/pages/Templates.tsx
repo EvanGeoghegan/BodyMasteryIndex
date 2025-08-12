@@ -142,7 +142,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
 
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
-      <header className="bg-dark-secondary p-2 shadow-lg">
+      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
         <div className="flex items-center justify-between">
           {/* Left side: Page Icon + Title */}
           <div className="flex items-center">
@@ -254,7 +254,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
                 <label className="text-text-secondary text-sm font-medium mb-2 block">
                   Template Type
                 </label>
-                <Select value={formData.type || "strength"} onValueChange={(value: "strength" | "cardio" | "mixed") => setFormData({ ...formData, type: value })}>
+                <Select value={formData.type || "strength"} onValueChange={(value: "strength" | "cardio" | "core"| "sports") => setFormData({ ...formData, type: value })}>
                   <SelectTrigger className="bg-dark-elevated text-text-primary border-dark-border">
                     <SelectValue />
                   </SelectTrigger>

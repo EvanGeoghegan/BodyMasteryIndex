@@ -238,7 +238,7 @@ export default function Dashboard({
 
   return (
     <div className="bg-dark-primary text-text-primary pb-20">
-      <header className="bg-dark-secondary p-2 shadow-lg">
+      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
         <div className="flex items-center justify-between">
           {/* Left side: Standalone Page Icon + Title */}
           <div className="flex items-center">

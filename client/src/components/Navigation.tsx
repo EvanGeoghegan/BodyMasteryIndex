@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Home, Dumbbell, UtensilsCrossed, BarChart3, Calendar, Cog, LayoutTemplate } from "lucide-react";
+import { Home, Trophy, Dumbbell, UtensilsCrossed, BarChart3, Calendar, Cog, LayoutTemplate } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React from "react";
 
@@ -36,6 +36,11 @@ const navLinks = [
     label: "Progress",
     icon: <BarChart3 className="w-6 h-6" />,
   },
+  {
+  id: "records",
+  label: "Records",
+  icon: <Trophy className="w-6 h-6" />,
+},
   {
     id: "calendar",
     label: "Calendar",
