@@ -174,10 +174,12 @@ export default function ProgressDashboard() {
           <div className="flex items-center">
             <BarChart3 className="text-accent-red mr-4" size={28} />
             <div>
+              <div className="mt-2">
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Progress
               </h2>
               <p className="text-text-secondary mt-1">Visualize your journey.</p>
+            </div>
             </div>
           </div>
 

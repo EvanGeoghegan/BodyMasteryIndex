@@ -237,10 +237,12 @@ export default function Macros() {
           <div className="flex items-center">
             <UtensilsCrossed className="text-accent-red mr-4" size={28} />
             <div>
+              <div className="mt-2">
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Macro Tracker
               </h2>
               <p className="text-text-secondary mt-1">Log your daily macro/micronutrients.</p>
+            </div>
             </div>
           </div>
           <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">

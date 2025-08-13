@@ -159,11 +159,13 @@ export default function CalendarPage() {
           <div className="flex items-center">
             <Calendar className="text-accent-red mr-4" size={28} />
             <div>
+              <div className="mt-2">
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Activity Calendar
               </h2>
               <p className="text-text-secondary mt-1">Review your workout history.</p>
             </div>
+          </div>
           </div>
 
           {/* Right side: App Logo */}

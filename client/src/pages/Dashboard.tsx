@@ -244,11 +244,13 @@ export default function Dashboard({
           <div className="flex items-center">
             <Home className="text-accent-red mr-4" size={28} />
             <div>
+            <div className="mt-2">
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Dashboard
               </h2>
               <p className="text-text-secondary mt-1">Your daily overview</p>
             </div>
+          </div>
           </div>
 
           {/* Right side: App Logo */}
@@ -352,64 +354,11 @@ export default function Dashboard({
             )}
           </blockquote>
         </div>
+        <FullBodyHeatmap />
       </div>
       <div className="px-4 pt-6 space-y-6">
         {/* --- End of the new grid container --- */}
-        <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
-          <div className="flex items-center gap-2 mb-4">
-            <Target className="text-accent-red" size={20} />
-            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
-              Weekly Assessment
-            </h2>
-          </div>
-          {weeklyAssessmentDone ? (
-            <div className="text-center py-4">
-              <div className="text-accent-green mb-2">✓</div>
-              <p className="text-text-secondary text-sm">
-                Weekly assessment completed!
-              </p>
-              <p className="text-text-secondary text-xs mt-1">
-                Come back next week.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-text-secondary">
-                    {assessmentExercise1}
-                  </label>
-                  <Input
-                    type="number"
-                    placeholder="0"
-                    value={exercise1Reps}
-                    onChange={(e) => setExercise1Reps(e.target.value)}
-                    className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-text-secondary">
-                    {assessmentExercise2}
-                  </label>
-                  <Input
-                    type="number"
-                    placeholder="0"
-                    value={exercise2Reps}
-                    onChange={(e) => setExercise2Reps(e.target.value)}
-                    className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
-                  />
-                </div>
-              </div>
-              <Button
-                onClick={saveAssessmentResults}
-                disabled={!exercise1Reps || !exercise2Reps}
-                className="w-full bg-accent-red text-white disabled:opacity-50"
-              >
-                Save Weekly Assessment
-              </Button>
-            </div>
-          )}
-        </div>
+        
         <div className="grid grid-cols-2 gap-4">
           <div
             className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors"
@@ -509,6 +458,63 @@ export default function Dashboard({
             </div>
           </div>
         </div>
+
+        <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
+          <div className="flex items-center gap-2 mb-4">
+            <Target className="text-accent-red" size={20} />
+            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
+              Weekly Assessment
+            </h2>
+          </div>
+          {weeklyAssessmentDone ? (
+            <div className="text-center py-4">
+              <div className="text-accent-green mb-2">✓</div>
+              <p className="text-text-secondary text-sm">
+                Weekly assessment completed!
+              </p>
+              <p className="text-text-secondary text-xs mt-1">
+                Come back next week.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-text-secondary">
+                    {assessmentExercise1}
+                  </label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={exercise1Reps}
+                    onChange={(e) => setExercise1Reps(e.target.value)}
+                    className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-text-secondary">
+                    {assessmentExercise2}
+                  </label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={exercise2Reps}
+                    onChange={(e) => setExercise2Reps(e.target.value)}
+                    className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
+                  />
+                </div>
+              </div>
+              <Button
+                onClick={saveAssessmentResults}
+                disabled={!exercise1Reps || !exercise2Reps}
+                className="w-full bg-accent-red text-white disabled:opacity-50"
+              >
+                Save Weekly Assessment
+              </Button>
+            </div>
+          )}
+        </div>
+        
         <div className="bg-dark-secondary rounded-xl p-5 border border-dark-border shadow-lg">
           <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center">
             <History className="text-accent-red mr-2" size={20} />
@@ -561,7 +567,7 @@ export default function Dashboard({
           </Button>
         </div>
 
-        <FullBodyHeatmap />
+        
       </div>
     </div>
   );

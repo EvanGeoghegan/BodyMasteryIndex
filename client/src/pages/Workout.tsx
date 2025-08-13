@@ -371,12 +371,14 @@ export default function WorkoutPage({
           <div className="flex items-center">
             <Dumbbell className="text-accent-red mr-4" size={28} />
             <div>
+              <div className="mt-2">
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Log Workout
               </h2>
               <p className="text-text-secondary mt-1">
                 Track your sets, reps, and weight.
               </p>
+            </div>
             </div>
           </div>
           <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
