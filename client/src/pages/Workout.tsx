@@ -576,7 +576,6 @@ export default function WorkoutPage({
                             onDelete={() => deleteExercise(exercise.id)}
                             workoutExercises={exercises}
                             startOpen={exercise.id === lastAddedExerciseId}
-                            workoutType={workoutType}
                           />
                         ))}
                       </div>
@@ -610,7 +609,6 @@ export default function WorkoutPage({
                         onDelete={() => deleteExercise(exercise.id)}
                         workoutExercises={exercises}
                         startOpen={exercise.id === lastAddedExerciseId}
-                        workoutType={workoutType}
                       />
 
                       {/* + Button to group with next */}
