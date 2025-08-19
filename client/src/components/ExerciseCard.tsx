@@ -11,7 +11,6 @@ import { equipmentIcons } from "@/icons/equipmentIcons";
 
 interface ExerciseCardProps {
   exercise: Exercise;
-  workoutType: "strength" | "cardio" | "core" | "sports";
   onUpdate: (data: Partial<Exercise>) => void;
   onDelete: () => void;
   startOpen?: boolean;
@@ -26,7 +25,6 @@ interface LastPerformance {
 
 export default function ExerciseCard({
   exercise,
-  workoutType,
   onUpdate,
   onDelete,
   startOpen = false,
@@ -55,11 +53,11 @@ export default function ExerciseCard({
 
   const handleExerciseSelect = (exerciseName: string) => {
     const selected = masterExerciseList.find((ex) => ex.name === exerciseName);
-    const category = selected ? selected.category : workoutType;
+    const category = selected ? selected.category : exercise.type;
 
     const updates: Partial<Exercise> = {
       name: exerciseName,
-      type: category as any,
+      type: (category as any) || "strength",
       equipment: Array.isArray(selected?.equipment)
         ? selected?.equipment
         : selected?.equipment
@@ -240,7 +238,13 @@ export default function ExerciseCard({
             <ExerciseCombobox
               value={exercise.name}
               onSelect={handleExerciseSelect}
-              filter={workoutType}
+              filter={
+                (exercise.type || "strength") as
+                  | "strength"
+                  | "cardio"
+                  | "core"
+                  | "sports"
+              }
             />
           )}
 

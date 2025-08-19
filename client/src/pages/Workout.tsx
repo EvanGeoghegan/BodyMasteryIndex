@@ -2,13 +2,6 @@ import { useState, Fragment, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -20,6 +13,17 @@ import { storage } from "@/lib/storage";
 import { Exercise, Workout, Template, InsertTemplate } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+
+function determineWorkoutType(
+  exercises: Exercise[]
+): "strength" | "cardio" | "core" | "sports" {
+  const uniqueTypes = Array.from(
+    new Set(exercises.map((ex) => ex.type).filter(Boolean))
+  );
+  return uniqueTypes.length === 1
+    ? (uniqueTypes[0] as "strength" | "cardio" | "core")
+    : "sports";
+}
 
 interface WorkoutProps {
   onWorkoutSaved: () => void;
@@ -38,7 +42,7 @@ export default function WorkoutPage({
   const [showTemplateDialog, setShowTemplateDialog] = useState(false);
   const [workoutType, setWorkoutType] = useState<
     "strength" | "cardio" | "core" | "sports"
-  >("strength");
+  >("sports");
   const [workoutDate, setWorkoutDate] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -77,14 +81,16 @@ export default function WorkoutPage({
   };
 
   useEffect(() => {
+    setWorkoutType(determineWorkoutType(exercises));
+  }, [exercises]);
+
+  useEffect(() => {
     setTemplates(storage.getTemplates());
     loadTodaysWorkouts();
 
     if (initialWorkout) {
       setEditingWorkout(initialWorkout);
       setWorkoutName(initialWorkout.name);
-      // Map "mixed" from storage back to "sports" for the UI
-      setWorkoutType(initialWorkout.type);
       setExercises(initialWorkout.exercises);
       setWorkoutDate(initialWorkout.date.split("T")[0]);
       setWorkoutNotes(initialWorkout.notes || "");
@@ -106,7 +112,6 @@ export default function WorkoutPage({
   const editWorkout = (workout: Workout) => {
     setEditingWorkout(workout);
     setWorkoutName(workout.name);
-    setWorkoutType(workout.type);
     setExercises(workout.exercises);
     setWorkoutDate(workout.date.split("T")[0]);
     setWorkoutNotes(workout.notes || "");
@@ -117,7 +122,6 @@ export default function WorkoutPage({
     setEditingWorkout(null);
     setWorkoutName("");
     setExercises([]);
-    setWorkoutType("strength");
     setWorkoutDate(new Date().toISOString().split("T")[0]);
     setWorkoutNotes("");
     addExercise();
@@ -125,7 +129,6 @@ export default function WorkoutPage({
 
   const loadFromTemplate = (template: Template) => {
     setWorkoutName(template.name);
-    setWorkoutType(template.type);
 
     const templateExercises: Exercise[] = template.exercises.map(
       (templateEx) => ({
@@ -153,7 +156,7 @@ export default function WorkoutPage({
     const newExercise: Exercise = {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       name: "",
-      type: workoutType === "sports" ? "strength" : workoutType, // Default new exercises in sports to strength
+      type: "strength", // Default type; will be updated when an exercise is selected
       sets: [],
     };
     setExercises((prevExercises) => [...prevExercises, newExercise]);
@@ -224,13 +227,15 @@ export default function WorkoutPage({
       return;
     }
 
+    const computedWorkoutType = determineWorkoutType(validExercises);
+
     const workout: Omit<Workout, "id"> = {
       name: workoutName,
       date: new Date(
         workoutDate + "T" + new Date().toTimeString().split(" ")[0]
       ).toISOString(),
       exercises: validExercises,
-      type: workoutType,
+      type: computedWorkoutType,
       notes: workoutNotes,
     };
 
@@ -338,10 +343,12 @@ export default function WorkoutPage({
       return; // User cancelled
     }
 
+    const computedWorkoutType = determineWorkoutType(validExercises);
+
     const newTemplate: InsertTemplate = {
       name: templateName,
       description: `Template created from '${workoutName}'`,
-      type: workoutType,
+      type: computedWorkoutType,
       exercises: validExercises.map((ex) => {
         const firstSet = ex.sets[0];
         return {
@@ -478,7 +485,7 @@ export default function WorkoutPage({
             placeholder="e.g., Push Day, Leg Day"
           />
 
-          <div className="grid grid-cols-2 gap-3 mb-3">
+          <div className="grid grid-cols-1 gap-3 mb-3">
             <div>
               <label className="text-text-secondary text-sm font-medium mb-1 block">
                 Workout Date
@@ -489,27 +496,6 @@ export default function WorkoutPage({
                 onChange={(e) => setWorkoutDate(e.target.value)}
                 className="w-full bg-dark-elevated text-text-primary border-dark-border"
               />
-            </div>
-            <div>
-              <label className="text-text-secondary text-sm font-medium mb-1 block">
-                Workout Type
-              </label>
-              <Select
-                value={workoutType}
-                onValueChange={(
-                  value: "strength" | "cardio" | "core" | "sports"
-                ) => setWorkoutType(value)}
-              >
-                <SelectTrigger className="w-full bg-dark-elevated text-text-primary border-dark-border">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-dark-secondary border-dark-border">
-                  <SelectItem value="strength">Strength</SelectItem>
-                  <SelectItem value="cardio">Cardio</SelectItem>
-                  <SelectItem value="core">Core</SelectItem>
-                  <SelectItem value="sports">Sports</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
           </div>
         </div>
@@ -576,7 +562,6 @@ export default function WorkoutPage({
                             onDelete={() => deleteExercise(exercise.id)}
                             workoutExercises={exercises}
                             startOpen={exercise.id === lastAddedExerciseId}
-                            workoutType={workoutType}
                           />
                         ))}
                       </div>
@@ -610,7 +595,6 @@ export default function WorkoutPage({
                         onDelete={() => deleteExercise(exercise.id)}
                         workoutExercises={exercises}
                         startOpen={exercise.id === lastAddedExerciseId}
-                        workoutType={workoutType}
                       />
 
                       {/* + Button to group with next */}
