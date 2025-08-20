@@ -40,9 +40,6 @@ export default function WorkoutPage({
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [showTemplateDialog, setShowTemplateDialog] = useState(false);
-  const [workoutType, setWorkoutType] = useState<
-    "strength" | "cardio" | "core" | "sports"
-  >("sports");
   const [workoutDate, setWorkoutDate] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -79,10 +76,6 @@ export default function WorkoutPage({
       })
     );
   };
-
-  useEffect(() => {
-    setWorkoutType(determineWorkoutType(exercises));
-  }, [exercises]);
 
   useEffect(() => {
     setTemplates(storage.getTemplates());
