@@ -53,11 +53,10 @@ export default function ExerciseCard({
 
   const handleExerciseSelect = (exerciseName: string) => {
     const selected = masterExerciseList.find((ex) => ex.name === exerciseName);
-    const category = selected ? selected.category : exercise.type;
 
     const updates: Partial<Exercise> = {
       name: exerciseName,
-      type: (category as any) || "strength",
+      type: (selected?.category as any) || exercise.type || "strength",
       equipment: Array.isArray(selected?.equipment)
         ? selected?.equipment
         : selected?.equipment
@@ -238,13 +237,6 @@ export default function ExerciseCard({
             <ExerciseCombobox
               value={exercise.name}
               onSelect={handleExerciseSelect}
-              filter={
-                (exercise.type || "strength") as
-                  | "strength"
-                  | "cardio"
-                  | "core"
-                  | "sports"
-              }
             />
           )}
 
