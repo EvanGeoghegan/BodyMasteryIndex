@@ -97,15 +97,31 @@ export default function CalendarPage() {
 
   const getWorkoutData = (date: Date) => {
     const dateString = toLocalDateString(date);
-    const allWorkouts = storage.getWorkouts();
-    const workouts = allWorkouts.filter(w => w.date.startsWith(dateString));
+    const workouts = storage.getWorkouts().filter(w => w.date.startsWith(dateString));
 
-    if (workouts.length === 0) return null;
+    const types = new Set<string>();
 
-    const workoutTypes = new Set(workouts.map(w => w.type));
+    for (const workout of workouts) {
+      let completedInWorkout = false;
+
+      for (const exercise of workout.exercises) {
+        const hasCompletedSet = exercise.sets.some(set => set.completed);
+        if (hasCompletedSet) {
+          types.add(exercise.type);
+          completedInWorkout = true;
+        }
+      }
+
+      if (completedInWorkout && workout.type === 'sports') {
+        types.add('sports');
+      }
+    }
+
+    if (types.size === 0) return null;
+
     return {
       hasWorkouts: true,
-      types: Array.from(workoutTypes),
+      types: Array.from(types),
     };
   };
 
