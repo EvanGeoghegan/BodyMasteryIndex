@@ -27,16 +27,10 @@ interface ExerciseOption {
 interface ExerciseComboboxProps {
   value: string;
   onSelect: (value: string) => void;
-  filter: "strength" | "cardio" | "core" | "sports"; // New prop to filter by
 }
 
-export default function ExerciseCombobox({ value, onSelect, filter }: ExerciseComboboxProps) {
+export default function ExerciseCombobox({ value, onSelect }: ExerciseComboboxProps) {
   const [open, setOpen] = useState(false);
-
-  // Filter the master list based on the workout type
-  const filteredExercises = masterExerciseList.filter(
-    (exercise) => exercise.category === filter
-  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -57,7 +51,7 @@ export default function ExerciseCombobox({ value, onSelect, filter }: ExerciseCo
           <CommandList>
             <CommandEmpty>No exercise found.</CommandEmpty>
             <CommandGroup>
-              {filteredExercises.map((exercise) => (
+              {masterExerciseList.map((exercise) => (
                 <CommandItem
                   key={exercise.id}
                   value={exercise.name}
