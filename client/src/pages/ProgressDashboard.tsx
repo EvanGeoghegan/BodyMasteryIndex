@@ -17,6 +17,7 @@ import {
   Legend
 } from "recharts";
 import masterExerciseList from "@/lib/exercises.json"; // Import the exercise database
+import WeeklyAssessmentReport from "@/components/WeeklyAssessmentReport";
 
 // Data structure for body composition history
 interface BodyCompData {
@@ -34,6 +35,7 @@ export default function ProgressDashboard() {
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>('all');
   const [selectedPbExercise1, setSelectedPbExercise1] = useState<string>('none');
   const [selectedPbExercise2, setSelectedPbExercise2] = useState<string>('none'); // For comparison
+  const [showWeekly, setShowWeekly] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -166,16 +168,18 @@ export default function ProgressDashboard() {
 
   return (
     <div className="bg-dark-primary pb-20">
-      <header className="bg-dark-secondary p-2 shadow-lg">
+      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
         <div className="flex items-center justify-between">
           {/* Left side: Page Icon + Title */}
           <div className="flex items-center">
             <BarChart3 className="text-accent-red mr-4" size={28} />
             <div>
+              <div className="mt-2">
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Progress
               </h2>
               <p className="text-text-secondary mt-1">Visualize your journey.</p>
+            </div>
             </div>
           </div>
 
@@ -206,114 +210,181 @@ export default function ProgressDashboard() {
             <p className="text-xs text-text-secondary mt-1">Total Volume (kg)</p>
           </div>
         </div>
-
-        {/* Body Composition Charts (unchanged) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
-            <h3 className="text-lg font-semibold text-text-primary font-heading mb-4 flex items-center"><Weight className="mr-2" size={20} />Body Weight</h3>
-            <div className="h-60">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={bodyCompHistory} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--dark-border)" />
-                  <XAxis dataKey="date" tickFormatter={formatDate} stroke="var(--text-secondary)" fontSize={12} />
-                  <YAxis stroke="var(--text-secondary)" fontSize={12} domain={['dataMin - 2', 'dataMax + 2']} />
-                  <Tooltip contentStyle={{ backgroundColor: 'var(--dark-elevated)', border: '1px solid var(--dark-border)' }} />
-                  <Line type="monotone" dataKey="weight" stroke="var(--accent-red)" strokeWidth={2} dot={{ r: 4 }} />
-                  {settings.targetWeight && <ReferenceLine y={settings.targetWeight} label="Target" stroke="var(--accent-green)" strokeDasharray="4 4" />}
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
-            <h3 className="text-lg font-semibold text-text-primary font-heading mb-4 flex items-center"><Percent className="mr-2" size={20} />Body Fat %</h3>
-            <div className="h-60">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={bodyCompHistory} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--dark-border)" />
-                  <XAxis dataKey="date" tickFormatter={formatDate} stroke="var(--text-secondary)" fontSize={12} />
-                  <YAxis stroke="var(--text-secondary)" fontSize={12} domain={['dataMin - 2', 'dataMax + 2']} />
-                  <Tooltip contentStyle={{ backgroundColor: 'var(--dark-elevated)', border: '1px solid var(--dark-border)' }} />
-                  <Line type="monotone" dataKey="bodyFat" stroke="#8884d8" strokeWidth={2} dot={{ r: 4 }} />
-                  {settings.targetBodyFat && <ReferenceLine y={settings.targetBodyFat} label="Target" stroke="var(--accent-green)" strokeDasharray="4 4" />}
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+{/* Toggle Button */}
+        <div className="text-center mt-4">
+          <button
+            onClick={() => setShowWeekly((v) => !v)}
+            className="bg-accent-red hover:bg-accent-red/90 text-white font-semibold py-2 px-4 rounded"
+          >
+            {showWeekly ? "Back to Charts" : "Weekly Summary"}
+          </button>
         </div>
 
-        {/* Weekly Volume Chart (unchanged) */}
-        <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
-          <h3 className="text-lg font-semibold text-text-primary font-heading mb-4 flex items-center"><TrendingUp className="mr-2" size={20} />Weekly Volume</h3>
-          <div className="h-60">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={weeklyVolumeData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--dark-border)" />
-                <XAxis dataKey="date" tickFormatter={formatDate} stroke="var(--text-secondary)" fontSize={12} />
-                <YAxis stroke="var(--text-secondary)" fontSize={12} />
-                <Tooltip contentStyle={{ backgroundColor: 'var(--dark-elevated)', border: '1px solid var(--dark-border)' }} />
-                <Bar dataKey="volume" fill="var(--accent-red)" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+        {/* Conditional Rendering */}
+        {showWeekly ? (
+          <WeeklyAssessmentReport />
+        ) : (
+          <>
+            {/* Body Composition Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
+                <h3 className="text-lg font-semibold text-text-primary font-heading mb-4 flex items-center">
+                  <Weight className="mr-2" size={20} />
+                  Body Weight
+                </h3>
+                <div className="h-60">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={bodyCompHistory} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--dark-border)" />
+                      <XAxis dataKey="date" tickFormatter={formatDate} stroke="var(--text-secondary)" fontSize={12} />
+                      <YAxis stroke="var(--text-secondary)" fontSize={12} domain={["dataMin - 2", "dataMax + 2"]} />
+                      <Tooltip contentStyle={{ backgroundColor: "var(--dark-elevated)", border: "1px solid var(--dark-border)" }} />
+                      <Line type="monotone" dataKey="weight" stroke="var(--accent-red)" strokeWidth={2} dot={{ r: 4 }} />
+                      {settings.targetWeight && (
+                        <ReferenceLine y={settings.targetWeight} label="Target" stroke="var(--accent-green)" strokeDasharray="4 4" />
+                      )}
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
 
-        {/* --- UPDATED Personal Best Chart Section --- */}
-        <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
-          <h3 className="text-lg font-semibold text-text-primary font-heading mb-4 flex items-center"><Trophy className="mr-2" size={20} />Personal Best Progress</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-            <Select value={selectedMuscleGroup} onValueChange={(value) => {
-              setSelectedMuscleGroup(value);
-              setSelectedPbExercise1('none');
-              setSelectedPbExercise2('none');
-            }}>
-              <SelectTrigger className="w-full bg-dark-elevated border-dark-border text-text-primary">
-                <SelectValue placeholder="Select Muscle Group..." />
-              </SelectTrigger>
-              <SelectContent className="bg-dark-secondary border-dark-border">
-                <SelectItem value="all">All Muscle Groups</SelectItem>
-                {muscleGroupOptions.map(group => <SelectItem key={group} value={group} className="capitalize">{group}</SelectItem>)}
-              </SelectContent>
-            </Select>
-
-            <Select value={selectedPbExercise1} onValueChange={setSelectedPbExercise1}>
-              <SelectTrigger className="w-full bg-dark-elevated border-dark-border text-text-primary">
-                <SelectValue placeholder="Select Exercise 1..." />
-              </SelectTrigger>
-              <SelectContent className="bg-dark-secondary border-dark-border">
-                <SelectItem value="none">Select Exercise...</SelectItem>
-                {pbExerciseOptions.map(ex => <SelectItem key={ex} value={ex}>{ex}</SelectItem>)}
-              </SelectContent>
-            </Select>
-
-            <Select value={selectedPbExercise2} onValueChange={setSelectedPbExercise2} disabled={selectedPbExercise1 === 'none'}>
-              <SelectTrigger className="w-full bg-dark-elevated border-dark-border text-text-primary">
-                <SelectValue placeholder="Compare with..." />
-              </SelectTrigger>
-              <SelectContent className="bg-dark-secondary border-dark-border">
-                <SelectItem value="none">None</SelectItem>
-                {pbExerciseOptions.filter(ex => ex !== selectedPbExercise1).map(ex => <SelectItem key={ex} value={ex}>{ex}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {selectedPbExercise1 !== 'none' && (
-            <div className="h-60">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={comparisonChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--dark-border)" />
-                  <XAxis dataKey="date" tickFormatter={formatDate} stroke="var(--text-secondary)" fontSize={12} />
-                  <YAxis stroke="var(--text-secondary)" fontSize={12} domain={['dataMin - 5', 'dataMax + 5']} />
-                  <Tooltip contentStyle={{ backgroundColor: 'var(--dark-elevated)', border: '1px solid var(--dark-border)' }} />
-                  <Legend />
-                  <Line type="monotone" dataKey={selectedPbExercise1} name={selectedPbExercise1} stroke="var(--accent-green)" strokeWidth={2} dot={{ r: 4 }} connectNulls />
-                  {selectedPbExercise2 !== 'none' && (
-                    <Line type="monotone" dataKey={selectedPbExercise2} name={selectedPbExercise2} stroke="#8884d8" strokeWidth={2} dot={{ r: 4 }} connectNulls />
-                  )}
-                </LineChart>
-              </ResponsiveContainer>
+              <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
+                <h3 className="text-lg font-semibold text-text-primary font-heading mb-4 flex items-center">
+                  <Percent className="mr-2" size={20} />
+                  Body Fat %
+                </h3>
+                <div className="h-60">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={bodyCompHistory} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--dark-border)" />
+                      <XAxis dataKey="date" tickFormatter={formatDate} stroke="var(--text-secondary)" fontSize={12} />
+                      <YAxis stroke="var(--text-secondary)" fontSize={12} domain={["dataMin - 2", "dataMax + 2"]} />
+                      <Tooltip contentStyle={{ backgroundColor: "var(--dark-elevated)", border: "1px solid var(--dark-border)" }} />
+                      <Line type="monotone" dataKey="bodyFat" stroke="#8884d8" strokeWidth={2} dot={{ r: 4 }} />
+                      {settings.targetBodyFat && (
+                        <ReferenceLine y={settings.targetBodyFat} label="Target" stroke="var(--accent-green)" strokeDasharray="4 4" />
+                      )}
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             </div>
-          )}
-        </div>
+
+            {/* Weekly Volume Chart */}
+            <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
+              <h3 className="text-lg font-semibold text-text-primary font-heading mb-4 flex items-center">
+                <TrendingUp className="mr-2" size={20} />
+                Weekly Volume
+              </h3>
+              <div className="h-60">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={weeklyVolumeData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--dark-border)" />
+                    <XAxis dataKey="date" tickFormatter={formatDate} stroke="var(--text-secondary)" fontSize={12} />
+                    <YAxis stroke="var(--text-secondary)" fontSize={12} />
+                    <Tooltip contentStyle={{ backgroundColor: "var(--dark-elevated)", border: "1px solid var(--dark-border)" }} />
+                    <Bar dataKey="volume" fill="var(--accent-red)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Personal Best Progress */}
+            <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
+              <h3 className="text-lg font-semibold text-text-primary font-heading mb-4 flex items-center">
+                <Trophy className="mr-2" size={20} />
+                Personal Best Progress
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                <Select
+                  value={selectedMuscleGroup}
+                  onValueChange={(v) => {
+                    setSelectedMuscleGroup(v);
+                    setSelectedPbExercise1("none");
+                    setSelectedPbExercise2("none");
+                  }}
+                >
+                  <SelectTrigger className="w-full bg-dark-elevated border-dark-border text-text-primary">
+                    <SelectValue placeholder="Select Muscle Group..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-dark-secondary border-dark-border">
+                    <SelectItem value="all">All Muscle Groups</SelectItem>
+                    {muscleGroupOptions.map((g) => (
+                      <SelectItem key={g} value={g} className="capitalize">
+                        {g}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={selectedPbExercise1} onValueChange={setSelectedPbExercise1}>
+                  <SelectTrigger className="w-full bg-dark-elevated border-dark-border text-text-primary">
+                    <SelectValue placeholder="Select Exercise 1..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-dark-secondary border-dark-border">
+                    <SelectItem value="none">Select Exercise...</SelectItem>
+                    {pbExerciseOptions.map((ex) => (
+                      <SelectItem key={ex} value={ex}>
+                        {ex}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={selectedPbExercise2}
+                  onValueChange={setSelectedPbExercise2}
+                  disabled={selectedPbExercise1 === "none"}
+                >
+                  <SelectTrigger className="w-full bg-dark-elevated border-dark-border text-text-primary">
+                    <SelectValue placeholder="Compare with..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-dark-secondary border-dark-border">
+                    <SelectItem value="none">None</SelectItem>
+                    {pbExerciseOptions
+                      .filter((ex) => ex !== selectedPbExercise1)
+                      .map((ex) => (
+                        <SelectItem key={ex} value={ex}>
+                          {ex}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {selectedPbExercise1 !== "none" && (
+                <div className="h-60">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={comparisonChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--dark-border)" />
+                      <XAxis dataKey="date" tickFormatter={formatDate} stroke="var(--text-secondary)" fontSize={12} />
+                      <YAxis stroke="var(--text-secondary)" fontSize={12} domain={["dataMin - 5", "dataMax + 5"]} />
+                      <Tooltip contentStyle={{ backgroundColor: "var(--dark-elevated)", border: "1px solid var(--dark-border)" }} />
+                      <Legend />
+                      <Line
+                        type="monotone"
+                        dataKey={selectedPbExercise1}
+                        name={selectedPbExercise1}
+                        stroke="var(--accent-green)"
+                        strokeWidth={2}
+                        dot={{ r: 4 }}
+                        connectNulls
+                      />
+                      {selectedPbExercise2 !== "none" && (
+                        <Line
+                          type="monotone"
+                          dataKey={selectedPbExercise2}
+                          name={selectedPbExercise2}
+                          stroke="#8884d8"
+                          strokeWidth={2}
+                          dot={{ r: 4 }}
+                          connectNulls
+                        />
+                      )}
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

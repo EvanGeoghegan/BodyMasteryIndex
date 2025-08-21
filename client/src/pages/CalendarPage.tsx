@@ -153,17 +153,19 @@ export default function CalendarPage() {
 
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
-      <header className="bg-dark-secondary p-2 shadow-lg">
+      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
         <div className="flex items-center justify-between">
           {/* Left side: Page Icon + Title */}
           <div className="flex items-center">
             <Calendar className="text-accent-red mr-4" size={28} />
             <div>
+              <div className="mt-2">
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Activity Calendar
               </h2>
               <p className="text-text-secondary mt-1">Review your workout history.</p>
             </div>
+          </div>
           </div>
 
           {/* Right side: App Logo */}

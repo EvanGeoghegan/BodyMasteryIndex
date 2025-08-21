@@ -12,6 +12,10 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { Workout, Template, PersonalBest, Supplement, SupplementLog } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher"; // --- 1. IMPORT THE SWITCHER ---
+import { scheduleDailyReminder, cancelReminder, WORKOUT_REMINDER_ID, NUTRITION_REMINDER_ID,} from '@/lib/notifications';
+import { exportAllDataAsCSV } from '@/lib/export';
+import Papa from 'papaparse';
+
 
 interface SettingsProps {}
 
@@ -57,6 +61,41 @@ export default function Settings({}: SettingsProps) {
     }
   }, []);
 
+  useEffect(() => {
+  const run = async () => {
+    if (workoutReminder && workoutReminderTime) {
+      await scheduleDailyReminder(
+        WORKOUT_REMINDER_ID,
+        'Log your workout?',
+        'Tap Quick Add to jump straight to the logger.',
+        'workout',
+        workoutReminderTime
+      );
+    } else {
+      await cancelReminder(WORKOUT_REMINDER_ID);
+    }
+  };
+  run();
+}, [workoutReminder, workoutReminderTime]);
+
+// When user toggles nutrition reminder or time changes
+useEffect(() => {
+  const run = async () => {
+    if (nutritionReminder && nutritionReminderTime) {
+      await scheduleDailyReminder(
+        NUTRITION_REMINDER_ID,
+        'Log your nutrition',
+        'Don’t forget protein & water!',
+        'macros',
+        nutritionReminderTime
+      );
+    } else {
+      await cancelReminder(NUTRITION_REMINDER_ID);
+    }
+  };
+  run();
+}, [nutritionReminder, nutritionReminderTime]);
+
   const scheduleNotifications = async () => {
     // This function is assumed to be correct from previous steps
   };
@@ -95,23 +134,128 @@ export default function Settings({}: SettingsProps) {
     setTimeout(() => setIsSaving(false), 1000);
   };
 
-  const handleExportData = async () => { /* ... unchanged ... */ };
-  const handleImportClick = () => { /* ... unchanged ... */ };
-  const handleFileSelected = (event: React.ChangeEvent<HTMLInputElement>) => { /* ... unchanged ... */ };
-  const handleClearAllData = () => { /* ... unchanged ... */ };
+  const handleExportData = async () => {
+  try {
+    const csvBlob = await exportAllDataAsCSV();
+    const csvText = await csvBlob.text(); // Convert to plain CSV string
+
+    const fileName = `bmi_data_export_${new Date().toISOString().split("T")[0]}.csv`;
+
+    // ✅ Write to filesystem as UTF-8 plain text
+    const fileWriteResult = await Filesystem.writeFile({
+      path: fileName,
+      data: csvText,
+      directory: Directory.Documents,
+      encoding: Encoding.UTF8,
+    });
+
+    // ✅ Share directly
+    await Share.share({
+      title: "BMI Exported Data",
+      text: "Here is your exported Body Mastery Index data.",
+      url: fileWriteResult.uri,
+      dialogTitle: "Share your data",
+    });
+  } catch (error) {
+    const err = error as Error;
+    console.error("Export failed:", err);
+    alert(`Export failed: ${err.message}`);
+  }
+};
+
+
+
+
+  const handleImportClick = () => {
+  fileInputRef.current?.click();
+  };
+
+  const handleFileSelected = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const text = e.target?.result as string;
+
+    const results = Papa.parse(text, {
+      header: true,
+      skipEmptyLines: true,
+    });
+
+    const parsed = results.data as any[];
+
+    if (!parsed.length) {
+      alert("⚠️ File was empty or invalid.");
+      return;
+    }
+
+    // Group and import each type
+    const dataMap: Record<string, any[]> = {
+      workout: [],
+      personal_best: [],
+      supplement: [],
+      supplement_log: [],
+      body_comp: [],
+    };
+
+    let importedSettings = null;
+
+    parsed.forEach((row) => {
+      if (row.type === "settings") {
+        importedSettings = row.data && JSON.parse(row.data);
+      } else if (dataMap[row.type]) {
+        const data = row.data && JSON.parse(row.data);
+        if (data) dataMap[row.type].push(data);
+      }
+    });
+
+    localStorage.setItem('bmi_workouts', JSON.stringify(dataMap.workout));
+    localStorage.setItem('bmi_personal_bests', JSON.stringify(dataMap.personal_best));
+    localStorage.setItem('bmi_supplements', JSON.stringify(dataMap.supplement));
+    localStorage.setItem('bmi_supplement_logs', JSON.stringify(dataMap.supplement_log));
+    localStorage.setItem('body_composition_history', JSON.stringify(dataMap.body_comp));
+
+    if (importedSettings) {
+      localStorage.setItem('bmi_settings', JSON.stringify(importedSettings));
+    }
+
+    alert("✅ Data imported successfully!");
+  };
+
+  reader.readAsText(file);
+};
+
+
+  const handleClearAllData = () => {
+  if (window.confirm("⚠️ Are you sure you want to delete all app data? This action cannot be undone.")) {
+    localStorage.removeItem('bmi_settings');
+    localStorage.removeItem('bmi_workouts');
+    localStorage.removeItem('bmi_personal_bests');
+    localStorage.removeItem('bmi_supplements');
+    localStorage.removeItem('bmi_supplement_logs');
+    localStorage.removeItem('body_composition_history');
+
+    alert("✅ All local data has been cleared.");
+    location.reload(); // Optional: Refresh app state
+    }
+  };
+
 
   return (
     <div className="bg-dark-primary">
-      <header className="bg-dark-secondary p-2 shadow-lg">
+      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
   <div className="flex items-center justify-between">
     {/* Left side: Page Icon + Title */}
     <div className="flex items-center">
       <Cog className="text-accent-red mr-4" size={28} />
       <div>
+        <div className="mt-2">
         <h2 className="text-xl font-bold text-text-primary font-heading">
           Settings
         </h2>
         <p className="text-text-secondary mt-1">Manage goals and preferences.</p>
+      </div>
       </div>
     </div>
 

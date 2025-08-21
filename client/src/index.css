@@ -40,8 +40,11 @@
 
   /* --- Base Layout & Font Styles --- */
   html, body, #root {
-    @apply h-full overflow-hidden;
-  }
+  height: 100vh; /* Ensure it respects the full viewport */
+  /* Add this */
+  background-color: hsl(222, 47%, 8%); /* Your dark-primary */
+}
+
 
   body {
     font-family: 'Inter', sans-serif;

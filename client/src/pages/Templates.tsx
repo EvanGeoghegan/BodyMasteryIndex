@@ -35,10 +35,6 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
   const loadTemplates = () => {
     const loadedTemplates = storage.getTemplates();
     setTemplates(loadedTemplates);
-
-    // Initialize default templates if none exist
-    if (loadedTemplates.length === 0) {
-    }
   };
 
   const openCreateDialog = () => {
@@ -146,16 +142,18 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
 
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
-      <header className="bg-dark-secondary p-2 shadow-lg">
+      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
         <div className="flex items-center justify-between">
           {/* Left side: Page Icon + Title */}
           <div className="flex items-center">
             <LayoutTemplate className="text-accent-red mr-4" size={28} />
             <div>
+              <div className="mt-2">
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Workout Templates
               </h2>
               <p className="text-text-secondary mt-1">Start your session quickly.</p>
+            </div>
             </div>
           </div>
 
@@ -258,7 +256,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
                 <label className="text-text-secondary text-sm font-medium mb-2 block">
                   Template Type
                 </label>
-                <Select value={formData.type || "strength"} onValueChange={(value: "strength" | "cardio" | "mixed") => setFormData({ ...formData, type: value })}>
+                <Select value={formData.type || "strength"} onValueChange={(value: "strength" | "cardio" | "core"| "sports") => setFormData({ ...formData, type: value })}>
                   <SelectTrigger className="bg-dark-elevated text-text-primary border-dark-border">
                     <SelectValue />
                   </SelectTrigger>

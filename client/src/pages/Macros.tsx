@@ -232,15 +232,17 @@ export default function Macros() {
 
   return (
     <div className="min-h-screen bg-dark-primary">
-      <header className="bg-dark-secondary p-2 shadow-lg">
+      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <UtensilsCrossed className="text-accent-red mr-4" size={28} />
             <div>
+              <div className="mt-2">
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Macro Tracker
               </h2>
               <p className="text-text-secondary mt-1">Log your daily macro/micronutrients.</p>
+            </div>
             </div>
           </div>
           <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
