@@ -265,8 +265,6 @@ export default function Dashboard({
         </div>
       </header>
 
-      
-
       {showCongrats && (
         <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 rounded-xl p-6 border border-green-500/30 shadow-lg">
           <div className="flex items-center justify-center mb-3">
