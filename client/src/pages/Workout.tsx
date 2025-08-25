@@ -2,13 +2,6 @@ import { useState, Fragment, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -20,6 +13,13 @@ import { storage } from "@/lib/storage";
 import { Exercise, Workout, Template, InsertTemplate } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+
+function deriveWorkoutType(
+  exercises: Exercise[]
+): "strength" | "cardio" | "core" | "sports" {
+  const types = Array.from(new Set(exercises.map((ex) => ex.type)));
+  return types.length === 1 ? types[0] : "sports";
+}
 
 interface WorkoutProps {
   onWorkoutSaved: () => void;
@@ -95,6 +95,10 @@ export default function WorkoutPage({
     }
   }, [initialTemplate, initialWorkout]);
 
+   useEffect(() => {
+    setWorkoutType(deriveWorkoutType(exercises));
+  }, [exercises]);
+
   const loadTodaysWorkouts = () => {
     const today = new Date().toISOString().split("T")[0];
     const allWorkouts = storage.getWorkouts();
@@ -153,7 +157,7 @@ export default function WorkoutPage({
     const newExercise: Exercise = {
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       name: "",
-      type: workoutType === "sports" ? "strength" : workoutType, // Default new exercises in sports to strength
+      type: workoutType === "sports" ? "strength" : workoutType,
       sets: [],
     };
     setExercises((prevExercises) => [...prevExercises, newExercise]);
@@ -223,6 +227,8 @@ export default function WorkoutPage({
       });
       return;
     }
+
+    const workoutType = deriveWorkoutType(validExercises);
 
     const workout: Omit<Workout, "id"> = {
       name: workoutName,
@@ -337,6 +343,8 @@ export default function WorkoutPage({
     if (!templateName) {
       return; // User cancelled
     }
+
+    const workoutType = deriveWorkoutType(validExercises);
 
     const newTemplate: InsertTemplate = {
       name: templateName,
@@ -478,39 +486,16 @@ export default function WorkoutPage({
             placeholder="e.g., Push Day, Leg Day"
           />
 
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <div>
-              <label className="text-text-secondary text-sm font-medium mb-1 block">
-                Workout Date
-              </label>
-              <Input
-                type="date"
-                value={workoutDate}
-                onChange={(e) => setWorkoutDate(e.target.value)}
-                className="w-full bg-dark-elevated text-text-primary border-dark-border"
-              />
-            </div>
-            <div>
-              <label className="text-text-secondary text-sm font-medium mb-1 block">
-                Workout Type
-              </label>
-              <Select
-                value={workoutType}
-                onValueChange={(
-                  value: "strength" | "cardio" | "core" | "sports"
-                ) => setWorkoutType(value)}
-              >
-                <SelectTrigger className="w-full bg-dark-elevated text-text-primary border-dark-border">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-dark-secondary border-dark-border">
-                  <SelectItem value="strength">Strength</SelectItem>
-                  <SelectItem value="cardio">Cardio</SelectItem>
-                  <SelectItem value="core">Core</SelectItem>
-                  <SelectItem value="sports">Sports</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                  <div className="mb-3">
+            <label className="text-text-secondary text-sm font-medium mb-1 block">
+              Workout Date
+            </label>
+            <Input
+              type="date"
+              value={workoutDate}
+              onChange={(e) => setWorkoutDate(e.target.value)}
+              className="w-full bg-dark-elevated text-text-primary border-dark-border"
+            />
           </div>
         </div>
 
@@ -576,7 +561,6 @@ export default function WorkoutPage({
                             onDelete={() => deleteExercise(exercise.id)}
                             workoutExercises={exercises}
                             startOpen={exercise.id === lastAddedExerciseId}
-                            workoutType={workoutType}
                           />
                         ))}
                       </div>
@@ -610,7 +594,6 @@ export default function WorkoutPage({
                         onDelete={() => deleteExercise(exercise.id)}
                         workoutExercises={exercises}
                         startOpen={exercise.id === lastAddedExerciseId}
-                        workoutType={workoutType}
                       />
 
                       {/* + Button to group with next */}
