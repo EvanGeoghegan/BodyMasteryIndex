@@ -54,16 +54,9 @@
   }
 
   /* --- Global Style Fixes --- */
-  *::-webkit-scrollbar {
-    display: none;
-  }
-  * {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
   input:-webkit-autofill,
-  input:-webkit-autofill:hover, 
-  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px var(--dark-elevated) inset !important;
     -webkit-text-fill-color: var(--text-primary) !important;
@@ -144,4 +137,14 @@
   .light .supplement-dot {
   border: 1px solid #000; /* A light grey border */
 }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
