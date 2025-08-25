@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -24,43 +24,45 @@
 
   /* Cool Mist Light Theme */
   .light {
-    --dark-primary: #F1F3F5;      /* Was #F8F9FA - now a more distinct light grey */
-    --dark-secondary: #FFFFFF;     /* Stays pure white */
-    --dark-elevated: #E9ECEF;     /* A slightly off-white for elevated elements */
-    --dark-border: #DEE2E6;       /* Was #E9ECEF - a slightly darker border to match */
-    --accent-red: #4A90E2;
-    --accent-light-red: #357ABD;
-    --accent-green: #50C878;
+    --dark-primary: #f4f6f8; /* app background */
+    --dark-secondary: #ffffff; /* surface */
+    --dark-elevated: #eef1f4; /* cards/raised */
+    --dark-border: #d7dde3; /* clearer border */
+    --accent-red: #4a90e2;
+    --accent-light-red: #357abd;
+    --accent-green: #2baa6b;
     --accent-warning: #f59e0b;
-    --text-primary: #212529;
-    --text-secondary: #6C757D;
-    --text-disabled: #ADB5BD;
-    --bg-chart-uncompleted: var(--dark-border);
+    --text-primary: #1f2937; /* slate-800 */
+    --text-secondary: #4b5563; /* slate-600 */
+    --text-disabled: #9ca3af; /* slate-400 */
+    --bg-chart-uncompleted: var(--dark-elevated);
   }
 
   /* --- Base Layout & Font Styles --- */
-/* Fill the real viewport height on mobile (prevents 1–2px ghost scrollbars) */
-html, body, #root {
-  height: 100dvh;
-  background-color: hsl(222, 47%, 8%);
-  overflow: hidden; 
-}
+  /* Fill the real viewport height on mobile (prevents 1–2px ghost scrollbars) */
+  html,
+  body,
+  #root {
+    height: 100dvh;
+    background-color: hsl(222, 47%, 8%);
+    overflow: hidden;
+  }
 
-/* Hide page (root) scrollbars but keep scrolling */
-html, body, #root {
-  -ms-overflow-style: none;   /* IE/old Edge */
-  scrollbar-width: none;      /* Firefox */
-}
-html::-webkit-scrollbar,
-body::-webkit-scrollbar,
-#root::-webkit-scrollbar {
-  display: none;              /* WebKit/Chromium */
-}
-
-
+  /* Hide page (root) scrollbars but keep scrolling */
+  html,
+  body,
+  #root {
+    -ms-overflow-style: none; /* IE/old Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  #root::-webkit-scrollbar {
+    display: none; /* WebKit/Chromium */
+  }
 
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
     @apply bg-dark-primary text-text-primary;
     transition-property: background-color, color;
     transition-duration: 0.3s;
@@ -78,47 +80,75 @@ body::-webkit-scrollbar,
 
 @layer components {
   /* --- Utility Class Definitions --- */
-  .bg-dark-primary { background-color: var(--dark-primary); }
-  .bg-dark-secondary { background-color: var(--dark-secondary); }
-  .bg-dark-elevated { background-color: var(--dark-elevated); }
-  .border-dark-border { border-color: var(--dark-border); }
-  .text-text-primary { color: var(--text-primary); }
-  .text-text-secondary { color: var(--text-secondary); }
-  .text-text-disabled { color: var(--text-disabled); }
-  .text-accent-red { color: var(--accent-red); }
-  .bg-accent-red { background-color: var(--accent-red); }
-  .text-accent-green { color: var(--accent-green); }
-  .bg-accent-green { background-color: var(--accent-green); }
-  .text-blue-400 { color: hsl(210, 80%, 60%); }
+  .bg-dark-primary {
+    background-color: var(--dark-primary);
+  }
+  .bg-dark-secondary {
+    background-color: var(--dark-secondary);
+  }
+  .bg-dark-elevated {
+    background-color: var(--dark-elevated);
+  }
+  .border-dark-border {
+    border-color: var(--dark-border);
+  }
+  .text-text-primary {
+    color: var(--text-primary);
+  }
+  .text-text-secondary {
+    color: var(--text-secondary);
+  }
+  .text-text-disabled {
+    color: var(--text-disabled);
+  }
+  .text-accent-red {
+    color: var(--accent-red);
+  }
+  .bg-accent-red {
+    background-color: var(--accent-red);
+  }
+  .text-accent-green {
+    color: var(--accent-green);
+  }
+  .bg-accent-green {
+    background-color: var(--accent-green);
+  }
+  .text-blue-400 {
+    color: hsl(210, 80%, 60%);
+  }
 
   .pie-chart-container {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-}
-.pie-chart-container::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: conic-gradient(var(--color) calc(var(--p, 0) * 1%), var(--bg-chart-uncompleted) 0);
-  transition: background 0.3s;
-}
-.pie-chart-center {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: var(--bg-secondary);
-  display: grid;
-  place-items: center;
-}
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+  }
+  .pie-chart-container::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(
+      var(--color) calc(var(--p, 0) * 1%),
+      var(--bg-chart-uncompleted) 0
+    );
+    transition: background 0.3s;
+  }
+  .pie-chart-center {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    display: grid;
+    place-items: center;
+  }
   /* --- Component Style Overrides --- */
-  .radix-dialog-content, [data-radix-select-content] {
+  .radix-dialog-content,
+  [data-radix-select-content] {
     background-color: var(--dark-secondary) !important;
     border: 1px solid var(--dark-border) !important;
   }
@@ -148,8 +178,16 @@ body::-webkit-scrollbar,
     background-color: #dee2e6;
   }
   .light .supplement-dot {
-  border: 1px solid #000; /* A light grey border */
-}
+    border: 1px solid #000; /* A light grey border */
+  }
+  @layer components {
+    .light .shadow-card {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+    .shadow-card {
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    } /* dark mode */
+  }
 }
 
 @layer utilities {
@@ -163,5 +201,11 @@ body::-webkit-scrollbar,
 }
 
 /* LAST-RESORT: force-hide all scrollbars app-wide */
-*::-webkit-scrollbar { width: 0 !important; height: 0 !important; }
-* { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+*::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+* {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
