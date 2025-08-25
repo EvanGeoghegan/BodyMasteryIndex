@@ -15,6 +15,7 @@ import { ThemeSwitcher } from "@/components/ThemeSwitcher"; // --- 1. IMPORT THE
 import { scheduleDailyReminder, cancelReminder, WORKOUT_REMINDER_ID, NUTRITION_REMINDER_ID,} from '@/lib/notifications';
 import { exportAllDataAsCSV } from '@/lib/export';
 import Papa from 'papaparse';
+import PageHeader from "@/components/PageHeader";
 
 
 interface SettingsProps {}
@@ -244,31 +245,12 @@ useEffect(() => {
 
   return (
     <div className="bg-dark-primary">
-      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
-  <div className="flex items-center justify-between">
-    {/* Left side: Page Icon + Title */}
-    <div className="flex items-center">
-      <Cog className="text-accent-red mr-4" size={28} />
-      <div>
-        <div className="mt-4">
-        <h2 className="text-xl font-bold text-text-primary font-heading">
-          Settings
-        </h2>
-        <p className="text-text-secondary mt-1">Manage goals and preferences.</p>
-      </div>
-      </div>
-    </div>
-
-    {/* Right side: App Logo */}
-    <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
-      <img 
-        src="/assets/icon.png" 
-        alt="Body Mastery Index Icon" 
-        className="w-full h-full object-cover rounded-full" 
+      <PageHeader
+        icon={<Cog className="text-accent-red mr-4" size={28} />}
+        title="Settings"
+        subtitle="Manage goals and preferences."
       />
-    </div>
-  </div>
-</header>
+    
 
       <div className="p-4 space-y-6 pb-24">
         {/* --- 2. ADD THE THEME SWITCHER HERE --- */}

@@ -29,6 +29,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import FullBodyHeatmap from "@/components/FullBodyHeatmap";
+import PageHeader from "@/components/PageHeader";
 
 interface DashboardProps {
   onNavigateToWorkout: () => void;
@@ -238,32 +239,11 @@ export default function Dashboard({
 
   return (
     <div className="bg-dark-primary text-text-primary pb-20">
-      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
-        <div className="flex items-center justify-between">
-          {/* Left side: Standalone Page Icon + Title */}
-          <div className="flex items-center">
-            <Home className="text-accent-red mr-4" size={28} />
-            <div>
-            <div className="mt-4">
-              <h2 className="text-xl font-bold text-text-primary font-heading">
-                Dashboard
-              </h2>
-              <p className="text-text-secondary mt-1">Your daily overview</p>
-            </div>
-          </div>
-          </div>
-
-          {/* Right side: App Logo */}
-          <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
-            {/* The key change here is adding rounded-full to the image itself */}
-            <img
-              src="/assets/icon.png"
-              alt="Body Mastery Index Icon"
-              className="w-full h-full object-cover rounded-full"
-            />
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        icon={<Home className="text-accent-red mr-4" size={28} />}
+        title="Dashboard"
+        subtitle="Your daily overview"
+      />
 
       {showCongrats && (
         <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 rounded-xl p-6 border border-green-500/30 shadow-lg">

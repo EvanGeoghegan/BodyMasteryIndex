@@ -18,6 +18,7 @@ import {
 } from "recharts";
 import masterExerciseList from "@/lib/exercises.json"; // Import the exercise database
 import WeeklyAssessmentReport from "@/components/WeeklyAssessmentReport";
+import PageHeader from "@/components/PageHeader";
 
 // Data structure for body composition history
 interface BodyCompData {
@@ -168,31 +169,11 @@ export default function ProgressDashboard() {
 
   return (
     <div className="bg-dark-primary pb-20">
-      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
-        <div className="flex items-center justify-between">
-          {/* Left side: Page Icon + Title */}
-          <div className="flex items-center">
-            <BarChart3 className="text-accent-red mr-4" size={28} />
-            <div>
-              <div className="mt-4">
-              <h2 className="text-xl font-bold text-text-primary font-heading">
-                Progress
-              </h2>
-              <p className="text-text-secondary mt-1">Visualize your journey.</p>
-            </div>
-            </div>
-          </div>
-
-          {/* Right side: App Logo */}
-          <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
-            <img
-              src="/assets/icon.png"
-              alt="Body Mastery Index Icon"
-              className="w-full h-full object-cover rounded-full"
-            />
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        icon={<BarChart3 className="text-accent-red mr-4" size={28} />}
+        title="Progress"
+        subtitle="Visualize your journey."
+      />
 
       <div className="p-4 space-y-6">
         {/* KPI Cards (unchanged) */}

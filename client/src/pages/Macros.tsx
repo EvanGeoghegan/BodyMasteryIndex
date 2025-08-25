@@ -15,6 +15,7 @@ import { insertSupplementSchema, Supplement, SupplementLog, InsertSupplement, In
 import { storage } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 import { PieChart as RechartsPieChart, Pie, ResponsiveContainer } from "recharts";
+import PageHeader from "@/components/PageHeader";
 
 const supplementTypes = [
   { value: "vitamin", label: "Vitamin" },
@@ -232,28 +233,11 @@ export default function Macros() {
 
   return (
     <div className="min-h-screen bg-dark-primary">
-      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <UtensilsCrossed className="text-accent-red mr-4" size={28} />
-            <div>
-              <div className="mt-4">
-              <h2 className="text-xl font-bold text-text-primary font-heading">
-                Macro Tracker
-              </h2>
-              <p className="text-text-secondary mt-1">Log your daily macro/micronutrients.</p>
-            </div>
-            </div>
-          </div>
-          <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
-            <img
-              src="/assets/icon.png"
-              alt="Body Mastery Index Icon"
-              className="w-full h-full object-cover rounded-full"
-            />
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        icon={<UtensilsCrossed className="text-accent-red mr-4" size={28} />}
+        title="Macro Tracker"
+        subtitle="Log your daily macro/micronutrients."
+      />
 
       <div className="p-4 space-y-6 pb-24">
         <div className="grid grid-cols-2 gap-4">

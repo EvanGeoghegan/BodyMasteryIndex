@@ -13,6 +13,7 @@ import { storage } from "@/lib/storage";
 import { Exercise, Workout, Template, InsertTemplate } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import PageHeader from "@/components/PageHeader";
 
 function deriveWorkoutType(
   exercises: Exercise[]
@@ -374,30 +375,11 @@ export default function WorkoutPage({
 
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
-      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <Dumbbell className="text-accent-red mr-4" size={28} />
-            <div>
-              <div className="mt-4">
-              <h2 className="text-xl font-bold text-text-primary font-heading">
-                Log Workout
-              </h2>
-              <p className="text-text-secondary mt-1">
-                Track your sets, reps, and weight.
-              </p>
-            </div>
-            </div>
-          </div>
-          <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
-            <img
-              src="/assets/icon.png"
-              alt="Body Mastery Index Icon"
-              className="w-full h-full object-cover rounded-full"
-            />
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        icon={<Dumbbell className="text-accent-red mr-4" size={28} />}
+        title="Log Workout"
+        subtitle="Track your sets, reps, and weight."
+      />
 
       <div className="p-4 space-y-4">
         {todaysWorkouts.length > 0 && !editingWorkout && (

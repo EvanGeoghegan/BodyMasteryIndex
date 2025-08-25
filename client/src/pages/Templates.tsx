@@ -9,6 +9,7 @@ import TemplateCard from "@/components/TemplateCard";
 import { storage } from "@/lib/storage";
 import { Template, InsertTemplate } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+import PageHeader from "@/components/PageHeader";
 
 interface TemplatesProps {
   onUseTemplate: (template: Template) => void;
@@ -142,31 +143,11 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
 
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
-      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
-        <div className="flex items-center justify-between">
-          {/* Left side: Page Icon + Title */}
-          <div className="flex items-center">
-            <LayoutTemplate className="text-accent-red mr-4" size={28} />
-            <div>
-              <div className="mt-4">
-              <h2 className="text-xl font-bold text-text-primary font-heading">
-                Workout Templates
-              </h2>
-              <p className="text-text-secondary mt-1">Start your session quickly.</p>
-            </div>
-            </div>
-          </div>
-
-          {/* Right side: App Logo */}
-          <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
-            <img
-              src="/assets/icon.png"
-              alt="Body Mastery Index Icon"
-              className="w-full h-full object-cover rounded-full"
-            />
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        icon={<LayoutTemplate className="text-accent-red mr-4" size={28} />}
+        title="Workout Templates"
+        subtitle="Start your session quickly."
+      />
 
       <div className="p-4 space-y-4">
         {templates.length === 0 ? (

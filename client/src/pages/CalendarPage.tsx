@@ -4,6 +4,7 @@ import { storage } from "@/lib/storage";
 import { Workout, SupplementLog } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import PageHeader from "@/components/PageHeader";
 
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -158,31 +159,11 @@ export default function CalendarPage() {
 
   return (
     <div className="min-h-screen bg-dark-primary pb-20">
-      <header className="bg-dark-secondary pt-[env(safe-area-inset-top,32px)] p-2 shadow-lg sticky top-0 z-50">
-        <div className="flex items-center justify-between">
-          {/* Left side: Page Icon + Title */}
-          <div className="flex items-center">
-            <Calendar className="text-accent-red mr-4" size={28} />
-            <div>
-              <div className="mt-4">
-              <h2 className="text-xl font-bold text-text-primary font-heading">
-                Activity Calendar
-              </h2>
-              <p className="text-text-secondary mt-1">Review your workout history.</p>
-            </div>
-          </div>
-          </div>
-
-          {/* Right side: App Logo */}
-          <div className="w-14 h-14 bg-dark-elevated rounded-full flex items-center justify-center overflow-hidden border-2 border-dark-border flex-shrink-0">
-            <img
-              src="/assets/icon.png"
-              alt="Body Mastery Index Icon"
-              className="w-full h-full object-cover rounded-full"
-            />
-          </div>
-        </div>
-      </header>
+     <PageHeader
+        icon={<Calendar className="text-accent-red mr-4" size={28} />}
+        title="Activity Calendar"
+        subtitle="Review your workout history."
+      />
 
       <div className="p-4">
         <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
