@@ -19,6 +19,8 @@ import {
 import masterExerciseList from "@/lib/exercises.json"; // Import the exercise database
 import WeeklyAssessmentReport from "@/components/WeeklyAssessmentReport";
 import PageHeader from "@/components/PageHeader";
+import { getDisplayWeekRange, fmtYYYYMMDD } from "@/lib/date";
+
 
 // Data structure for body composition history
 interface BodyCompData {
@@ -61,6 +63,8 @@ export default function ProgressDashboard() {
   };
 
   const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const { start, end } = getDisplayWeekRange();
+  const dateLabel = `${start.toLocaleDateString(undefined, { weekday: 'short', day: '2-digit', month: 'short' })} → ${end.toLocaleDateString(undefined, { weekday: 'short', day: '2-digit', month: 'short' })}`;
 
   const kpiStats = useMemo(() => {
     const totalWorkouts = workouts.length;

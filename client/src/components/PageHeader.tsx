@@ -9,7 +9,7 @@ interface PageHeaderProps {
 export default function PageHeader({ icon, title, subtitle }: PageHeaderProps) {
   return (
     <header className="bg-dark-secondary shadow-lg sticky top-0 z-50">
-      <div className="flex items-center justify-between px-6 pt-[calc(env(safe-area-inset-top,0px)+1.5rem)] pb-4">
+      <div className="flex items-center justify-between px-6 pt-[calc(env(safe-area-inset-top,0px)+2rem)] pb-4">
         <div className="flex items-center gap-x-3">
           {icon}
           <div className="flex flex-col">

@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
 import FullBodyHeatmap from "@/components/FullBodyHeatmap";
 import PageHeader from "@/components/PageHeader";
 
+
 interface DashboardProps {
   onNavigateToWorkout: () => void;
   onEditWorkout?: (workout: Workout) => void;
