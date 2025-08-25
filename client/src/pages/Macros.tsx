@@ -237,7 +237,7 @@ export default function Macros() {
           <div className="flex items-center">
             <UtensilsCrossed className="text-accent-red mr-4" size={28} />
             <div>
-              <div className="mt-2">
+              <div className="mt-4">
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Macro Tracker
               </h2>

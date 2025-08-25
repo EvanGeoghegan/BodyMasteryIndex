@@ -244,7 +244,7 @@ export default function Dashboard({
           <div className="flex items-center">
             <Home className="text-accent-red mr-4" size={28} />
             <div>
-            <div className="mt-2">
+            <div className="mt-4">
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Dashboard
               </h2>

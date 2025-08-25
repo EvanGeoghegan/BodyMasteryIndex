@@ -131,7 +131,7 @@ export default function PersonalBests() {
           <div className="flex items-center">
             <Trophy className="text-accent-red mr-4" size={28} />
             <div>
-              <div className="mt-2">
+              <div className="mt-4">
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Records
               </h2>

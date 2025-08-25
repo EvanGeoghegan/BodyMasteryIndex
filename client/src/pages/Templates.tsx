@@ -148,7 +148,7 @@ export default function Templates({ onUseTemplate }: TemplatesProps) {
           <div className="flex items-center">
             <LayoutTemplate className="text-accent-red mr-4" size={28} />
             <div>
-              <div className="mt-2">
+              <div className="mt-4">
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Workout Templates
               </h2>

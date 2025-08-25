@@ -102,7 +102,12 @@ export default function CalendarPage() {
 
     if (workouts.length === 0) return null;
 
-    const workoutTypes = new Set(workouts.map(w => w.type));
+    const workoutTypes = new Set<string>();
+    workouts.forEach(workout => {
+      workout.exercises.forEach(ex => workoutTypes.add(ex.type));
+      if (workout.type === "sports") workoutTypes.add("sports");
+    });
+
     return {
       hasWorkouts: true,
       types: Array.from(workoutTypes),
@@ -159,7 +164,7 @@ export default function CalendarPage() {
           <div className="flex items-center">
             <Calendar className="text-accent-red mr-4" size={28} />
             <div>
-              <div className="mt-2">
+              <div className="mt-4">
               <h2 className="text-xl font-bold text-text-primary font-heading">
                 Activity Calendar
               </h2>
