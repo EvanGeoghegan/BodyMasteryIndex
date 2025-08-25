@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
+import android.webkit.WebView;
+
 
 import com.getcapacitor.BridgeActivity;
 
@@ -23,5 +26,15 @@ public class MainActivity extends BridgeActivity {
                 startActivity(intent);
             }
         }
+        
+        // Hide WebView overlay scroll indicators and overscroll glow
+        WebView webView = this.getBridge().getWebView();
+        if (webView != null) {
+            webView.setVerticalScrollBarEnabled(false);
+            webView.setHorizontalScrollBarEnabled(false);
+            webView.setOverScrollMode(View.OVER_SCROLL_NEVER); // removes edge glow
+            webView.setScrollbarFadingEnabled(true);           // harmless if disabled
+        }
+
     }
 }

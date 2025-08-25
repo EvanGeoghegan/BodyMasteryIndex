@@ -125,16 +125,25 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <main className="max-w-md mx-auto h-full bg-dark-primary text-text-primary overflow-y-auto no-scrollbar">
-          <div className="pb-24">{renderActiveTab()}</div>
+        <main className="fixed inset-0 w-full bg-dark-primary text-text-primary">
+        {/* Constrain to your phone width and center */}
+        <div className="relative h-full max-w-md mx-auto">
 
+          {/* The ONLY vertical scroller in the app */}
+          <div className="absolute inset-0 overflow-y-auto no-scrollbar pb-24">
+            {renderActiveTab()}
+          </div>
+
+          {/* Fixed bottom navigation stays pinned above */}
           <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
 
+          {/* Any toasts/notifications sit on top */}
           <NotificationSystem
             onNavigateToWorkout={handleNavigateToWorkout}
             onNavigateToNutrition={handleNavigateToNutrition}
           />
-        </main>
+        </div>
+      </main>
 
         <Toaster />
       </TooltipProvider>

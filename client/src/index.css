@@ -39,11 +39,24 @@
   }
 
   /* --- Base Layout & Font Styles --- */
-  html, body, #root {
-  height: 100vh; /* Ensure it respects the full viewport */
-  /* Add this */
-  background-color: hsl(222, 47%, 8%); /* Your dark-primary */
+/* Fill the real viewport height on mobile (prevents 1–2px ghost scrollbars) */
+html, body, #root {
+  height: 100dvh;
+  background-color: hsl(222, 47%, 8%);
+  overflow: hidden; 
 }
+
+/* Hide page (root) scrollbars but keep scrolling */
+html, body, #root {
+  -ms-overflow-style: none;   /* IE/old Edge */
+  scrollbar-width: none;      /* Firefox */
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar {
+  display: none;              /* WebKit/Chromium */
+}
+
 
 
   body {
@@ -148,3 +161,7 @@
     scrollbar-width: none;
   }
 }
+
+/* LAST-RESORT: force-hide all scrollbars app-wide */
+*::-webkit-scrollbar { width: 0 !important; height: 0 !important; }
+* { scrollbar-width: none !important; -ms-overflow-style: none !important; }

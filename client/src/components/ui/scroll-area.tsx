@@ -3,20 +3,43 @@ import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area"
 
 import { cn } from "@/lib/utils"
 
+type RootProps = React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & {
+  /** If true (default), the visual scrollbar is hidden but scrolling still works */
+  hideScrollbar?: boolean
+}
+
 const ScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
->(({ className, children, ...props }, ref) => (
+  RootProps
+>(({ className, children, hideScrollbar = true, ...props }, ref) => (
   <ScrollAreaPrimitive.Root
     ref={ref}
     className={cn("relative overflow-hidden", className)}
     {...props}
   >
-    <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">
+    {/* Hide rails in the viewport while keeping scroll functional */}
+    <ScrollAreaPrimitive.Viewport
+      className={cn(
+        "h-full w-full rounded-[inherit]",
+        // Cross‑browser hidden scrollbars (still scrollable)
+        // Firefox
+        "[scrollbar-width:none]",
+        // Old Edge/IE
+        "[-ms-overflow-style:none]",
+        // WebKit
+        "[&::-webkit-scrollbar]:hidden"
+      )}
+    >
       {children}
     </ScrollAreaPrimitive.Viewport>
-    <ScrollBar />
-    <ScrollAreaPrimitive.Corner />
+
+    {/* Only render the visual scrollbar if the caller wants it */}
+    {!hideScrollbar && (
+      <>
+        <ScrollBar />
+        <ScrollAreaPrimitive.Corner />
+      </>
+    )}
   </ScrollAreaPrimitive.Root>
 ))
 ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName

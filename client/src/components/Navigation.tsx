@@ -77,7 +77,7 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
           : "bg-dark-secondary border-t border-dark-border"
       )}
     >
-      <div className="flex overflow-x-auto items-center h-full px-4 space-x-3 scrollbar-hide">
+      <div className="flex overflow-x-auto items-center h-full px-4 space-x-3 no-scrollbar overscroll-x-contain touch-pan-x">
         {navLinks.map((link) => (
           <button
             key={link.id}
