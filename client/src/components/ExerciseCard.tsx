@@ -238,7 +238,6 @@ export default function ExerciseCard({
             <ExerciseCombobox
               value={exercise.name}
               onSelect={handleExerciseSelect}
-              filter={exercise.type}
             />
           )}
 

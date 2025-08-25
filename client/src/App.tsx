@@ -4,7 +4,6 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "@/components/Navigation";
-import NotificationSystem from "@/components/NotificationSystem";
 import Dashboard from "@/pages/Dashboard";
 import WorkoutPage from "@/pages/Workout";
 import Templates from "@/pages/Templates";
@@ -13,7 +12,6 @@ import PersonalBests from "@/pages/PersonalBests";
 import ProgressDashboard from "@/pages/ProgressDashboard";
 import Macros from "@/pages/Macros";
 import Settings from "@/pages/Settings";
-import { storage } from "@/lib/storage";
 import { Template, Workout as WorkoutType } from "@shared/schema";
 import { LocalNotifications } from "@capacitor/local-notifications";
 import {
@@ -137,11 +135,7 @@ function App() {
           {/* Fixed bottom navigation stays pinned above */}
           <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
 
-          {/* Any toasts/notifications sit on top */}
-          <NotificationSystem
-            onNavigateToWorkout={handleNavigateToWorkout}
-            onNavigateToNutrition={handleNavigateToNutrition}
-          />
+        
         </div>
       </main>
 
