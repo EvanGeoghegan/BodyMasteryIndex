@@ -32,26 +32,13 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
   return (
     <nav
       className={cn(
-        "fixed bottom-0 left-0 right-0 h-16 z-40 transition-all duration-300",
+        "fixed bottom-2 left-0 right-0 h-18 z-40 transition-all duration-300",
         isScrolled
-          ? "bg-dark-secondary/80 backdrop-blur-lg border-t border-dark-border"
-          : "bg-dark-secondary border-t border-dark-border"
+          ? "bg-dark-secondary/80 backdrop-blur-lg"
+          : "bg-dark-secondary"
       )}
     >
       <div className="relative h-full max-w-md mx-auto">
-        {/* Animated active background pill */}
-        <div className="absolute inset-y-2 left-2 right-2 pointer-events-none">
-          <motion.div
-            layoutId="nav-active-bg"
-            className="h-16 rounded-2xl bg-dark-elevated/60 border border-dark-border"
-            transition={{ type: "spring", stiffness: 350, damping: 30 }}
-            // Position under the active item via CSS grid trick below
-            style={{
-              gridColumn: `${Math.max(navLinks.findIndex(n => n.id === activeTab) + 1, 1)} / span 1`,
-            }}
-          />
-        </div>
-
         {/* Scrollable row */}
         <div className="grid grid-flow-col auto-cols-[minmax(48px,1fr)] overflow-x-auto no-scrollbar overscroll-x-contain touch-pan-x h-full px-2 gap-1">
           {navLinks.map((link) => {

@@ -19,7 +19,7 @@ import {
 import masterExerciseList from "@/lib/exercises.json"; // Import the exercise database
 import WeeklyAssessmentReport from "@/components/WeeklyAssessmentReport";
 import PageHeader from "@/components/PageHeader";
-import { getDisplayWeekRange, fmtYYYYMMDD } from "@/lib/date";
+import { fmtYYYYMMDD, WeekRange } from "@/lib/date";
 
 
 // Data structure for body composition history
@@ -39,6 +39,7 @@ export default function ProgressDashboard() {
   const [selectedPbExercise1, setSelectedPbExercise1] = useState<string>('none');
   const [selectedPbExercise2, setSelectedPbExercise2] = useState<string>('none'); // For comparison
   const [showWeekly, setShowWeekly] = useState(false);
+  const [selectedWeek, setSelectedWeek] = useState<WeekRange | null>(null);
 
   useEffect(() => {
     loadData();
@@ -63,9 +64,7 @@ export default function ProgressDashboard() {
   };
 
   const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  const { start, end } = getDisplayWeekRange();
-  const dateLabel = `${start.toLocaleDateString(undefined, { weekday: 'short', day: '2-digit', month: 'short' })} → ${end.toLocaleDateString(undefined, { weekday: 'short', day: '2-digit', month: 'short' })}`;
-
+  
   const kpiStats = useMemo(() => {
     const totalWorkouts = workouts.length;
     const totalVolume = workouts.reduce((sum, workout) => sum + workout.exercises.reduce((exSum, ex) => exSum + ex.sets.reduce((setSum, set) => set.completed && set.weight && set.reps ? setSum + (set.weight * set.reps) : setSum, 0), 0), 0);
@@ -104,6 +103,27 @@ export default function ProgressDashboard() {
     });
     return Array.from(weeklyMap.entries()).map(([date, volume]) => ({ date, volume })).sort((a, b) => a.date.localeCompare(b.date));
   }, [workouts]);
+  const weekOptions = useMemo(() => {
+    return weeklyVolumeData.map(({ date }) => {
+      const start = new Date(date);
+      const end = new Date(start);
+      end.setDate(start.getDate() + 6);
+      return {
+        start,
+        end,
+        label: `${start.toLocaleDateString(undefined, { month: 'short', day: '2-digit' })} → ${end.toLocaleDateString(undefined, { month: 'short', day: '2-digit' })}`,
+        value: fmtYYYYMMDD(start),
+      };
+    });
+  }, [weeklyVolumeData]);
+
+  useEffect(() => {
+    if (weekOptions.length > 0 && !selectedWeek) {
+      const last = weekOptions[weekOptions.length - 1];
+      setSelectedWeek({ start: last.start, end: last.end });
+    }
+  }, [weekOptions, selectedWeek]);
+
 
   // --- FIX: Logic to correctly extract muscle groups ---
   const muscleGroupOptions = useMemo(() => {
@@ -207,7 +227,33 @@ export default function ProgressDashboard() {
 
         {/* Conditional Rendering */}
         {showWeekly ? (
-          <WeeklyAssessmentReport />
+           <>
+            {weekOptions.length > 0 && selectedWeek && (
+              <div className="mb-4">
+                <Select
+                  value={fmtYYYYMMDD(selectedWeek.start)}
+                  onValueChange={(value) => {
+                    const opt = weekOptions.find((o) => o.value === value);
+                    if (opt) setSelectedWeek({ start: opt.start, end: opt.end });
+                  }}
+                >
+                  <SelectTrigger className="w-full bg-dark-elevated border-dark-border text-text-primary">
+                    <SelectValue placeholder="Select Week..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-dark-secondary border-dark-border">
+                    {weekOptions.map((w) => (
+                      <SelectItem key={w.value} value={w.value}>
+                        {w.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            {selectedWeek && (
+              <WeeklyAssessmentReport start={selectedWeek.start} end={selectedWeek.end} />
+            )}
+          </>
         ) : (
           <>
             {/* Body Composition Charts */}

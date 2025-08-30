@@ -1,26 +1,28 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { storage } from '@/lib/storage';
 import { Workout, PersonalBest } from '@shared/schema';
 import { Calendar, Dumbbell, Trophy } from 'lucide-react';
 
-export default function WeeklyAssessmentReport() {
-  const now = new Date();
-  // Start of week = last Sunday at 00:00
-  const startOfWeek = useMemo(() => {
-    const d = new Date(now);
-    d.setDate(now.getDate() - now.getDay());
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }, [now]);
+interface Props {
+  start: Date;
+  end: Date;
+}
+
+export default function WeeklyAssessmentReport({ start, end }: Props) {
 
   // Pull everything from localStorage
   const allWorkouts: Workout[] = storage.getWorkouts();
   const allPBs: PersonalBest[]  = storage.getPersonalBests();
 
   // Filter down to this week
-  const weeklyWorkouts = allWorkouts.filter(w => new Date(w.date) >= startOfWeek);
-  const weeklyPBs      = allPBs.filter(pb   => new Date(pb.date)  >= startOfWeek);
-
+  const weeklyWorkouts = allWorkouts.filter(w => {
+    const d = new Date(w.date);
+    return d >= start && d <= end;
+  });
+  const weeklyPBs      = allPBs.filter(pb => {
+    const d = new Date(pb.date);
+    return d >= start && d <= end;
+  });
   // 1) Total workouts
   const totalWorkouts = weeklyWorkouts.length;
 
@@ -37,8 +39,8 @@ export default function WeeklyAssessmentReport() {
   0);
 
   // Date range label
-  const rangeStr = `${startOfWeek.toLocaleDateString()} – ${now.toLocaleDateString()}`;
-
+  const rangeStr = `${start.toLocaleDateString()} – ${end.toLocaleDateString()}`;
+  
   return (
     <div className="bg-dark-primary pb-20">
       <header className="bg-dark-secondary p-4 border-b border-dark-border">
