@@ -32,7 +32,7 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
   return (
     <nav
       className={cn(
-        "fixed bottom-0 left-0 right-0 h-20 z-40 transition-all duration-300",
+        "fixed bottom-0 left-0 right-0 h-16 z-40 transition-all duration-300",
         isScrolled
           ? "bg-dark-secondary/80 backdrop-blur-lg border-t border-dark-border"
           : "bg-dark-secondary border-t border-dark-border"
@@ -53,7 +53,7 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
         </div>
 
         {/* Scrollable row */}
-        <div className="grid grid-flow-col auto-cols-[minmax(64px,1fr)] overflow-x-auto no-scrollbar overscroll-x-contain touch-pan-x h-full px-2 gap-2">
+        <div className="grid grid-flow-col auto-cols-[minmax(48px,1fr)] overflow-x-auto no-scrollbar overscroll-x-contain touch-pan-x h-full px-2 gap-1">
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = activeTab === link.id;
@@ -62,28 +62,28 @@ export default function Navigation({ activeTab, onTabChange }: NavigationProps) 
                 key={link.id}
                 onClick={() => onTabChange(link.id)}
                 className={cn(
-                  "relative flex flex-col items-center justify-center text-center rounded-2xl",
+                  "relative flex flex-col items-center justify-center text-center rounded-2xl h-full",
                   "transition-colors duration-200"
                 )}
               >
                 <motion.div
                   className={cn(
-                    "flex items-center justify-center w-10 h-10",
+                    "flex items-center justify-center",
                     isActive ? "text-accent-red" : "text-text-secondary"
                   )}
-                  animate={{ scale: isActive ? 1.15 : 1 }}
-                  transition={{ type: "spring", stiffness: 350, damping: 20 }}
                 >
-                  <Icon className="w-6 h-6" />
+                  <Icon className={isActive ? "w-8 h-8" : "w-6 h-6"} />
                 </motion.div>
-                <motion.span
-                  className={cn("text-[11px] mt-1", isActive ? "text-accent-red" : "text-text-disabled")}
-                  initial={false}
-                  animate={{ opacity: isActive ? 1 : 0.75, y: isActive ? 0 : 2 }}
-                  transition={{ duration: 0.18 }}
-                >
-                  {link.label}
-                </motion.span>
+                {isActive && (
+                  <motion.span
+                    className="text-[11px] mt-0 text-accent-red"
+                    initial={{ opacity: 0, y: 2 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.18 }}
+                  >
+                    {link.label}
+                  </motion.span>
+                )}
 
                 {/* Active underline */}
                 {isActive && (

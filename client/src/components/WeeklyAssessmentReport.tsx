@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { storage } from '@/lib/storage';
 import { Workout, PersonalBest } from '@shared/schema';
-import { Calendar, Dumbbell, Clock, Trophy } from 'lucide-react';
+import { Calendar, Dumbbell, Trophy } from 'lucide-react';
 
 export default function WeeklyAssessmentReport() {
   const now = new Date();
@@ -36,21 +36,6 @@ export default function WeeklyAssessmentReport() {
     0),
   0);
 
-  // 3) Total cardio duration (sum of each set.duration)
-  const totalDuration = weeklyWorkouts.reduce((sum, w) =>
-    sum + w.exercises.reduce((exSum, ex) => {
-      if (ex.type === 'cardio') {
-        return exSum + ex.sets.reduce((setSum, set) =>
-          setSum + (set.completed && set.duration
-            ? set.duration
-            : 0
-          ),
-        0);
-      }
-      return exSum;
-    }, 0),
-  0);
-
   // Date range label
   const rangeStr = `${startOfWeek.toLocaleDateString()} – ${now.toLocaleDateString()}`;
 
@@ -61,7 +46,7 @@ export default function WeeklyAssessmentReport() {
         <p className="text-text-secondary mt-1">Summary for {rangeStr}</p>
       </header>
 
-      <div className="p-4 grid grid-cols-2 gap-4">
+      <div className="p-4 grid grid-cols-3 gap-4">
         {/* Workouts */}
         <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border text-center">
           <Calendar className="mx-auto mb-2" size={24} />
@@ -74,13 +59,6 @@ export default function WeeklyAssessmentReport() {
           <Dumbbell className="mx-auto mb-2" size={24} />
           <p className="text-2xl font-bold text-accent-red">{(totalVolume / 1000).toFixed(1)}k</p>
           <p className="text-xs text-text-secondary">Volume (kg)</p>
-        </div>
-
-        {/* Duration */}
-        <div className="bg-dark-secondary rounded-xl p-4 border border-dark-border text-center">
-          <Clock className="mx-auto mb-2" size={24} />
-          <p className="text-2xl font-bold text-accent-red">{totalDuration}</p>
-          <p className="text-xs text-text-secondary">Duration (min)</p>
         </div>
 
         {/* New PBs */}
