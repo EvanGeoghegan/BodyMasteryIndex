@@ -1,0 +1,20 @@
+.reorder-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  text-align: center;
+}
+
+.reorder-overlay-content {
+  color: #fff;
+  padding: 1rem;
+}
+
+.reorder-overlay-message {
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+}

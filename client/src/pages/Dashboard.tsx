@@ -1,4 +1,21 @@
 import { useState, useEffect } from "react";
+import {
+  DndContext,
+  PointerSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  arrayMove,
+  rectSortingStrategy,
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import {
   Quote,
@@ -9,7 +26,6 @@ import {
   Droplets,
   Target,
   Home,
-  Edit,
   Flame,
   Bed,
   MessageSquare,
@@ -23,6 +39,7 @@ import { Workout, RecoveryScore } from "@shared/schema";
 import confetti from "canvas-confetti";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { useToast } from "@/hooks/use-toast";
+import useLongPress from "@/hooks/use-long-press";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,7 +47,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import FullBodyHeatmap from "@/components/FullBodyHeatmap";
 import PageHeader from "@/components/PageHeader";
-
+import "./Dashboard.css";
 
 interface DashboardProps {
   onNavigateToWorkout: () => void;
@@ -38,6 +55,22 @@ interface DashboardProps {
   refreshTrigger?: number;
   onNavigateToNutrition?: () => void;
 }
+
+function ReorderOverlay({ onDone }: { onDone: () => void }) {
+  return (
+    <div className="reorder-overlay">
+      <div className="reorder-overlay-content">
+        <p className="reorder-overlay-message">
+          Rearranging – drag to reorder, tap Done to finish.
+        </p>
+        <Button className="reorder-overlay-done" onClick={onDone}>
+          Done
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 
 export default function Dashboard({
   onNavigateToWorkout,
@@ -61,6 +94,29 @@ export default function Dashboard({
     status: "none" as "active" | "at_risk" | "none",
   });
   const { toast } = useToast();
+
+  const defaultOrder = ["protein", "water", "weekly", "last"] as const;
+  const [widgetOrder, setWidgetOrder] = useState<string[]>([]);
+  const [isRearranging, setIsRearranging] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("dashboard_order");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length) {
+          setWidgetOrder(parsed);
+          return;
+        }
+      } catch {}
+    }
+    setWidgetOrder([...defaultOrder]);
+  }, []);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
 
   const getDaysSinceLastWorkout = (): number => {
     if (!lastWorkout) return 999;
@@ -238,8 +294,273 @@ export default function Dashboard({
     });
   };
 
+  const renderWidget = (id: string) => {
+    switch (id) {
+      case "protein":
+        return (
+          <div
+            className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors"
+            onClick={() => onNavigateToNutrition?.()}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-text-primary">Protein</h3>
+              <img
+                src={logoPath}
+                alt="Protein"
+                className="w-4 h-4 object-contain"
+              />
+            </div>
+            <div className="relative w-20 h-20 mx-auto mb-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[
+                      {
+                        value: Math.min(currentProtein, proteinGoal || 1),
+                        fill: "var(--accent-red)",
+                      },
+                      {
+                        value: Math.max(0, (proteinGoal || 1) - currentProtein),
+                        fill: "var(--dark-elevated)",
+                      },
+                    ]}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={25}
+                    outerRadius={40}
+                    startAngle={90}
+                    endAngle={-270}
+                    dataKey="value"
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs font-bold text-text-primary">
+                  {Math.round((currentProtein / (proteinGoal || 1)) * 100)}%
+                </span>
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-sm font-bold text-accent-red">
+                {currentProtein}g
+              </div>
+              <div className="text-xs text-text-secondary">
+                of {proteinGoal}g
+              </div>
+            </div>
+          </div>
+        );
+      case "water":
+        return (
+          <div
+            className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors"
+            onClick={() => onNavigateToNutrition?.()}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-text-primary">Water</h3>
+              <Droplets className="text-blue-400" size={16} />
+            </div>
+            <div className="relative w-20 h-20 mx-auto mb-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[
+                      {
+                        value: Math.min(currentWater, waterGoal || 1),
+                        fill: "hsl(210, 80%, 60%)",
+                      },
+                      {
+                        value: Math.max(0, (waterGoal || 1) - currentWater),
+                        fill: "var(--dark-elevated)",
+                      },
+                    ]}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={25}
+                    outerRadius={40}
+                    startAngle={90}
+                    endAngle={-270}
+                    dataKey="value"
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs font-bold text-text-primary">
+                  {Math.round((currentWater / (waterGoal || 1)) * 100)}%
+                </span>
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-sm font-bold text-blue-400">
+                {currentWater}L
+              </div>
+              <div className="text-xs text-text-secondary">of {waterGoal}L</div>
+            </div>
+          </div>
+        );
+      case "weekly":
+        return (
+          <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
+            <div className="flex items-center gap-2 mb-4">
+              <Target className="text-accent-red" size={20} />
+              <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
+                Weekly Assessment
+              </h2>
+            </div>
+            {weeklyAssessmentDone ? (
+              <div className="text-center py-4">
+                <div className="text-accent-green mb-2">✓</div>
+                <p className="text-text-secondary text-sm">
+                  Weekly assessment completed!
+                </p>
+                <p className="text-text-secondary text-xs mt-1">
+                  Come back next week.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-text-secondary">
+                      {assessmentExercise1}
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      value={exercise1Reps}
+                      onChange={(e) => setExercise1Reps(e.target.value)}
+                      className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-text-secondary">
+                      {assessmentExercise2}
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      value={exercise2Reps}
+                      onChange={(e) => setExercise2Reps(e.target.value)}
+                      className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
+                    />
+                  </div>
+                </div>
+                <Button
+                  onClick={saveAssessmentResults}
+                  disabled={!exercise1Reps || !exercise2Reps}
+                  className="w-full bg-accent-red text-white disabled:opacity-50"
+                >
+                  Edit Workout Save Weekly Assessment
+                </Button>
+              </div>
+            )}
+          </div>
+        );
+      case "last":
+        return (
+          <div className="bg-dark-secondary rounded-xl p-5 border border-dark-border shadow-lg">
+            <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center">
+              <History className="text-accent-red mr-2" size={20} />
+              Last Activity
+            </h3>
+            {lastWorkout ? (
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-text-secondary">Workout</span>
+                  <span className="text-text-primary font-medium">
+                    {lastWorkout.name}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-text-secondary">Date</span>
+                  <span className="text-text-primary font-medium">
+                    {formatDate(lastWorkout.date)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-text-secondary">Exercises</span>
+                  <span className="text-text-primary font-medium">
+                    {lastWorkout.exercises.length} exercises
+                  </span>
+                </div>
+                {onEditWorkout && (
+                  <Button
+                    onClick={() => onEditWorkout(lastWorkout)}
+                    variant="secondary"
+                    size="sm"
+                    className="w-full mt-3 bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-red"
+                  >
+                    Edit Workout
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <p className="text-text-secondary">
+                No workouts logged yet. Start your first workout!
+              </p>
+            )}
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  function SortableItem({
+    id,
+    children,
+    className,
+  }: {
+    id: string;
+    children: React.ReactNode;
+    className?: string;
+  }) {
+    const { attributes, listeners, setNodeRef, transform, transition } =
+      useSortable({ id });
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+    const lp = useLongPress(
+      () => setIsRearranging(true),
+      () => setIsRearranging(false)
+    );
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className={cn(
+          className,
+          isRearranging && "ring-2 ring-accent-red cursor-grab"
+        )}
+        {...attributes}
+        {...(isRearranging ? listeners : {})}
+        {...lp}
+      >
+        {children}
+      </div>
+    );
+  }
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setWidgetOrder((items) => {
+        const oldIndex = items.indexOf(active.id as string);
+        const newIndex = items.indexOf(over.id as string);
+        const newOrder = arrayMove(items, oldIndex, newIndex);
+        localStorage.setItem("dashboard_order", JSON.stringify(newOrder));
+        return newOrder;
+      });
+    }
+    setTimeout(() => setIsRearranging(false), 300);
+  };
+
   return (
     <div className="bg-dark-primary text-text-primary pb-20">
+      {isRearranging && (
+        <ReorderOverlay onDone={() => setIsRearranging(false)} />
+      )}
       <PageHeader
         icon={<Home className="text-accent-red mr-4" size={28} />}
         title="Dashboard"
@@ -337,218 +658,37 @@ export default function Dashboard({
         </div>
         <FullBodyHeatmap />
       </div>
-      <div className="px-4 pt-6 space-y-6">
-        {/* --- End of the new grid container --- */}
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div
-            className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors"
-            onClick={() => onNavigateToNutrition?.()}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-text-primary">Protein</h3>
-              <img
-                src={logoPath}
-                alt="Protein"
-                className="w-4 h-4 object-contain"
-              />
-            </div>
-            <div className="relative w-20 h-20 mx-auto mb-2">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={[
-                      {
-                        value: Math.min(currentProtein, proteinGoal || 1),
-                        fill: "var(--accent-red)",
-                      },
-                      {
-                        value: Math.max(0, (proteinGoal || 1) - currentProtein),
-                        fill: "var(--dark-elevated)",
-                      },
-                    ]}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={25}
-                    outerRadius={40}
-                    startAngle={90}
-                    endAngle={-270}
-                    dataKey="value"
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-bold text-text-primary">
-                  {Math.round((currentProtein / (proteinGoal || 1)) * 100)}%
-                </span>
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-sm font-bold text-accent-red">
-                {currentProtein}g
-              </div>
-              <div className="text-xs text-text-secondary">
-                of {proteinGoal}g
-              </div>
-            </div>
-          </div>
 
-          <div
-            className="bg-dark-secondary rounded-xl p-4 border border-dark-border cursor-pointer hover:bg-dark-elevated transition-colors"
-            onClick={() => onNavigateToNutrition?.()}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-text-primary">Water</h3>
-              <Droplets className="text-blue-400" size={16} />
-            </div>
-            <div className="relative w-20 h-20 mx-auto mb-2">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={[
-                      {
-                        value: Math.min(currentWater, waterGoal || 1),
-                        fill: "hsl(210, 80%, 60%)",
-                      },
-                      {
-                        value: Math.max(0, (waterGoal || 1) - currentWater),
-                        fill: "var(--dark-elevated)",
-                      },
-                    ]}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={25}
-                    outerRadius={40}
-                    startAngle={90}
-                    endAngle={-270}
-                    dataKey="value"
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-bold text-text-primary">
-                  {Math.round((currentWater / (waterGoal || 1)) * 100)}%
-                </span>
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-sm font-bold text-blue-400">
-                {currentWater}L
-              </div>
-              <div className="text-xs text-text-secondary">of {waterGoal}L</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
-          <div className="flex items-center gap-2 mb-4">
-            <Target className="text-accent-red" size={20} />
-            <h2 className="text-lg font-semibold text-text-primary font-['Montserrat']">
-              Weekly Assessment
-            </h2>
-          </div>
-          {weeklyAssessmentDone ? (
-            <div className="text-center py-4">
-              <div className="text-accent-green mb-2">✓</div>
-              <p className="text-text-secondary text-sm">
-                Weekly assessment completed!
-              </p>
-              <p className="text-text-secondary text-xs mt-1">
-                Come back next week.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-text-secondary">
-                    {assessmentExercise1}
-                  </label>
-                  <Input
-                    type="number"
-                    placeholder="0"
-                    value={exercise1Reps}
-                    onChange={(e) => setExercise1Reps(e.target.value)}
-                    className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-text-secondary">
-                    {assessmentExercise2}
-                  </label>
-                  <Input
-                    type="number"
-                    placeholder="0"
-                    value={exercise2Reps}
-                    onChange={(e) => setExercise2Reps(e.target.value)}
-                    className="mt-1 bg-dark-elevated border-dark-border text-text-primary"
-                  />
-                </div>
-              </div>
-              <Button
-                onClick={saveAssessmentResults}
-                disabled={!exercise1Reps || !exercise2Reps}
-                className="w-full bg-accent-red text-white disabled:opacity-50"
-              >
-                Save Weekly Assessment
-              </Button>
-            </div>
-          )}
-        </div>
-        
-        <div className="bg-dark-secondary rounded-xl p-5 border border-dark-border shadow-lg">
-          <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center">
-            <History className="text-accent-red mr-2" size={20} />
-            Last Activity
-          </h3>
-          {lastWorkout ? (
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-text-secondary">Workout</span>
-                <span className="text-text-primary font-medium">
-                  {lastWorkout.name}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-text-secondary">Date</span>
-                <span className="text-text-primary font-medium">
-                  {formatDate(lastWorkout.date)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-text-secondary">Exercises</span>
-                <span className="text-text-primary font-medium">
-                  {lastWorkout.exercises.length} exercises
-                </span>
-              </div>
-              {onEditWorkout && (
-                <Button
-                  onClick={() => onEditWorkout(lastWorkout)}
-                  variant="secondary"
-                  size="sm"
-                  className="w-full mt-3 bg-dark-elevated border-dark-border text-text-secondary hover:text-accent-red"
+      <div className="px-4 pt-6">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext items={widgetOrder} strategy={rectSortingStrategy}>
+            <div className="grid grid-cols-2 gap-4">
+              {widgetOrder.map((id) => (
+                <SortableItem
+                  key={id}
+                  id={id}
+                  className={
+                    id === "weekly" || id === "last" ? "col-span-2" : undefined
+                  }
                 >
-                  Edit Workout
-                </Button>
-              )}
+                  {renderWidget(id)}
+                </SortableItem>
+              ))}
             </div>
-          ) : (
-            <p className="text-text-secondary">
-              No workouts logged yet. Start your first workout!
-            </p>
-          )}
-        </div>
-
-        <div className="px-4 pb-4">
-          <Button
-            onClick={onNavigateToWorkout}
-            className="w-full bg-accent-red text-white font-medium py-4 px-4 rounded-xl shadow-lg border border-transparent transition-all duration-200 hover:shadow-xl hover:scale-105"
-          >
-            <span>Log Workout</span>
-          </Button>
-        </div>
-
-        
+          </SortableContext>
+        </DndContext>
+      </div>
+      <div className="px-4 pb-4">
+        <Button
+          onClick={onNavigateToWorkout}
+          className="w-full bg-accent-red text-white font-medium py-4 px-4 rounded-xl shadow-lg border border-transparent transition-all duration-200 hover:shadow-xl hover:scale-105"
+        >
+          <span>Log Workout</span>
+        </Button>
       </div>
     </div>
   );
