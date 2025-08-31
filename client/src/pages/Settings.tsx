@@ -28,6 +28,8 @@ export default function Settings({}: SettingsProps) {
   const [targetWeight, setTargetWeight] = useState("");
   const [currentBodyFat, setCurrentBodyFat] = useState("");
   const [targetBodyFat, setTargetBodyFat] = useState("");
+  const [currentVO2Max, setCurrentVO2Max] = useState("");
+  const [targetVO2Max, setTargetVO2Max] = useState("");
   const [assessmentExercise1, setAssessmentExercise1] = useState("Push-ups");
   const [assessmentExercise2, setAssessmentExercise2] = useState("Pull-ups");
   const [workoutReminder, setWorkoutReminder] = useState(true);
@@ -50,6 +52,8 @@ export default function Settings({}: SettingsProps) {
         setTargetWeight(settings.targetWeight?.toString() || "");
         setCurrentBodyFat(settings.currentBodyFat?.toString() || "");
         setTargetBodyFat(settings.targetBodyFat?.toString() || "");
+        setCurrentVO2Max(settings.currentVO2Max?.toString() || "");
+        setTargetVO2Max(settings.targetVO2Max?.toString() || "");
         setAssessmentExercise1(settings.assessmentExercise1 || "Push-ups");
         setAssessmentExercise2(settings.assessmentExercise2 || "Pull-ups");
         setWorkoutReminder(settings.workoutReminder !== false);
@@ -110,6 +114,8 @@ useEffect(() => {
       targetWeight: targetWeight ? parseFloat(targetWeight) : null,
       currentBodyFat: currentBodyFat ? parseFloat(currentBodyFat) : null,
       targetBodyFat: targetBodyFat ? parseFloat(targetBodyFat) : null,
+      currentVO2Max: currentVO2Max ? parseFloat(currentVO2Max) : null,
+      targetVO2Max: targetVO2Max ? parseFloat(targetVO2Max) : null,
       assessmentExercise1,
       assessmentExercise2,
       workoutReminder,
@@ -120,12 +126,13 @@ useEffect(() => {
     
     localStorage.setItem('bmi_settings', JSON.stringify(settingsToSave));
 
-    if (settingsToSave.currentWeight || settingsToSave.currentBodyFat) {
+    if (settingsToSave.currentWeight || settingsToSave.currentBodyFat || settingsToSave.currentVO2Max) {
       const history = JSON.parse(localStorage.getItem('body_composition_history') || '[]');
       history.push({
         date: new Date().toISOString().split('T')[0],
         weight: settingsToSave.currentWeight,
         bodyFat: settingsToSave.currentBodyFat,
+        vo2Max: settingsToSave.currentVO2Max,
       });
       localStorage.setItem('body_composition_history', JSON.stringify(history));
     }
@@ -197,7 +204,7 @@ useEffect(() => {
       personal_best: [],
       supplement: [],
       supplement_log: [],
-      body_comp: [],
+      body_comp: [], // { date, weight, bodyFat, vo2Max }
     };
 
     let importedSettings = null;
@@ -205,6 +212,14 @@ useEffect(() => {
     parsed.forEach((row) => {
       if (row.type === "settings") {
         importedSettings = row.data && JSON.parse(row.data);
+        } else if (row.type === "body_comp") {
+        const data = row.data && JSON.parse(row.data);
+        if (data) {
+          dataMap.body_comp.push({
+            ...data,
+            vo2Max: data.vo2Max ?? null,
+          });
+        }
       } else if (dataMap[row.type]) {
         const data = row.data && JSON.parse(row.data);
         if (data) dataMap[row.type].push(data);
@@ -289,6 +304,16 @@ useEffect(() => {
               <div>
                 <Label htmlFor="target-body-fat" className="text-text-secondary">Target Body Fat (%)</Label>
                 <Input id="target-body-fat" type="number" step="0.1" placeholder="12.0" value={targetBodyFat} onChange={(e) => setTargetBodyFat(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="current-vo2-max" className="text-text-secondary">Current VO₂ Max</Label>
+                <Input id="current-vo2-max" type="number" step="0.1" placeholder="40.0" value={currentVO2Max} onChange={(e) => setCurrentVO2Max(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" />
+              </div>
+              <div>
+                <Label htmlFor="target-vo2-max" className="text-text-secondary">Target VO₂ Max</Label>
+                <Input id="target-vo2-max" type="number" step="0.1" placeholder="45.0" value={targetVO2Max} onChange={(e) => setTargetVO2Max(e.target.value)} className="mt-1 bg-dark-elevated border-dark-border text-text-primary" />
               </div>
             </div>
             <div className="space-y-4">

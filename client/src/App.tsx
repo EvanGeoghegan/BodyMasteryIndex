@@ -128,7 +128,7 @@ function App() {
         <div className="relative h-full max-w-md mx-auto">
 
           {/* The ONLY vertical scroller in the app */}
-          <div className="absolute inset-0 overflow-y-auto no-scrollbar pb-24 px-4">
+          <div className="absolute inset-0 overflow-y-auto no-scrollbar pb-24">
             {renderActiveTab()}
           </div>
 

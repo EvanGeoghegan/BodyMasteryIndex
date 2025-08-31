@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { TrendingUp, Weight, Percent, BarChart3, Trophy } from "lucide-react";
+import { TrendingUp, Weight, Percent, BarChart3, Trophy, Activity } from "lucide-react";
 import { storage } from "@/lib/storage";
 import { Workout, PersonalBest } from "@shared/schema";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -27,6 +27,7 @@ interface BodyCompData {
   date: string;
   weight?: number;
   bodyFat?: number;
+  vo2Max?: number;
 }
 
 export default function ProgressDashboard() {
@@ -54,7 +55,7 @@ export default function ProgressDashboard() {
     try {
       setWorkouts(storage.getWorkouts());
       setPersonalBests(storage.getPersonalBests());
-      const history = JSON.parse(localStorage.getItem('body_composition_history') || '[]');
+      const history: BodyCompData[] = JSON.parse(localStorage.getItem('body_composition_history') || '[]');
       setBodyCompHistory(history);
       const savedSettings = JSON.parse(localStorage.getItem('bmi_settings') || '{}');
       setSettings(savedSettings);
@@ -257,7 +258,7 @@ export default function ProgressDashboard() {
         ) : (
           <>
             {/* Body Composition Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
                 <h3 className="text-lg font-semibold text-text-primary font-heading mb-4 flex items-center">
                   <Weight className="mr-2" size={20} />
@@ -294,6 +295,27 @@ export default function ProgressDashboard() {
                       <Line type="monotone" dataKey="bodyFat" stroke="#8884d8" strokeWidth={2} dot={{ r: 4 }} />
                       {settings.targetBodyFat && (
                         <ReferenceLine y={settings.targetBodyFat} label="Target" stroke="var(--accent-green)" strokeDasharray="4 4" />
+                      )}
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="bg-dark-secondary rounded-xl p-6 border border-dark-border">
+                <h3 className="text-lg font-semibold text-text-primary font-heading mb-4 flex items-center">
+                  <Activity className="mr-2" size={20} />
+                  VO₂ Max
+                </h3>
+                <div className="h-60">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={bodyCompHistory} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--dark-border)" />
+                      <XAxis dataKey="date" tickFormatter={formatDate} stroke="var(--text-secondary)" fontSize={12} />
+                      <YAxis stroke="var(--text-secondary)" fontSize={12} domain={["dataMin - 2", "dataMax + 2"]} />
+                      <Tooltip contentStyle={{ backgroundColor: "var(--dark-elevated)", border: "1px solid var(--dark-border)" }} />
+                      <Line type="monotone" dataKey="vo2Max" stroke="#82ca9d" strokeWidth={2} dot={{ r: 4 }} />
+                      {settings.targetVO2Max && (
+                        <ReferenceLine y={settings.targetVO2Max} label="Target" stroke="var(--accent-green)" strokeDasharray="4 4" />
                       )}
                     </LineChart>
                   </ResponsiveContainer>

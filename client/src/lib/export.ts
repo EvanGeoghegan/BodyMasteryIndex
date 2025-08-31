@@ -26,12 +26,12 @@ export async function exportAllDataAsCSV(): Promise<Blob> {
   }));
   files.push({ name: 'pbs.csv', data: Papa.unparse(pbRows) });
 
-  // 3. Body Composition
-  const bodyCompRows = bodyComp.map((entry: { date: string; weight: number; bodyFat: number }) => ({
-
+  // 3. Body Composition (includes optional VO2 Max)
+  const bodyCompRows = bodyComp.map((entry: { date: string; weight: number; bodyFat: number; vo2Max?: number }) => ({
     date: entry.date,
     weight: entry.weight,
     bodyFat: entry.bodyFat,
+    vo2Max: entry.vo2Max ?? '',
   }));
   files.push({ name: 'body_composition.csv', data: Papa.unparse(bodyCompRows) });
 
