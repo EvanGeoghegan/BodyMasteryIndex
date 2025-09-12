@@ -521,10 +521,14 @@ export default function Dashboard({
       transform: CSS.Transform.toString(transform),
       transition,
     };
-    const lp = useLongPress(
-      () => setIsRearranging(true),
-      () => setIsRearranging(false)
-    );
+    const lp = useLongPress(() => setIsRearranging(true), () => {}, 500);
+    const {
+      onPointerDown: dndPointerDown,
+      onPointerMove: dndPointerMove,
+      onPointerUp: dndPointerUp,
+      onPointerLeave: dndPointerLeave,
+      ...otherListeners
+    } = listeners ?? {};
     return (
       <div
         ref={setNodeRef}
@@ -534,8 +538,23 @@ export default function Dashboard({
           isRearranging && "ring-2 ring-accent-red cursor-grab"
         )}
         {...attributes}
-        {...(isRearranging ? listeners : {})}
-        {...lp}
+        {...(isRearranging ? otherListeners : {})}
+        onPointerDown={(e) => {
+          lp.onPointerDown(e);
+          if (isRearranging) dndPointerDown?.(e);
+        }}
+        onPointerMove={(e) => {
+          lp.onPointerMove(e);
+          if (isRearranging) dndPointerMove?.(e);
+        }}
+        onPointerUp={(e) => {
+          lp.onPointerUp();
+          if (isRearranging) dndPointerUp?.(e);
+        }}
+        onPointerLeave={(e) => {
+          lp.onPointerLeave();
+          if (isRearranging) dndPointerLeave?.(e);
+        }}
       >
         {children}
       </div>
