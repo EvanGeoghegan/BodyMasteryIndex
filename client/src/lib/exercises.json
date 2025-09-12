@@ -3016,6 +3016,24 @@
     ]
   },
   {
+    "id": "wrist001",
+    "name": "Wrist Flexion",
+    "category": "strength",
+    "equipment": ["barbell", "dumbbell"],
+    "musclesWorked": [
+      "wrist_flexors"
+    ]
+  },
+  {
+    "id": "wrist002",
+    "name": "Wrist Extension",
+    "category": "strength",
+    "equipment": ["barbell", "dumbbell"],
+    "musclesWorked": [
+      "wrist_extensors"
+    ]
+  },
+  {
     "id": "biceps001",
     "name": "Curl",
     "category": "strength",
