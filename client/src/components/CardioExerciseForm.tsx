@@ -49,10 +49,15 @@ export default function CardioExerciseForm({ exercise, onUpdate, onDelete }: Car
 
   const toggleCompleted = (setIndex: number) => {
     const set = exercise.sets[setIndex];
-    updateSet(setIndex, { completed: !set.completed });
-    
-    if (!set.completed) {
+    const newCompleted = !set.completed;
+    if (newCompleted) {
+      const updatedSets = exercise.sets.map((s, index) =>
+        index <= setIndex ? { ...s, completed: true } : s
+      );
+      onUpdate({ ...exercise, sets: updatedSets });
       setShowRestTimer(true);
+    } else {
+      updateSet(setIndex, { completed: false });
     }
   };
 

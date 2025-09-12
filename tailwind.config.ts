@@ -73,6 +73,7 @@ export default {
         "accent-light-navy": "var(--accent-light-navy)",
         "accent-green": "var(--accent-green)",
         "accent-red": "var(--accent-red)",
+        "accent-yellow": "var(--accent-yellow)",
         "text-primary": "var(--text-primary)",
         "text-secondary": "var(--text-secondary)",
         "text-disabled": "var(--text-disabled)",

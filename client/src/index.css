@@ -15,7 +15,7 @@
     --accent-red: hsl(0, 75%, 45%);
     --accent-light-red: hsl(0, 78%, 55%);
     --accent-green: hsl(135, 65%, 55%);
-    --accent-warning: hsl(28, 90%, 60%);
+    --accent-yellow: hsl(28, 90%, 60%);
     --text-primary: hsl(220, 15%, 95%);
     --text-secondary: hsl(220, 10%, 80%);
     --text-disabled: hsl(220, 10%, 60%);
@@ -31,7 +31,7 @@
     --accent-red: #4a90e2;
     --accent-light-red: #357abd;
     --accent-green: #2baa6b;
-    --accent-warning: #f59e0b;
+    --accent-yellow: #f59e0b;
     --text-primary: #1f2937; /* slate-800 */
     --text-secondary: #4b5563; /* slate-600 */
     --text-disabled: #9ca3af; /* slate-400 */
@@ -112,6 +112,12 @@
   }
   .bg-accent-green {
     background-color: var(--accent-green);
+  }
+  .text-accent-yellow {
+    color: var(--accent-yellow);
+  }
+  .bg-accent-yellow {
+    background-color: var(--accent-yellow);
   }
   .text-blue-400 {
     color: hsl(210, 80%, 60%);

@@ -57,6 +57,18 @@ export default function CoreExerciseForm({ exercise, onUpdate, onDelete }: CoreE
     onUpdate({ ...exercise, notes });
   };
 
+  const toggleCompleted = (setIndex: number) => {
+    const set = exercise.sets[setIndex];
+    if (!set.completed) {
+      const updatedSets = exercise.sets.map((s, index) =>
+        index <= setIndex ? { ...s, completed: true } : s
+      );
+      onUpdate({ ...exercise, sets: updatedSets });
+    } else {
+      updateSet(set.id, { completed: false });
+    }
+  };
+
   return (
     <div className="bg-dark-elevated rounded-xl p-5 border border-dark-border shadow-lg">
       <div className="flex items-center justify-between mb-3">
@@ -130,7 +142,7 @@ export default function CoreExerciseForm({ exercise, onUpdate, onDelete }: CoreE
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => updateSet(set.id, { completed: !set.completed })}
+              onClick={() => toggleCompleted(index)}
               className="p-1 h-8 w-8"
             >
               {set.completed ? (

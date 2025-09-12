@@ -156,7 +156,9 @@ class LocalStorage {
     return true;
   }
   // ADD THIS ENTIRE FUNCTION
-  getLastPerformance(exerciseName: string): { weight: number; reps: number; date: string } | null {
+  getLastPerformance(
+    exerciseName: string
+  ): { weight: number; reps: number; date: string; difficulty?: 'easy' | 'good' | 'hard' } | null {
     const allWorkouts = this.getWorkouts();
     let lastPerformance = null;
 
@@ -181,6 +183,7 @@ class LocalStorage {
               weight: bestSet.weight,
               reps: bestSet.reps,
               date: workout.date,
+              difficulty: exercise.difficulty,
             };
           }
         }

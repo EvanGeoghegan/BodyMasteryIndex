@@ -639,7 +639,7 @@ export default function Dashboard({
                 workoutStreak.streak > 0
                   ? "text-accent-red"
                   : "text-text-primary",
-                workoutStreak.status === "at_risk" && "text-accent-warning"
+                workoutStreak.status === "at_risk" && "text-accent-yellow"
               )}
             >
               {workoutStreak.streak} Day{workoutStreak.streak !== 1 && "s"}

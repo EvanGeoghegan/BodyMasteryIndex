@@ -21,6 +21,7 @@ interface LastPerformance {
   weight: number;
   reps: number;
   date: string;
+  difficulty?: "easy" | "good" | "hard";
 }
 
 export default function ExerciseCard({
@@ -115,7 +116,15 @@ export default function ExerciseCard({
 
   const toggleSetCompleted = (setIndex: number) => {
     const set = exercise.sets[setIndex];
-    updateSet(setIndex, { completed: !set.completed });
+    const newCompleted = !set.completed;
+    if (newCompleted) {
+      const updatedSets = exercise.sets.map((s, index) =>
+        index <= setIndex ? { ...s, completed: true } : s
+      );
+      onUpdate({ sets: updatedSets });
+    } else {
+      updateSet(setIndex, { completed: false });
+    }
   };
 
   const getSetSummary = () => {
@@ -166,6 +175,21 @@ export default function ExerciseCard({
     return exercise.groupType === "circuit" ? "Circuit" : "Superset";
   };
 
+  const getDifficultyColor = (
+    level?: "easy" | "good" | "hard"
+  ): string => {
+    switch (level) {
+      case "easy":
+        return "bg-accent-green";
+      case "good":
+        return "bg-accent-yellow";
+      case "hard":
+        return "bg-accent-red";
+      default:
+        return "";
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -182,9 +206,9 @@ export default function ExerciseCard({
         onClick={() => setIsOpen(!isOpen)}
       >
         <div>
-            <h4 className="font-semibold text-lg text-text-primary">
-              {exercise.name?.trim() || "Select an Exercise"}
-            </h4>
+          <h4 className="font-semibold text-lg text-text-primary">
+            {exercise.name?.trim() || "Select an Exercise"}
+          </h4>
 
           {getGroupLabel() && (
             <p className="text-xs text-accent-yellow mt-1">{getGroupLabel()}</p>
@@ -200,6 +224,15 @@ export default function ExerciseCard({
           >
             {getSetSummary()}
           </span>
+          {exercise.difficulty && (
+            <span
+              className={cn(
+                "inline-block w-3 h-3 rounded-full ml-2",
+                getDifficultyColor(exercise.difficulty)
+              )}
+              title={exercise.difficulty.replace('_', ' ')}
+            />
+          )}
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -229,6 +262,15 @@ export default function ExerciseCard({
             Last time: {lastPerformance.weight}kg x {lastPerformance.reps} reps
             on {new Date(lastPerformance.date).toLocaleDateString()}
           </span>
+          {lastPerformance.difficulty && (
+            <span
+              className={cn(
+                "inline-block w-2 h-2 rounded-full",
+                getDifficultyColor(lastPerformance.difficulty)
+              )}
+              title={lastPerformance.difficulty.replace('_', ' ')}
+            />
+          )}
         </div>
       )}
 
@@ -415,6 +457,30 @@ export default function ExerciseCard({
                   </div>
                 ))}
               </div>
+
+              <div className="flex items-center gap-2 mt-2">
+                {(['easy', 'good', 'hard'] as const).map((level) => (
+                  <button
+                    key={level}
+                    onClick={() => onUpdate({ difficulty: level })}
+                    className={cn(
+                      "w-4 h-4 rounded-full",
+                      getDifficultyColor(level),
+                      exercise.difficulty === level
+                        ? "ring-2 ring-white"
+                        : "opacity-50"
+                    )}
+                    title={
+                      level === 'easy'
+                        ? 'Easy'
+                        : level === 'good'
+                        ? 'Good'
+                        : 'Hard'
+                    }
+                  />
+                ))}
+              </div>
+
 
               <Button
                 onClick={() => addSet()}
